@@ -136,10 +136,6 @@
 		<data>
 		Prhya2Apv9EPhRu421T+9iTNB6A=
 		</data>
-		<key>Resources/engine/texture/box-shadow/256.png</key>
-		<data>
-		zCIhUivQ9IAdBs8Qr2FezkQ2Rpw=
-		</data>
 		<key>Resources/engine/texture/box-shadow/32.png</key>
 		<data>
 		tYwPS1tee2SZOXmfKekAcj7cLKM=
@@ -388,13 +384,6 @@
 			<key>hash2</key>
 			<data>
 			01ICSOdW+X9Wo8vB+JW247R3sy0PZy9ThB+O3fcfWiA=
-			</data>
-		</dict>
-		<key>Resources/engine/texture/box-shadow/256.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			HaKhL7mpwMm61yCATZo6PSCcsavU3z9k9smmwK3PQe4=
 			</data>
 		</dict>
 		<key>Resources/engine/texture/box-shadow/32.png</key>
