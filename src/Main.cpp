@@ -1,15 +1,16 @@
 
-# include <Siv3D.hpp> // OpenSiv3D v0.2.8
-#include <vector>
+# include <Siv3D.hpp> // OpenSiv3D v0.2.8
 
 namespace Lane_t {
-    int interval = 390;
-    int top = 0;
-    int bottom = 1000;
-    int leftmost = 180;
-    int rightmost = leftmost + interval * 4;
-    
+    Vec2 interval(390, 0);
     Vec2 laneBegin(1920/2, -180);
+    Vec2 leftEnd(180, 1000);
+    Vec2 rightEnd = leftEnd + interval * 4;
+    
+    Vec2 outerGuide = Line(laneBegin, leftEnd).vector();
+    Vec2 insideGuide = Line(laneBegin, leftEnd + interval).vector();
+    
+    const Line underLine(0,1000,1920,1000);
 }
 
 namespace Window_t {
@@ -21,17 +22,19 @@ void Main() {
     Window::SetTitle(U"MusicGame");
     Graphics::SetBackground(Palette::Yellow);
     
-    const Line underLine(Vec2(Window_t::edge, Lane_t::bottom), Vec2(Window::Width(), Lane_t::bottom));
     Font score(50);
+    
+    int y;
     
     while (System::Update()) {
         // draw background of lane
-        Triangle(Lane_t::laneBegin, Vec2(Lane_t::leftmost, Lane_t::bottom), Vec2(Lane_t::rightmost, Lane_t::bottom)).draw(Color(65, 65, 65));
+        Triangle(Lane_t::laneBegin, Lane_t::leftEnd, Lane_t::rightEnd).draw(Color(65, 65, 65));
         
         // draw lane separator
-        for (int i = 0; i < 5 ; i++) {
-            Line(Lane_t::laneBegin, Vec2(Lane_t::leftmost, Lane_t::bottom) + Vec2(Lane_t::interval * i, 0)).draw((i == 0 || i == 4) ? 8 : 2, Palette::Orange);
+        for (auto i:step(5)) {
+            Line(Lane_t::laneBegin, Lane_t::leftEnd + Lane_t::interval * i).draw((i == 0 || i == 4) ? 8 : 2, Palette::Orange);
         }
-        underLine.draw(8, Palette::Orange);
+        Lane_t::underLine.draw(8, Palette::Orange);
+        
     }
 }
