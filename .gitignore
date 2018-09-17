@@ -432,5 +432,10 @@ ASALocalRun/
 App/
 
 # Build results
-Intermediate
+Intermediate/
 
+
+
+
+# extra
+test/
