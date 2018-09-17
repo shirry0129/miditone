@@ -434,3 +434,5 @@ App/
 # Build results
 Intermediate
 
+# user add
+.vscode/
