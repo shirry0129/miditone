@@ -12,11 +12,6 @@ Lane::Lane() {
 	}
 }
 
-Lane::~Lane(){
-	guide.clear();
-	guide.shrink_to_fit();
-}
-
 Lane& Lane::getInstance(){
 	return *instance;
 }

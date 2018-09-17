@@ -13,7 +13,7 @@
 class Lane {
 private:
     Lane();
-    ~Lane();
+    ~Lane() = default;
     Array<Line> guide;
     Line underLine;
     Vec2 laneBegin;
