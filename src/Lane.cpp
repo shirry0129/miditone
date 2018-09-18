@@ -1,10 +1,11 @@
 #include"Lane.h"
 
-Lane::Lane() {
-	underLine = Line(210, 1000, 1710, 1000);
-	laneBegin = Vec2(960, -200);
-	interval = Vec2(400,0);
-	leftEnd = Vec2(160,1080);
+Lane::Lane():
+    underLine(210, 1000, 1710, 1000),
+    laneBegin(960, -200),
+    interval(400, 0),
+    leftEnd(160,1080)
+{
 	rightEnd = leftEnd + interval * 4;
 
 	for(auto i:step(5)){
