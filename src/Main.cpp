@@ -10,6 +10,6 @@ void Main() {
     Lane::create();
     
     while (System::Update()) {
-       Lane::getInstance().draw();
+        Lane::getInstance().draw();
     }
 }
