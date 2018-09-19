@@ -94,7 +94,7 @@ namespace score {
 		// move file pointer
 		Status moveChunk(const std::basic_string<char_type> &chunkName);
 
-		Status readHeader(Header &header);
+		Status readHeader(Header &header, const std::basic_string<char_type> &chunkName);
 
 		Status readNote();
 
