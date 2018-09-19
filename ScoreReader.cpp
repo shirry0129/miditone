@@ -88,18 +88,18 @@ namespace score {
 		return prevStatus = Status::S_OK;
 	}
 
-	Status ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
+	Status ScoreReader::readHeader(Header &_header) {
 		if (!readable(prevStatus))
 			return prevStatus;
 
 		// move file pointer
-		if (failed(moveChunk(chunkName)))
+		if (failed(moveChunk("header")))
 			return prevStatus;
 
 		// process all arguments
 		argProcessFlag = true;
 
-		while (!score.eof() && currentChunk == chunkName) {
+		while (!score.eof() && currentChunk == "header") {
 			if (failed(processLine()))
 				return prevStatus;
 		}
@@ -132,7 +132,7 @@ namespace score {
 
 		currentChunk.erase(currentChunk.cbegin(), currentChunk.cend());
 		prevStatus = Status::E_SET_NOFILE;
-		delim = ':';
+		delim = U':';
 		argProcessFlag = false;
 
 #define eraseAll(container) container.erase(container.cbegin(), container.cend())
