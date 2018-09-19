@@ -356,7 +356,7 @@ namespace score {
 		}
 
 		// add tempo data
-		sr.header.tempo.emplace_back(Tempo(tempo, bar, math::Fraction(n, d)));
+		sr.header.tempo.emplace_back(TempoEvent(tempo, bar, math::Fraction(n, d)));
 
 		return sr.prevStatus = Status::S_OK;
 	}
@@ -390,7 +390,7 @@ namespace score {
 		}
 
 		// add beat data
-		sr.header.beat.emplace_back(Beat(math::Fraction(n, d), bar));
+		sr.header.beat.emplace_back(BeatEvent(math::Fraction(n, d), bar, math::Fraction(0)));
 
 		return sr.prevStatus = Status::S_OK;
 	}

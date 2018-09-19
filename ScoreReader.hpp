@@ -41,21 +41,25 @@ namespace score {
 	bool readable(Status s);
 
 
-	struct Tempo {
-		Tempo(float tempo, int bar, const math::Fraction& posInBar) noexcept
-			: tempo(tempo), bar(bar), posInBar(posInBar) {}
-
-		const float tempo;
+	struct ScoreTime {
+		ScoreTime(int bar, const math::Fraction &posInBar) :
+			bar(bar), posInBar(posInBar) {}
 		const int bar;
 		const math::Fraction posInBar;
 	};
 
-	struct Beat {
-		Beat(const math::Fraction &beat, int bar) noexcept
-			: beat(beat), bar(bar) {}
+	struct TempoEvent : ScoreTime {
+		TempoEvent(float tempo, int bar, const math::Fraction &posInBar) noexcept
+			: tempo(tempo), ScoreTime(bar, posInBar) {}
+
+		const float tempo;
+	};
+
+	struct BeatEvent : ScoreTime {
+		BeatEvent(const math::Fraction &beat, int bar, const math::Fraction &posInBar) noexcept
+			: beat(beat), ScoreTime(bar, posInBar) {}
 
 		const math::Fraction beat;
-		const int bar;
 	};
 
 	struct Header {
@@ -67,8 +71,8 @@ namespace score {
 			3
 		>								level;
 		std::basic_string<char_type>	genre;
-		std::vector<Tempo>				tempo;
-		std::vector<Beat>				beat;
+		std::vector<TempoEvent>		tempo;
+		std::vector<BeatEvent>			beat;
 	};
 
 
@@ -120,13 +124,6 @@ namespace score {
 		Status moveToBegin();
 
 		
-
-
-
-
-
-
-
 
 
 		struct Command {
