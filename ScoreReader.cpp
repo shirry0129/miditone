@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 
-std::locale::id std::codecvt<char32_t, char, std::mbstate_t>::id;
+//std::locale::id std::codecvt<char32_t, char, std::mbstate_t>::id;
 
 
 
@@ -193,6 +193,9 @@ namespace score {
 
 
 	State ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
+		if (sr.currentChunk != "")
+			return State::E_UNEXPECTED_STRING;
+
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -205,8 +208,7 @@ namespace score {
 		sstream.getline(section.data(), section.size(), sr.delim);
 		std::basic_string<char_type> firstArg(section.data());
 		if (firstArg == "")
-			return sr.prevStatus = State::E_INVALID_ARGUMENT;
-
+			return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 		// update current chunk name
 		sr.currentChunk = firstArg;
@@ -216,6 +218,8 @@ namespace score {
 	}
 
 	State ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
+		if (sr.prevStatus == State::S_REACH_CHUNK_END)
+			return sr.prevStatus = State::E_UNEXPECTED_STRING;
 		
 		// update current chunk name
 		sr.currentChunk = "";
@@ -227,6 +231,9 @@ namespace score {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
+
 		std::basic_stringstream<char_type> sstream(line);
 
 		// ignore command string 
@@ -236,7 +243,7 @@ namespace score {
 		sstream >> sr.header.id;
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 		return sr.prevStatus = State::S_OK;
 	}
@@ -244,6 +251,9 @@ namespace score {
 	State ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -256,7 +266,7 @@ namespace score {
 		sr.header.title.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 		return sr.prevStatus = State::S_OK;
 	}
@@ -264,6 +274,9 @@ namespace score {
 	State ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -276,7 +289,7 @@ namespace score {
 		sr.header.artist.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 		return sr.prevStatus = State::S_OK;
 	}
@@ -284,6 +297,9 @@ namespace score {
 	State ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -296,7 +312,7 @@ namespace score {
 		sr.header.genre.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 		return sr.prevStatus = State::S_OK;
 	}
@@ -304,6 +320,9 @@ namespace score {
 	State ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -317,7 +336,7 @@ namespace score {
 			it->assign(tmp.data());
 
 			if (sstream.fail())
-				return sr.prevStatus = State::E_INVALID_ARGUMENT;
+				return sr.prevStatus = State::E_UNEXPECTED_STRING;
 		}
 
 		
@@ -327,6 +346,9 @@ namespace score {
 	State ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -349,7 +371,7 @@ namespace score {
 			}
 
 			if (sstream.fail())
-				return sr.prevStatus = State::E_INVALID_ARGUMENT;
+				return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 			// read delimiter
 			sstream >> tmp;
@@ -364,6 +386,9 @@ namespace score {
 	State ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -383,7 +408,7 @@ namespace score {
 			}
 
 			if (sstream.fail())
-				return sr.prevStatus = State::E_INVALID_ARGUMENT;
+				return sr.prevStatus = State::E_UNEXPECTED_STRING;
 
 			// read delimiter
 			sstream >> tmp;

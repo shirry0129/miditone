@@ -30,11 +30,10 @@ namespace score {
 		E_CANNOT_OPEN_FILE = -1,		// when open file
 		E_TOOLONG_DATALINE = -2,		// when read file (move file pointer)
 		E_CANNOT_FIND_COMMAND = -3,		// when read file (move file pointer)
-		E_INVALID_ARGUMENT = -4,		// when read header or note data
+		E_UNEXPECTED_STRING = -4,		// when read header or note data
 		E_SET_NOFILE = -5,				// after constructed
 		E_EMBED_NO_BEAT_OR_TEMPO = -6,	// when read header
-		E_OUT_OF_RANGE_CHUNK = -7,		// after move file pointer
-		E_CANNOT_FIND_CHUNK = -8		// when move file pointer
+		E_CANNOT_FIND_CHUNK = -7		// when move file pointer
 	};
 
 	bool success(State s);
