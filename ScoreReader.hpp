@@ -24,7 +24,8 @@ namespace score {
 	using char_type = char;
 
 
-	enum class Status {
+	enum class State {
+		S_REACH_CHUNK_END = 1,
 		S_OK = 0,
 		E_CANNOT_OPEN_FILE = -1,		// when open file
 		E_TOOLONG_DATALINE = -2,		// when read file (move file pointer)
@@ -36,9 +37,9 @@ namespace score {
 		E_CANNOT_FIND_CHUNK = -8		// when move file pointer
 	};
 
-	bool success(Status s);
-	bool failed(Status s);
-	bool readable(Status s);
+	bool success(State s);
+	bool failed(State s);
+	bool readable(State s);
 
 
 	struct ScoreTime {
@@ -85,18 +86,18 @@ namespace score {
 		ScoreReader(const char *file, char_type delim = ':');
 		~ScoreReader();
 
-		Status open(const wchar_t *file);
-		Status open(const char * file);
+		State open(const wchar_t *file);
+		State open(const char * file);
 
 
 		void setDelim(char_type delim) noexcept;
 
 		// move file pointer
-		Status moveChunk(const std::basic_string<char_type> &chunkName);
+		State moveChunk(const std::basic_string<char_type> &chunkName);
 
-		Status readHeader(Header &header, const std::basic_string<char_type> &chunkName);
+		State readHeader(Header &header, const std::basic_string<char_type> &chunkName);
 
-		Status readNote();
+		State readNote();
 
 
 	private:
@@ -104,7 +105,7 @@ namespace score {
 
 		Header header;
 
-		Status prevStatus;
+		State prevStatus;
 
 		// name of chunk where exist current file pointer
 		std::basic_string<char_type> currentChunk;
@@ -119,55 +120,55 @@ namespace score {
 
 		void init();
 	
-		Status processLine();
+		State processLine();
 
-		Status moveToBegin();
+		State moveToBegin();
 
 		
 
 
 		struct Command {
-			virtual Status execute(ScoreReader &sr, const char_type *line) = 0;
+			virtual State execute(ScoreReader &sr, const char_type *line) = 0;
 		};
 
 		struct BeginCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct EndCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct IdCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct TitleCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct ArtistCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct GenreCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct LevelCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct TempoCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct BeatCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct NullCmd : Command {
-			Status execute(ScoreReader &sr, const char_type *line) override;
+			State execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct CommandManager {

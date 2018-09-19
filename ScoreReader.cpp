@@ -11,16 +11,16 @@ std::locale::id std::codecvt<char32_t, char, std::mbstate_t>::id;
 namespace score {
 
 
-	bool success(Status s) {
+	bool success(State s) {
 		return static_cast<int>(s) >= 0;
 	}
 
-	bool failed(Status s) {
+	bool failed(State s) {
 		return static_cast<int>(s) < 0;
 	}
 
-	bool readable(Status s) {
-		return (s != Status::E_SET_NOFILE && s != Status::E_CANNOT_OPEN_FILE);
+	bool readable(State s) {
+		return (s != State::E_SET_NOFILE && s != State::E_CANNOT_OPEN_FILE);
 	}
 
 
@@ -41,13 +41,13 @@ namespace score {
 
 	ScoreReader::~ScoreReader() {}
 
-	Status ScoreReader::open(const wchar_t * file) {
+	State ScoreReader::open(const wchar_t * file) {
 		char path[256];
 		wcstombs(path, file, 256);
 		return open(path);
 	}
 
-	Status ScoreReader::open(const char *file) {
+	State ScoreReader::open(const char *file) {
 		// init
 		char_type d = delim;
 		init();
@@ -57,15 +57,15 @@ namespace score {
 		score.open(file);
 
 		if (!score) {
-			return prevStatus = Status::E_CANNOT_OPEN_FILE;
+			return prevStatus = State::E_CANNOT_OPEN_FILE;
 		}
 
-		return prevStatus = Status::S_OK;
+		return prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::moveChunk(const std::basic_string<char_type> &chunkName) {
+	State ScoreReader::moveChunk(const std::basic_string<char_type> &chunkName) {
 		if (!readable(prevStatus))
-			return prevStatus = Status::E_SET_NOFILE;
+			return prevStatus = State::E_SET_NOFILE;
 
 
 		// move file pointer to begin
@@ -82,13 +82,13 @@ namespace score {
 		// reach eof ?
 		if (score.eof()) {
 			score.clear(score.rdstate() & ~std::ios_base::eofbit); // unset flag of eof
-			return prevStatus = Status::E_CANNOT_FIND_CHUNK;
+			return prevStatus = State::E_CANNOT_FIND_CHUNK;
 		}
 
-		return prevStatus = Status::S_OK;
+		return prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
+	State ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
 		if (!readable(prevStatus))
 			return prevStatus;
 
@@ -111,18 +111,18 @@ namespace score {
 
 		// exist any tempo data or beat data ?
 		if (header.tempo.empty() || header.beat.empty())
-			return prevStatus = Status::E_EMBED_NO_BEAT_OR_TEMPO;
+			return prevStatus = State::E_EMBED_NO_BEAT_OR_TEMPO;
 
 
 		_header = std::move(header);
 
-		return prevStatus = Status::S_OK;
+		return prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::readNote() {
+	State ScoreReader::readNote() {
 
 
-		return prevStatus = Status::S_OK;
+		return prevStatus = State::S_OK;
 	}
 
 	void score::ScoreReader::init() {
@@ -131,7 +131,7 @@ namespace score {
 			score.close();
 
 		currentChunk.erase(currentChunk.cbegin(), currentChunk.cend());
-		prevStatus = Status::E_SET_NOFILE;
+		prevStatus = State::E_SET_NOFILE;
 		delim = U':';
 		argProcessFlag = false;
 
@@ -149,34 +149,34 @@ namespace score {
 
 	}
 
-	Status ScoreReader::processLine() {
+	State ScoreReader::processLine() {
 		// read a line
 		score.getline(buffer.data(), buffer.size());
 
 		// fstream can have read a whole line ? 
 		if (score.fail()) {
 			score.clear(score.rdstate() & ~std::ios_base::failbit); // unset flag of fail
-			return prevStatus = Status::E_TOOLONG_DATALINE;
+			return prevStatus = State::E_TOOLONG_DATALINE;
 		}
 
 		// get command object
 		Command *cmd = cmdMng.inputHandler(buffer.data(), delim);
 		if (cmd == nullptr)
-			return prevStatus = Status::E_CANNOT_FIND_COMMAND;
+			return prevStatus = State::E_CANNOT_FIND_COMMAND;
 
 		// execute
 		if (failed(cmd->execute(*this, buffer.data())))
 			return prevStatus;
 
 
-		return prevStatus = Status::S_OK;
+		return prevStatus = State::S_OK;
 	}
 
 	void score::ScoreReader::setDelim(char_type _delim) noexcept {
 		delim = _delim;
 	}
 
-	Status score::ScoreReader::moveToBegin() {
+	State score::ScoreReader::moveToBegin() {
 		if (failed(prevStatus))
 			return prevStatus;
 
@@ -185,14 +185,14 @@ namespace score {
 
 		argProcessFlag = false;
 
-		return prevStatus = Status::S_OK;
+		return prevStatus = State::S_OK;
 	}
 
 
 
 
 
-	Status ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
+	State ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -205,27 +205,27 @@ namespace score {
 		sstream.getline(section.data(), section.size(), sr.delim);
 		std::basic_string<char_type> firstArg(section.data());
 		if (firstArg == "")
-			return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
 
 		// update current chunk name
 		sr.currentChunk = firstArg;
 
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
+	State ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
 		
 		// update current chunk name
 		sr.currentChunk = "";
 		
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_REACH_CHUNK_END;
 	}
 
-	Status ScoreReader::IdCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::IdCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -236,14 +236,14 @@ namespace score {
 		sstream >> sr.header.id;
 
 		if (sstream.fail())
-			return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -256,14 +256,14 @@ namespace score {
 		sr.header.title.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -276,14 +276,14 @@ namespace score {
 		sr.header.artist.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -296,14 +296,14 @@ namespace score {
 		sr.header.genre.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+			return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -317,16 +317,16 @@ namespace score {
 			it->assign(tmp.data());
 
 			if (sstream.fail())
-				return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+				return sr.prevStatus = State::E_INVALID_ARGUMENT;
 		}
 
 		
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -349,7 +349,7 @@ namespace score {
 			}
 
 			if (sstream.fail())
-				return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+				return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
 			// read delimiter
 			sstream >> tmp;
@@ -358,12 +358,12 @@ namespace score {
 		// add tempo data
 		sr.header.tempo.emplace_back(TempoEvent(tempo, bar, math::Fraction(n, d)));
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
+	State ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
-			return Status::S_OK;	// skip
+			return State::S_OK;	// skip
 
 		std::basic_stringstream<char_type> sstream(line);
 
@@ -383,7 +383,7 @@ namespace score {
 			}
 
 			if (sstream.fail())
-				return sr.prevStatus = Status::E_INVALID_ARGUMENT;
+				return sr.prevStatus = State::E_INVALID_ARGUMENT;
 
 			// read delimiter
 			sstream >> tmp;
@@ -392,11 +392,11 @@ namespace score {
 		// add beat data
 		sr.header.beat.emplace_back(BeatEvent(math::Fraction(n, d), bar, math::Fraction(0)));
 
-		return sr.prevStatus = Status::S_OK;
+		return sr.prevStatus = State::S_OK;
 	}
 
-	Status ScoreReader::NullCmd::execute(ScoreReader & sr, const char_type * line) {
-		return sr.prevStatus = Status::S_OK;
+	State ScoreReader::NullCmd::execute(ScoreReader & sr, const char_type * line) {
+		return sr.prevStatus = State::S_OK;
 	}
 
 	ScoreReader::Command * ScoreReader::CommandManager::inputHandler(const char_type * line, char_type delim) {
