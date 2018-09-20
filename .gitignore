@@ -437,5 +437,11 @@ Intermediate/
 
 
 
+#### vscode ####
+a.out
+a.out.dSYM
+.vscode
+
+
 # extra
 test/
