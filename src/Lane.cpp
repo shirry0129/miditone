@@ -1,36 +1,35 @@
-#include"Lane.h"
+#include"Lane.hpp"
 
-Lane::Lane():
+Lane::LaneBG::LaneBG():
     underLine(210, 1000, 1710, 1000),
     laneBegin(960, -200),
     interval(400, 0),
-    leftEnd(160,1080)
+    leftEnd(160,1080),
+    rightEnd(leftEnd + interval * 4)
 {
-	rightEnd = leftEnd + interval * 4;
-
 	for(auto i:step(5)){
 		guide.emplace_back(laneBegin, leftEnd + interval * i);
 	}
 }
 
-Lane& Lane::getInstance(){
+Lane::LaneBG& Lane::LaneBG::getInstance(){
 	return *instance;
 }
 
-void Lane::create(){
+void Lane::LaneBG::create(){
 	if (!instance) {
-		instance = new Lane;
+		instance = new LaneBG;
 	}
 }
 
-void Lane::destroy(){
+void Lane::LaneBG::destroy(){
 	delete instance;
-	instance = nullptr;
+    instance = nullptr;
 }
 
-void Lane::update(){}
+void Lane::LaneBG::update(){}
 
-void Lane::draw(){
+void Lane::LaneBG::draw(){
 	// draw background
     Triangle(laneBegin,leftEnd,rightEnd).draw(Color(65, 65, 65));
     
@@ -41,4 +40,4 @@ void Lane::draw(){
     underLine.draw(LineStyle::RoundCap, 8, Palette::Orange);
 }
 
-Lane* Lane::instance = nullptr;
+Lane::LaneBG* Lane::LaneBG::instance = nullptr;
