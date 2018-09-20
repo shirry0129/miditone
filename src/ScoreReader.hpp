@@ -65,19 +65,12 @@ namespace score {
 	};
 
 
-	enum class NoteType {
-		NONE = 0,
-		HIT,
-		HOLD_BEGIN,
-		HOLD_END
-	};
-
 	struct NoteEvent : ScoreTime {
-		NoteEvent(NoteType _type, int _lane, int _bar, const math::Fraction &_posInBar)
+		NoteEvent(int _type, int _lane, int _bar, const math::Fraction &_posInBar)
 			: type(_type), lane(_lane), ScoreTime(_bar, _posInBar) {}
 
 		const int lane;
-		const NoteType type;
+		const int type;
 	};
 
 	struct Header {
