@@ -432,7 +432,16 @@ ASALocalRun/
 App/
 
 # Build results
-Intermediate
+Intermediate/
 
-# user add
-.vscode/
+
+
+
+#### vscode ####
+a.out
+a.out.dSYM
+.vscode
+
+
+# extra
+test/
