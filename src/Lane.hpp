@@ -11,6 +11,9 @@
 #include<Siv3D.hpp>
 
 namespace Lane {
+    const Array<float> intercept = { 835, 897.5, 960, 1022.5, 1085 };
+    const Array<float> slope = { -0.625, -0.3125, 0, 0.3125, 0.625 };
+    const int decisionLine = 1000;
 
     class LaneBG {
     private:
@@ -37,7 +40,6 @@ namespace Lane {
         void update();
         void draw();
     };
-
 }
 
-#endif /* Lane_h *///
+#endif /* Lane_h */
