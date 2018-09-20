@@ -23,6 +23,17 @@ namespace score {
 		return (s != State::E_SET_NOFILE && s != State::E_CANNOT_OPEN_FILE);
 	}
 
+	bool isNumber(const std::basic_string<char_type> &str) {
+		if (str.empty())
+			return false;
+
+		for (auto ch : str) {
+			if (ch < '0' || ch > '9')
+				return false;
+		}
+
+		return true;
+	}
 
 
 	ScoreReader::ScoreReader() {
@@ -30,12 +41,12 @@ namespace score {
 	}
 
 	ScoreReader::ScoreReader(const wchar_t *file, char_type delim) {
-		prevStatus = open(file);
+		prevState = open(file);
 		this->delim = delim;
 	}
 
 	ScoreReader::ScoreReader(const char *file, char_type delim) {
-		prevStatus = open(file);
+		prevState = open(file);
 		this->delim = delim;
 	}
 
@@ -57,15 +68,15 @@ namespace score {
 		score.open(file);
 
 		if (!score) {
-			return prevStatus = State::E_CANNOT_OPEN_FILE;
+			return prevState = State::E_CANNOT_OPEN_FILE;
 		}
 
-		return prevStatus = State::S_OK;
+		return prevState = State::S_OK;
 	}
 
 	State ScoreReader::moveChunk(const std::basic_string<char_type> &chunkName) {
-		if (!readable(prevStatus))
-			return prevStatus = State::E_SET_NOFILE;
+		if (!readable(prevState))
+			return prevState = State::E_SET_NOFILE;
 
 
 		// move file pointer to begin
@@ -76,32 +87,33 @@ namespace score {
 
 		while (!score.eof() && currentChunk != chunkName) {
 			if (failed(processLine()))
-				return prevStatus;
+				return prevState;
 		}
 
 		// reach eof ?
 		if (score.eof()) {
 			score.clear(score.rdstate() & ~std::ios_base::eofbit); // unset flag of eof
-			return prevStatus = State::E_CANNOT_FIND_CHUNK;
+			return prevState = State::E_CANNOT_FIND_CHUNK;
 		}
 
-		return prevStatus = State::S_OK;
+		return prevState = State::S_OK;
 	}
 
 	State ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
-		if (!readable(prevStatus))
-			return prevStatus;
+		if (!readable(prevState))
+			return prevState;
 
 		// move file pointer
 		if (failed(moveChunk(chunkName)))
-			return prevStatus;
+			return prevState;
 
 		// process all arguments
 		argProcessFlag = true;
 
-		while (!score.eof() && currentChunk == chunkName) {
+		// read header chunk
+		while (!score.eof() && prevState != State::S_REACH_CHUNK_END) {
 			if (failed(processLine()))
-				return prevStatus;
+				return prevState;
 		}
 
 		// reach eof ?
@@ -111,18 +123,39 @@ namespace score {
 
 		// exist any tempo data or beat data ?
 		if (header.tempo.empty() || header.beat.empty())
-			return prevStatus = State::E_EMBED_NO_BEAT_OR_TEMPO;
+			return prevState = State::E_EMBED_NO_BEAT_OR_TEMPO;
 
 
 		_header = std::move(header);
 
-		return prevStatus = State::S_OK;
+		return prevState = State::S_OK;
 	}
 
-	State ScoreReader::readNote() {
+	State ScoreReader::readNote(std::vector<NoteEvent> &_notes, const std::basic_string<char_type> &chunkName) {
+		if (!readable(prevState))
+			return prevState;
 
+		// move file pointer
+		if (failed(moveChunk(chunkName)))
+			return prevState;
 
-		return prevStatus = State::S_OK;
+		// process all arguments
+		argProcessFlag = true;
+
+		// read Note data
+		while (!score.eof() && prevState != State::S_REACH_CHUNK_END) {
+			if (failed(processLine()))
+				return prevState;
+		}
+
+		// reach eof ?
+		if (score.eof()) {
+			score.clear(score.rdstate() & ~std::ios_base::eofbit); // unset flag of eof
+		}
+
+		_notes = std::move(notes);
+
+		return prevState = State::S_OK;
 	}
 
 	void score::ScoreReader::init() {
@@ -131,7 +164,7 @@ namespace score {
 			score.close();
 
 		currentChunk.erase(currentChunk.cbegin(), currentChunk.cend());
-		prevStatus = State::E_SET_NOFILE;
+		prevState = State::E_SET_NOFILE;
 		delim = U':';
 		argProcessFlag = false;
 
@@ -156,20 +189,17 @@ namespace score {
 		// fstream can have read a whole line ? 
 		if (score.fail()) {
 			score.clear(score.rdstate() & ~std::ios_base::failbit); // unset flag of fail
-			return prevStatus = State::E_TOOLONG_DATALINE;
+			return prevState = State::E_CANNOT_READ_WHOLELINE;
 		}
 
 		// get command object
 		Command *cmd = cmdMng.inputHandler(buffer.data(), delim);
 		if (cmd == nullptr)
-			return prevStatus = State::E_CANNOT_FIND_COMMAND;
+			return prevState = State::E_CANNOT_FIND_COMMAND;
 
-		// execute
-		if (failed(cmd->execute(*this, buffer.data())))
-			return prevStatus;
-
-
-		return prevStatus = State::S_OK;
+		//// execute
+		cmd->execute(*this, buffer.data());
+		return prevState;
 	}
 
 	void score::ScoreReader::setDelim(char_type _delim) noexcept {
@@ -177,15 +207,15 @@ namespace score {
 	}
 
 	State score::ScoreReader::moveToBegin() {
-		if (failed(prevStatus))
-			return prevStatus;
+		if (failed(prevState))
+			return prevState;
 
 		score.seekg(0, std::ios_base::beg);
 		currentChunk = "";
 
 		argProcessFlag = false;
 
-		return prevStatus = State::S_OK;
+		return prevState = State::S_OK;
 	}
 
 
@@ -208,23 +238,23 @@ namespace score {
 		sstream.getline(section.data(), section.size(), sr.delim);
 		std::basic_string<char_type> firstArg(section.data());
 		if (firstArg == "")
-			return sr.prevStatus = State::E_UNEXPECTED_STRING;
+			return sr.prevState = State::E_UNEXPECTED_STRING;
 
 		// update current chunk name
 		sr.currentChunk = firstArg;
 
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
-		if (sr.prevStatus == State::S_REACH_CHUNK_END)
-			return sr.prevStatus = State::E_UNEXPECTED_STRING;
+		if (sr.prevState == State::S_REACH_CHUNK_END)
+			return sr.prevState = State::E_UNEXPECTED_STRING;
 		
 		// update current chunk name
 		sr.currentChunk = "";
 		
-		return sr.prevStatus = State::S_REACH_CHUNK_END;
+		return sr.prevState = State::S_REACH_CHUNK_END;
 	}
 
 	State ScoreReader::IdCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -243,9 +273,9 @@ namespace score {
 		sstream >> sr.header.id;
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_UNEXPECTED_STRING;
+			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -266,9 +296,9 @@ namespace score {
 		sr.header.title.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_UNEXPECTED_STRING;
+			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -289,9 +319,9 @@ namespace score {
 		sr.header.artist.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_UNEXPECTED_STRING;
+			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -312,9 +342,9 @@ namespace score {
 		sr.header.genre.assign(tmp);
 
 		if (sstream.fail())
-			return sr.prevStatus = State::E_UNEXPECTED_STRING;
+			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -336,11 +366,11 @@ namespace score {
 			it->assign(tmp.data());
 
 			if (sstream.fail())
-				return sr.prevStatus = State::E_UNEXPECTED_STRING;
+				return sr.prevState = State::E_UNEXPECTED_STRING;
 		}
 
 		
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -371,7 +401,7 @@ namespace score {
 			}
 
 			if (sstream.fail())
-				return sr.prevStatus = State::E_UNEXPECTED_STRING;
+				return sr.prevState = State::E_UNEXPECTED_STRING;
 
 			// read delimiter
 			sstream >> tmp;
@@ -380,7 +410,7 @@ namespace score {
 		// add tempo data
 		sr.header.tempo.emplace_back(TempoEvent(tempo, bar, math::Fraction(n, d)));
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
@@ -408,20 +438,65 @@ namespace score {
 			}
 
 			if (sstream.fail())
-				return sr.prevStatus = State::E_UNEXPECTED_STRING;
+				return sr.prevState = State::E_UNEXPECTED_STRING;
 
 			// read delimiter
 			sstream >> tmp;
 		}
 
 		// add beat data
-		sr.header.beat.emplace_back(BeatEvent(math::Fraction(n, d), bar, math::Fraction(0)));
+		sr.header.beat.emplace_back(BeatEvent(math::Fraction(n, d), bar));
 
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
+	}
+
+	State ScoreReader::NoteCmd::execute(ScoreReader & sr, const char_type * line) {
+		if (!sr.argProcessFlag)
+			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
+
+		std::basic_stringstream<char_type> sstream(line);
+
+		// get argument string as int
+		char_type tmp;
+		int lane;
+		int bar;
+		std::basic_string<char_type> timing;
+
+		for (int i = 0; i < 3; i++) {
+			switch (i) {
+			case 0: sstream >> lane; break;
+			case 1: sstream >> bar; break;
+			case 2: sstream >> timing; break;
+			}
+
+			if (sstream.fail())
+				return sr.prevState = State::E_UNEXPECTED_STRING;
+
+			// read delimiter
+			sstream >> tmp;
+		}
+
+		// create note data
+		int count = 0;
+		for (const auto t : timing) {
+			NoteType type = static_cast<NoteType>(std::atoi(&t));
+			if (type != NoteType::NONE) {
+				sr.notes.emplace_back(
+					NoteEvent(type, lane, bar, math::Fraction(count, timing.size()))
+				);
+			}
+			count++;
+		}
+
+
+		return sr.prevState = State::S_OK;
 	}
 
 	State ScoreReader::NullCmd::execute(ScoreReader & sr, const char_type * line) {
-		return sr.prevStatus = State::S_OK;
+		return sr.prevState = State::S_OK;
 	}
 
 	ScoreReader::Command * ScoreReader::CommandManager::inputHandler(const char_type * line, char_type delim) {
@@ -452,12 +527,13 @@ namespace score {
 			return &cmd_tempo;
 		if (cmdStr == "beat")
 			return &cmd_beat;
+		if (isNumber(cmdStr))
+			return &cmd_note;
 		if (cmdStr == "")
 			return &cmd_null;
 
 		return nullptr;
 	}
 
-	
 
 }
