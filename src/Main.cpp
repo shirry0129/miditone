@@ -1,6 +1,6 @@
 
 # include <Siv3D.hpp> // OpenSiv3D v0.2.8
-#include"LaneBack.hpp"
+#include"Lane.hpp"
 #include"Notes.hpp"
 
 void Main() {
@@ -8,12 +8,12 @@ void Main() {
     Window::SetTitle(U"MusicGame");
     Graphics::SetBackground(Palette::Yellow);
 
-    Lane::LaneBack::create();
+    Lane::LaneBG::create();
     
     Notes testNote(1,0);
     
     while (System::Update()) {
-        Lane::LaneBack::getInstance().draw();
+        Lane::LaneBG::getInstance().draw();
         testNote.update(0);
         testNote.draw();
     }
