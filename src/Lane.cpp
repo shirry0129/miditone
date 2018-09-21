@@ -4,10 +4,10 @@
  Constructor
  */
 Lane::LaneBG::LaneBG():
-    underLine(210, 1000, 1710, 1000),
+    decisionLine(210,1000,1710,1000),
     laneBegin(Window::Width()/2, -200),
-    interval(400, 0),
-    leftEnd(160,Window::Height()),
+    interval(300, 0),
+    leftEnd(360,Window::Height()),
     rightEnd(leftEnd + interval * 4)
 {
 	for(auto i:step(5)){
@@ -57,7 +57,7 @@ void Lane::LaneBG::draw(){
 	for(auto i:step(5)){
         guide[i].draw(LineStyle::RoundCap, (i == 0 || i == 4) ? 8 : 2, Palette::Orange);
 	}
-    underLine.draw(LineStyle::RoundCap, 8, Palette::Orange);
+    decisionLine.draw(LineStyle::RoundCap, 8, Palette::Orange);
 }
 
 Lane::LaneBG* Lane::LaneBG::instance = nullptr;

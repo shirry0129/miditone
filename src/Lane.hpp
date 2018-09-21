@@ -13,14 +13,14 @@
 namespace Lane {
     const Array<float> intercept = { 835, 897.5, 960, 1022.5, 1085 };
     const Array<float> slope = { -0.625, -0.3125, 0, 0.3125, 0.625 };
-    const int decisionLine = 1000;
+    const int laneEnd = 1000;
 
     class LaneBG {
     private:
         LaneBG();
         ~LaneBG() = default;
         Array<Line> guide;
-        Line underLine;
+        Line decisionLine;
         Vec2 laneBegin;
         Vec2 interval;
         Vec2 leftEnd, rightEnd;

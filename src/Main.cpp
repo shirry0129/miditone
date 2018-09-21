@@ -10,15 +10,20 @@ void Main() {
 
     Lane::LaneBG::create();
     
-    Note testNote(1, 5);
+    HitNote testNote(1, 1);
+    HoldNote testHold(2, 1, 2);
     
-    float i = 0;
+    Stopwatch count(true);
     
     while (System::Update()) {
         Lane::LaneBG::getInstance().draw();
-        testNote.update(i, 0.3);
+        testNote.update(count.sF(), 1);
+        testHold.update(count.sF(), 1);
         testNote.draw();
+        testHold.draw();
         
-        i += 0.01;
+        if(count.s() > 4){
+            count.restart();
+        }
     }
 }

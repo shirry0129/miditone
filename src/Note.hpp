@@ -16,22 +16,39 @@ enum class NotesType {
 };
 
 class Note {
-private:
-    RectF note;
+protected:
     Array<Effect> decisionEffect;
     Texture looks;
     NotesType notesType;
     int laneNum;
-    float startTime;
-    float endTime;
     
 public:
-    Note(int _laneNum, float _startTime);
-    Note(int _laneNum, float _startTime, float _endTime);
+    Note(int _laneNum);
     ~Note() = default;
     
-    void update(double currentTime, double speed);
-    void draw();
+    virtual void update(double currentTime, float speed) = 0;
+    virtual void draw() = 0;
+};
+
+class HitNote final: public Note {
+private:
+    float startTime;
+    RectF note;
+public:
+    HitNote(int _laneNum, float _startTime);
+    virtual void update(double currentTime, float speed) override;
+    virtual void draw() override;
+};
+
+class HoldNote final: public Note {
+private:
+    float startTime;
+    float endTime;
+    Quad note;
+public:
+    HoldNote(int _laneNum, float _startTime, float _endTime);
+    virtual void update(double currentTime, float speed) override;
+    virtual void draw() override;
 };
 
 #endif /* Notes_hpp */
