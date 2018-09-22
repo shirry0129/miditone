@@ -23,25 +23,6 @@ This class reads the score file of music game
 namespace score {
 
 	using char_type = char;
-	constexpr size_t buffer_size = 256;
-
-
-	enum class State {
-		S_REACH_CHUNK_END = 1,
-		S_OK = 0,
-		E_CANNOT_OPEN_FILE = -1,		// when open file
-		E_CANNOT_READ_WHOLELINE = -2,	// when read file (move file pointer)
-		E_CANNOT_FIND_COMMAND = -3,		// when read file (move file pointer)
-		E_UNEXPECTED_STRING = -4,		// when read header or note data
-		E_SET_NOFILE = -5,				// after constructed
-		E_EMBED_NO_BEAT_OR_TEMPO = -6,	// when read header
-		E_CANNOT_FIND_CHUNK = -7		// when move file pointer
-	};
-
-	bool success(State s);
-	bool failed(State s);
-	bool readable(State s);
-	bool isNumber(const std::basic_string<char_type> &str);
 
 
 	struct ScoreTime {
@@ -74,7 +55,6 @@ namespace score {
 		const math::Fraction beat;
 	};
 
-
 	struct NoteEvent : ScoreTime {
 		NoteEvent(int _type, int _lane, int _bar, const math::Fraction &_posInBar)
 			: type(_type), lane(_lane), ScoreTime(_bar, _posInBar) {}
@@ -99,8 +79,26 @@ namespace score {
 
 
 	class ScoreReader {
-		
 	public:
+		static constexpr size_t buffer_size = 256;
+
+		enum class State {
+			S_REACH_CHUNK_END = 1,
+			S_OK = 0,
+			E_CANNOT_OPEN_FILE = -1,		// when open file
+			E_CANNOT_READ_WHOLELINE = -2,	// when read file (move file pointer)
+			E_CANNOT_FIND_COMMAND = -3,		// when read file (move file pointer)
+			E_UNEXPECTED_STRING = -4,		// when read header or note data
+			E_SET_NOFILE = -5,				// after constructed
+			E_EMBED_NO_BEAT_OR_TEMPO = -6,	// when read header
+			E_CANNOT_FIND_CHUNK = -7		// when move file pointer
+		};
+
+		static bool success(State s);
+		static bool failed(State s);
+		static bool readable(State s);
+		
+	
 		ScoreReader();
 		ScoreReader(const wchar_t *file, char_type delim = ':');
 		ScoreReader(const char *file, char_type delim = ':');
@@ -130,7 +128,7 @@ namespace score {
 		bool argProcessFlag;
 		char_type delim;
 		
-		std::array<char_type, score::buffer_size> buffer;
+		std::array<char_type, buffer_size> buffer;
 
 
 		void init();
@@ -203,6 +201,9 @@ namespace score {
 			BeatCmd			cmd_beat;
 			NoteCmd			cmd_note;
 			NullCmd			cmd_null;
+
+			bool isNumber(const std::basic_string<char_type> &str);
+
 		} cmdMng;
 
 

@@ -21,7 +21,7 @@ namespace score {
 
 		// read header
 		score::Header h;
-		if (failed(reader.readHeader(h, "header")))
+		if (ScoreReader::failed(reader.readHeader(h, "header")))
 			return false;
 
 
@@ -45,7 +45,7 @@ namespace score {
 
 		// read note data
 		std::vector<NoteEvent> event;
-		if (failed(reader.readNote(event, chunkName)))
+		if (ScoreReader::failed(reader.readNote(event, chunkName)))
 			return false;
 
 
