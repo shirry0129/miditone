@@ -31,7 +31,7 @@ namespace score {
 		ScoreTimeConverter(
 			const std::vector<score::BeatEvent> &beat,
 			const std::vector<score::TempoEvent> &tempo,
-			int maxBar,
+			int calcLimitBar,
 			double offset = 0.0
 		);
 
@@ -42,7 +42,7 @@ namespace score {
 		bool create(
 			const std::vector<score::BeatEvent> &beat,
 			const std::vector<score::TempoEvent> &tempo,
-			int maxBar,
+			int calcLimitBar,
 			double offset = 0.0
 		);
 

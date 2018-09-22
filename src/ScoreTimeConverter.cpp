@@ -7,10 +7,10 @@ namespace score {
 	ScoreTimeConverter::ScoreTimeConverter(
 		const std::vector<score::BeatEvent>& beat,
 		const std::vector<score::TempoEvent>& tempo,
-		int maxBar,
+		int calcLimitBar,
 		double offset
 	) : isReady(false) {
-		create(beat, tempo, maxBar, offset);
+		create(beat, tempo, calcLimitBar, offset);
 	}
 
 	ScoreTimeConverter::ScoreTimeConverter() : isReady(false) {}
