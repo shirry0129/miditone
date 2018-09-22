@@ -45,7 +45,8 @@ namespace score {
 		auto beatEvent = beat.begin();
 		auto tempoEvent = tempo.begin();
 
-		const math::Fraction limitBarLen = ScoreTime(calcLimitBar).getBarLength();
+		ScoreTime limitScoreTime = ScoreTime(calcLimitBar);
+		const math::Fraction limitBarLen = limitScoreTime.getBarLength();
 
 		while (endBarLen < limitBarLen) {
 
@@ -73,7 +74,7 @@ namespace score {
 			// user end point
 			if (endBarLen == begBarLen) {
 				endBarLen = limitBarLen;
-				endScoreTime = std::move(&ScoreTime(calcLimitBar));
+				endScoreTime = &limitScoreTime;
 			}
 
 			// calculate clock time
