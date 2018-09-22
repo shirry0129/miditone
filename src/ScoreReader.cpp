@@ -408,7 +408,9 @@ namespace score {
 		}
 
 		// add tempo data
-		sr.header.tempo.emplace_back(TempoEvent(tempo, bar, math::Fraction(n, d)));
+		sr.header.tempo.emplace_back(
+			TempoEvent(tempo, bar, math::Fraction(n, d).reduce())
+		);
 
 		return sr.prevState = State::S_OK;
 	}
@@ -485,7 +487,9 @@ namespace score {
 			int type = std::atoi(&t);
 			if (type != 0) {
 				sr.notes.emplace_back(
-					NoteEvent(type, lane, bar, math::Fraction(count, timing.size()))
+					NoteEvent(
+						type, lane, bar, math::Fraction(count, static_cast<int>(timing.size())).reduce()
+					)
 				);
 			}
 			count++;

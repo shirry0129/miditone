@@ -19,6 +19,7 @@ This class reads the score file of music game
 
 #include "Fraction.hpp"
 
+
 namespace score {
 
 	using char_type = char;
@@ -44,10 +45,19 @@ namespace score {
 
 
 	struct ScoreTime {
-		ScoreTime(int _bar, const math::Fraction &_posInBar) :
-			bar(_bar), posInBar(_posInBar) {}
+		ScoreTime(int _bar, const math::Fraction &_posInBar = math::Fraction(0)) :
+			bar(_bar), posInBar(_posInBar) {
+			barLength = bar - 1 + posInBar;
+		}
+
+		// origin is zero
+		inline const math::Fraction& getBarLength() const noexcept { return barLength; }
+
 		const int bar;
 		const math::Fraction posInBar;
+
+	private:
+		math::Fraction barLength;
 	};
 
 	struct TempoEvent : ScoreTime {
