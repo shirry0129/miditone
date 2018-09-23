@@ -17,6 +17,9 @@ namespace score {
 	bool Score::create(const char *file, Difficulty difficulty) {
 		using namespace score;
 
+		init();
+
+
 		ScoreReader reader(file);
 
 		// read header
@@ -51,7 +54,7 @@ namespace score {
 
 		// create note timing data
 		std::array<const NoteEvent*, numofLanes> lastHoldBegin;
-		ScoreTimeConverter conv(h.beat, h.tempo, event.back().bar + 1);
+		ScoreTimeConverter conv(h.beat, h.tempo);
 
 		double msec1 = 0.0f;
 		double msec2 = 0.0f;
@@ -170,6 +173,17 @@ namespace score {
 
 	const Score::Header & Score::getHeader() const noexcept {
 		return header;
+	}
+
+	void Score::init() {
+		notes.clear();
+		path.clear();
+		numofBars = 0;
+		numofHolds = 0;
+		numofHits = 0;
+		header.clear();
+		tempo.clear();
+		beat.clear();
 	}
 
 

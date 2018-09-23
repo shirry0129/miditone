@@ -77,6 +77,13 @@ namespace score {
 			std::basic_string<char_type> artist;
 			std::basic_string<char_type> level;
 			Difficulty difficulty;
+
+			void clear() {
+				title.clear();
+				artist.clear();
+				level.clear();
+				difficulty = Difficulty::EASY;
+			}
 		};
 
 	
@@ -111,6 +118,8 @@ namespace score {
 
 		std::vector<Tempo> tempo;
 		std::vector<Beat> beat;
+
+		void init();
 
 	};
 
