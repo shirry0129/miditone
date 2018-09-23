@@ -31,7 +31,6 @@ namespace score {
 		ScoreTimeConverter(
 			const std::vector<score::BeatEvent> &beat,
 			const std::vector<score::TempoEvent> &tempo,
-			int calcLimitBar,
 			double offset = 0.0
 		);
 
@@ -42,19 +41,24 @@ namespace score {
 		bool create(
 			const std::vector<score::BeatEvent> &beat,
 			const std::vector<score::TempoEvent> &tempo,
-			int calcLimitBar,
 			double offset = 0.0
 		);
 
 		double calcSec(const math::Fraction &barLength);
-
+		
 	private:
 		std::vector<ScoreTimeSec> clockTime;
 
+		math::Fraction lastBeat;
+		double lastTempo;
+
 		bool isReady;
+
+		void init();
 
 		const math::Fraction& getBeat(const std::vector<BeatEvent> &beat, const math::Fraction &barLength);
 		double getTempo(const std::vector<TempoEvent> &tempo, const math::Fraction &barLength);
+		double calcClockTimeLen(const math::Fraction &beat, double tempo, const math::Fraction &barLen);
 
 	};
 

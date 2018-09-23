@@ -7,10 +7,9 @@ namespace score {
 	ScoreTimeConverter::ScoreTimeConverter(
 		const std::vector<score::BeatEvent>& beat,
 		const std::vector<score::TempoEvent>& tempo,
-		int calcLimitBar,
 		double offset
 	) : isReady(false) {
-		create(beat, tempo, calcLimitBar, offset);
+		create(beat, tempo, offset);
 	}
 
 	ScoreTimeConverter::ScoreTimeConverter() : isReady(false) {}
@@ -20,17 +19,17 @@ namespace score {
 	bool ScoreTimeConverter::create(
 		const std::vector<score::BeatEvent>& beat,
 		const std::vector<score::TempoEvent>& tempo,
-		int calcLimitBar,
 		double offset
 	) {
 		
-		isReady = false;
+		init();
+
 
 		if (beat.empty() || tempo.empty())
 			return false;
 
-		if (beat.front().bar + beat.front().posInBar != 1 ||
-			tempo.front().bar + tempo.front().posInBar != 1)
+		if (beat.front().getBarLength() != 0 || 
+			tempo.front().getBarLength() != 0)
 			return false;
 
 
@@ -40,42 +39,42 @@ namespace score {
 		);
 
 
-		math::Fraction begBarLen(0);  // distance bar from origin (bar:1)
-		math::Fraction endBarLen(0);  // distance bar from origin (bar:1)
+		math::Fraction begBarLen(0);  // bar length from origin (bar:1)
+		math::Fraction endBarLen(0);  // bar length from origin (bar:1)
 		auto beatEvent = beat.begin();
 		auto tempoEvent = tempo.begin();
 
-		ScoreTime limitScoreTime = ScoreTime(calcLimitBar);
-		const math::Fraction limitBarLen = limitScoreTime.getBarLength();
-
-		while (endBarLen < limitBarLen) {
-
-			// next event
+		// next event
+		if (beatEvent + 1 != beat.end())
 			beatEvent++;
+		if (tempoEvent + 1 != tempo.end())
 			tempoEvent++;
 
-			// check that whether event exist
-			if (beatEvent == beat.cend())
-				beatEvent--;
-			if (tempoEvent == tempo.cend())
-				tempoEvent--;
-
+		while (true) {
 
 			// assign earlier event
 			 ScoreTime *endScoreTime;
 			if (beatEvent->getBarLength() < tempoEvent->getBarLength()) {
 				endBarLen = beatEvent->getBarLength();
 				endScoreTime = const_cast<BeatEvent*>(&(*beatEvent));
+
+				// next event
+				if (beatEvent + 1 != beat.end())
+					beatEvent++;
+
 			} else {
 				endBarLen = tempoEvent->getBarLength();
 				endScoreTime = const_cast<TempoEvent*>(&(*tempoEvent));
+
+				// next event
+				if (tempoEvent + 1 != tempo.end())
+					tempoEvent++;
 			}
 
-			// user end point
-			if (endBarLen == begBarLen) {
-				endBarLen = limitBarLen;
-				endScoreTime = &limitScoreTime;
-			}
+
+			if (endBarLen == begBarLen)
+				break;  // exit
+
 
 			// calculate clock time
 
@@ -85,10 +84,7 @@ namespace score {
 			const auto currentBeat = getBeat(beat, begBarLen);
 			const auto currentTempo = getTempo(tempo, begBarLen);
 
-			const double oneBeatLength = 60.0 / currentTempo;
-			const double numofBeats = 4 * currentBeat.to_f();  // the number of quarter notes in a bar
-			const double deltaClockTime = oneBeatLength * numofBeats * delta.to_f();
-
+			const double deltaClockTime = calcClockTimeLen(currentBeat, currentTempo, delta);
 
 			// add to [scoreTimeSecList]
 			const double ans = clockTime.back().sec + deltaClockTime;
@@ -103,6 +99,8 @@ namespace score {
 
 		// update member variable
 		isReady = true;
+		lastBeat = beat.back().beat;
+		lastTempo = tempo.back().tempo;
 		
 		return true;
 	}
@@ -111,36 +109,57 @@ namespace score {
 		if (!isReady)
 			return 0.0;
 
-		// score time before convert
+		// bar length before convert
 		const math::Fraction &srcBarLen = barLen;
-		math::Fraction tmp = clockTime.back().getBarLength();
 
-		if (tmp < srcBarLen)
-			return -1.0f;
-
-		// calculate delta time between two the clock times
-		// get the clock time at previous [scoreTime]
 		math::Fraction deltaBarLen;
 		math::Fraction barLenBeg;
 		double deltaClockTime;
 		double clockTimeBeg;
 
-		for (auto it = clockTime.crbegin(); it != clockTime.crend(); it++) {
-			barLenBeg = it->getBarLength();
 
-			if (barLenBeg <= srcBarLen) {
-				clockTimeBeg = it->sec;
-				math::Fraction barLenEnd = (it - 1)->getBarLength();
-				deltaBarLen = barLenEnd - barLenBeg;
-				deltaClockTime = (it - 1)->sec - it->sec;
-				break;
+		if (srcBarLen < clockTime.back().getBarLength()) {
+			// within clock time list
+
+			// calculate delta time between two the clock times
+			// get the clock time at previous [srcBarLen]
+
+			for (auto it = clockTime.crbegin(); it != clockTime.crend(); it++) {
+				barLenBeg = it->getBarLength();
+
+				if (barLenBeg <= srcBarLen) {
+					clockTimeBeg = it->sec;
+					math::Fraction barLenEnd = (it - 1)->getBarLength();
+					deltaBarLen = barLenEnd - barLenBeg;
+					deltaClockTime = (it - 1)->sec - it->sec;
+					break;
+				}
 			}
+
+			math::Fraction extraBarLen = srcBarLen - barLenBeg;
+			const double extraClockTime = deltaClockTime * (extraBarLen/deltaBarLen).to_f();
+
+			return clockTimeBeg + extraClockTime;
+
+		} else {
+			// outside clock time list
+
+			clockTimeBeg = clockTime.back().sec;
+			barLenBeg = clockTime.back().getBarLength();
+			deltaBarLen = srcBarLen - barLenBeg;
+
+			const double extraClockTime = calcClockTimeLen(lastBeat, lastTempo, deltaBarLen);
+
+			return clockTimeBeg + extraClockTime;
 		}
 
-		math::Fraction extraBarLen = srcBarLen - barLenBeg;
-		double extraClockTime = deltaClockTime * (extraBarLen/deltaBarLen).to_f();
+	}
 
-		return clockTimeBeg + extraClockTime;
+	void ScoreTimeConverter::init() {
+		clockTime.clear();
+		lastBeat = 0;
+		lastTempo = 0;
+		isReady = false;
 	}
 
 	const math::Fraction& ScoreTimeConverter::getBeat(const std::vector<BeatEvent> &beat, const math::Fraction &barLen) {
@@ -160,6 +179,15 @@ namespace score {
 
 		return 0.0;
 	}
+
+	double ScoreTimeConverter::calcClockTimeLen(const math::Fraction &beat, double tempo, const math::Fraction &barLen) {
+		const double oneBeatLength = 60.0 / tempo;
+		const double numofBeats = 4 * beat.to_f();  // the number of quarter notes in a bar
+		const double ClockTimeLen = oneBeatLength * numofBeats * barLen.to_f();
+
+		return ClockTimeLen;
+	}
+
 
 
 }
