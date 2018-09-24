@@ -44,7 +44,7 @@ namespace score {
 			double offset = 0.0
 		);
 
-		double calcSec(const math::Fraction &barLength);
+		double calcSec(const math::Fraction &barLength) const;
 		
 	private:
 		std::vector<ScoreTimeSec> clockTime;
@@ -56,9 +56,9 @@ namespace score {
 
 		void init();
 
-		const math::Fraction& getBeat(const std::vector<BeatEvent> &beat, const math::Fraction &barLength);
-		double getTempo(const std::vector<TempoEvent> &tempo, const math::Fraction &barLength);
-		double calcClockTimeLen(const math::Fraction &beat, double tempo, const math::Fraction &barLen);
+		const math::Fraction& getBeat(const std::vector<BeatEvent> &beat, const math::Fraction &barLength) const;
+		double getTempo(const std::vector<TempoEvent> &tempo, const math::Fraction &barLength) const;
+		double calcClockTimeLen(const math::Fraction &beat, double tempo, const math::Fraction &barLen) const;
 
 	};
 

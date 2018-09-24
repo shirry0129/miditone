@@ -39,43 +39,66 @@ namespace score {
 		);
 
 
-		math::Fraction begBarLen(0);  // bar length from origin (bar:1)
-		math::Fraction endBarLen(0);  // bar length from origin (bar:1)
+		math::Fraction begBarLen(0);  // bar length from origin (origin is bar:1)
+		math::Fraction endBarLen(0);  // bar length from origin (origin is bar:1)
 		auto beatEvent = beat.begin();
 		auto tempoEvent = tempo.begin();
 
 		// next event
-		if (beatEvent + 1 != beat.end())
-			beatEvent++;
-		if (tempoEvent + 1 != tempo.end())
-			tempoEvent++;
+		beatEvent++;
+		tempoEvent++;
 
-		while (true) {
+		while (beatEvent != beat.end() || tempoEvent != tempo.end() ) {
 
-			// assign earlier event
-			 ScoreTime *endScoreTime;
-			if (beatEvent->getBarLength() < tempoEvent->getBarLength()) {
+
+			// select earlier event or be existed event.
+			enum class EventType {
+				BEAT,
+				TEMPO,
+				BOTH
+			} event;
+
+			if (tempoEvent == tempo.cend())
+				event = EventType::BEAT;
+			else if (beatEvent == beat.cend())
+				event = EventType::TEMPO;
+			else if (beatEvent->getBarLength() < tempoEvent->getBarLength())
+				event = EventType::BEAT;
+			else if (tempoEvent->getBarLength() < beatEvent->getBarLength())
+				event = EventType::TEMPO;
+			else
+				event = EventType::BOTH;
+
+
+			// assign time of selected event.
+			ScoreTime *endScoreTime;
+			switch (event) {
+			case EventType::BEAT:
 				endBarLen = beatEvent->getBarLength();
 				endScoreTime = const_cast<BeatEvent*>(&(*beatEvent));
-
+				
 				// next event
-				if (beatEvent + 1 != beat.end())
-					beatEvent++;
-
-			} else {
+				beatEvent++;
+				break;
+			case EventType::TEMPO:
 				endBarLen = tempoEvent->getBarLength();
 				endScoreTime = const_cast<TempoEvent*>(&(*tempoEvent));
 
 				// next event
-				if (tempoEvent + 1 != tempo.end())
-					tempoEvent++;
+				tempoEvent++;
+				break;
+			case EventType::BOTH:
+				// If two events are same time, skip registering the other one.
+				endBarLen = beatEvent->getBarLength();
+				endScoreTime = const_cast<BeatEvent*>(&(*beatEvent));
+
+				// next event
+				beatEvent++;
+				tempoEvent++;
+				break;
 			}
 
-
-			if (endBarLen == begBarLen)
-				break;  // exit
-
-
+			
 			// calculate clock time
 
 			const math::Fraction delta = endBarLen - begBarLen;
@@ -96,7 +119,6 @@ namespace score {
 			begBarLen = endBarLen;
 		}
 
-
 		// update member variable
 		isReady = true;
 		lastBeat = beat.back().beat;
@@ -105,7 +127,7 @@ namespace score {
 		return true;
 	}
 
-	double ScoreTimeConverter::calcSec(const math::Fraction &barLen) {
+	double ScoreTimeConverter::calcSec(const math::Fraction &barLen) const {
 		if (!isReady)
 			return 0.0;
 
@@ -162,7 +184,9 @@ namespace score {
 		isReady = false;
 	}
 
-	const math::Fraction& ScoreTimeConverter::getBeat(const std::vector<BeatEvent> &beat, const math::Fraction &barLen) {
+	const math::Fraction& ScoreTimeConverter::getBeat(
+		const std::vector<BeatEvent> &beat, const math::Fraction &barLen
+		) const {
 		for (auto it = beat.crbegin(); it != beat.crend(); it++) {
 			if (it->getBarLength() <= barLen)
 				return it->beat;
@@ -171,7 +195,9 @@ namespace score {
 		return std::move(math::Fraction(0));
 	}
 
-	double ScoreTimeConverter::getTempo(const std::vector<TempoEvent> &tempo, const math::Fraction &barLen) {
+	double ScoreTimeConverter::getTempo(
+		const std::vector<TempoEvent> &tempo, const math::Fraction &barLen
+		) const {
 		for (auto it = tempo.crbegin(); it != tempo.crend(); it++) {
 			if (it->getBarLength() <= barLen)
 				return it->tempo;
@@ -180,7 +206,9 @@ namespace score {
 		return 0.0;
 	}
 
-	double ScoreTimeConverter::calcClockTimeLen(const math::Fraction &beat, double tempo, const math::Fraction &barLen) {
+	double ScoreTimeConverter::calcClockTimeLen(
+		const math::Fraction &beat, double tempo, const math::Fraction &barLen
+		) const {
 		const double oneBeatLength = 60.0 / tempo;
 		const double numofBeats = 4 * beat.to_f();  // the number of quarter notes in a bar
 		const double ClockTimeLen = oneBeatLength * numofBeats * barLen.to_f();
