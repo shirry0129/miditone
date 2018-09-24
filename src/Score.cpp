@@ -6,10 +6,7 @@ namespace score {
 	Score::Score() noexcept {}
 
 	Score::Score(const char *file, Difficulty difficulty) {
-		if (create(file, difficulty)) {
-			path = file;
-			difficulty = difficulty;
-		};
+		create(file, difficulty);
 	}
 
 	Score::~Score() {}
@@ -54,7 +51,9 @@ namespace score {
 
 		// create note timing data
 		std::array<const NoteEvent*, numofLanes> lastHoldBegin;
-		ScoreTimeConverter conv(h.beat, h.tempo);
+
+		if (!timeConv.create(h.beat, h.tempo))
+			return false;
 
 		double msec1 = 0.0f;
 		double msec2 = 0.0f;
@@ -68,7 +67,7 @@ namespace score {
 			case 0:
 				break;
 			case 1: // hit
-				msec1 = conv.calcSec(e.getBarLength());
+				msec1 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
 					Note(NoteType::HIT, e.lane, hitCount + holdCount, 
@@ -84,9 +83,9 @@ namespace score {
 			case 3: // hold end
 			{
 				const auto begin = lastHoldBegin.at(e.lane);
-				msec1 = conv.calcSec(begin->getBarLength());
+				msec1 = timeConv.calcSec(begin->getBarLength());
 			}
-				msec2 = conv.calcSec(e.getBarLength());
+				msec2 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
 					Note(NoteType::HOLD, e.lane, hitCount + holdCount, 
@@ -116,12 +115,12 @@ namespace score {
 
 		for (const auto &t : h.tempo) {
 			tempo.emplace_back(
-				NoteTime(t.bar, conv.calcSec(t.getBarLength())), t.tempo
+				NoteTime(t.bar, timeConv.calcSec(t.getBarLength())), t.tempo
 			);
 		}
 		for (const auto &b : h.beat) {
 			beat.emplace_back(
-				NoteTime(b.bar, conv.calcSec(b.getBarLength())), b.beat
+				NoteTime(b.bar, timeConv.calcSec(b.getBarLength())), b.beat
 			);
 		}
 
@@ -131,6 +130,10 @@ namespace score {
 
 	bool Score::recreate() {
 		return create(path.c_str(), header.difficulty);
+	}
+
+	void Score::clear() {
+		init();
 	}
 
 	int Score::getNumofBars() const noexcept {
@@ -175,9 +178,14 @@ namespace score {
 		return header;
 	}
 
+	const score::ScoreTimeConverter &Score::getConverter() const noexcept {
+		return timeConv;
+	}
+
 	void Score::init() {
 		notes.clear();
 		path.clear();
+		timeConv.clear();
 		numofBars = 0;
 		numofHolds = 0;
 		numofHits = 0;

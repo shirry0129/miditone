@@ -12,6 +12,7 @@ date	: 2018/9/20
 #define _SCORE_HPP_
 
 #include "ScoreReader.hpp"
+#include "ScoreTimeConverter.hpp"
 
 
 namespace score {
@@ -94,6 +95,8 @@ namespace score {
 		bool create(const char *file, Difficulty difficulty);
 		bool recreate();
 
+		void clear();
+
 		inline int getNumofBars() const noexcept;
 		inline int getNumofHolds() const noexcept;
 		inline int getNumofHits() const noexcept;
@@ -106,10 +109,14 @@ namespace score {
 
 		const Score::Header& getHeader() const noexcept;
 
+		const score::ScoreTimeConverter &getConverter() const noexcept;
+
 	private:
 		std::vector<Note> notes;
 
 		std::basic_string<char_type> path;
+
+		score::ScoreTimeConverter timeConv;
 
 		int numofBars;
 		int numofHolds;
