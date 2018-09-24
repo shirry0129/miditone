@@ -51,7 +51,7 @@ namespace score {
 		while (beatEvent != beat.end() || tempoEvent != tempo.end() ) {
 
 
-			// select earlier event or be existed event.
+			// select earlier event or existing event.
 			enum class EventType {
 				BEAT,
 				TEMPO,
@@ -175,6 +175,10 @@ namespace score {
 			return clockTimeBeg + extraClockTime;
 		}
 
+	}
+
+	void ScoreTimeConverter::clear() {
+		init();
 	}
 
 	void ScoreTimeConverter::init() {
