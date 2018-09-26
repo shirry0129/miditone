@@ -32,7 +32,7 @@ namespace score {
 		}
 
 		// origin is zero
-		inline const math::Fraction& getBarLength() const noexcept { return barLength; }
+		const math::Fraction& getBarLength() const noexcept { return barLength; }
 
 		const int bar;
 		const math::Fraction posInBar;

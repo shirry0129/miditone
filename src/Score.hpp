@@ -97,9 +97,9 @@ namespace score {
 
 		void clear();
 
-		inline int getNumofBars() const noexcept;
-		inline int getNumofHolds() const noexcept;
-		inline int getNumofHits() const noexcept;
+		int getNumofBars() const noexcept;
+		int getNumofHolds() const noexcept;
+		int getNumofHits() const noexcept;
 
 		const std::vector<Tempo>& getTempo() const noexcept;
 		float getTempo(double msec) const noexcept;
