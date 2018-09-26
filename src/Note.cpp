@@ -34,9 +34,11 @@ HitNote::HitNote(int _laneNum, float _startTime):
  @param speed ノーツスピード
  */
 void HitNote::update(double currentTime, float speed) {
+	Lane::LaneBG& inst = Lane::LaneBG::getInstance();
+	
 	float nextY = Lane::laneEnd - ((startTime - currentTime) * Lane::laneEnd * speed);
-	float nextX = Lane::slope[laneNum - 1] * nextY + Lane::intercept[laneNum - 1];
-	float nextWidth = Lane::slope[laneNum] * nextY + Lane::intercept[laneNum] - nextX;
+	float nextX = inst.getFactor(laneNum - 1).slope * nextY + inst.getFactor(laneNum - 1).intercept;
+	float nextWidth = inst.getFactor(laneNum).slope * nextY + inst.getFactor(laneNum).intercept - nextX;
 	
 	note.set(nextX + 1, nextY, nextWidth - 2, 10);
 }
@@ -70,6 +72,8 @@ HoldNote::HoldNote(int _laneNum, float _startTime, float _endTime):
  @param speed ノーツスピード
  */
 void HoldNote::update(double currentTime, float speed) {
+	Lane::LaneBG& inst = Lane::LaneBG::getInstance();
+	
 	float bottomY = Lane::laneEnd - ((startTime - currentTime) * Lane::laneEnd * speed);
 	float topY = Lane::laneEnd - ((endTime - currentTime) * Lane::laneEnd * speed);
 	
@@ -77,10 +81,10 @@ void HoldNote::update(double currentTime, float speed) {
 		topY = 0;
 	}
 	
-	Vec2 tl(Lane::slope[laneNum - 1] * topY + Lane::intercept[laneNum - 1] + 1, topY);
-	Vec2 tr(Lane::slope[laneNum] * topY + Lane::intercept[laneNum] - 1, topY);
-	Vec2 bl(Lane::slope[laneNum - 1] * bottomY + Lane::intercept[laneNum - 1] + 1, bottomY);
-	Vec2 br(Lane::slope[laneNum] * bottomY + Lane::intercept[laneNum] - 1, bottomY);
+	Vec2 tl(inst.getFactor(laneNum - 1).slope * topY + inst.getFactor(laneNum - 1).intercept + 1, topY);
+	Vec2 tr(inst.getFactor(laneNum).slope * topY + inst.getFactor(laneNum).intercept - 1, topY);
+	Vec2 bl(inst.getFactor(laneNum - 1).slope * bottomY + inst.getFactor(laneNum - 1).intercept + 1, bottomY);
+	Vec2 br(inst.getFactor(laneNum).slope * bottomY + inst.getFactor(laneNum).intercept - 1, bottomY);
 	
 	note.set(tl, tr, br, bl);
 }

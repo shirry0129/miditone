@@ -11,9 +11,12 @@
 #include<Siv3D.hpp>
 
 namespace Lane {
-    const Array<float> intercept = { 835, 897.5, 960, 1022.5, 1085 };
-    const Array<float> slope = { -0.625, -0.3125, 0, 0.3125, 0.625 };
-    const int laneEnd = 1000;
+    constexpr int laneEnd = 1000;
+    
+    struct factor {
+        float slope;
+        float intercept;
+    };
 
     class LaneBG {
     private:
@@ -24,6 +27,8 @@ namespace Lane {
         Vec2 laneBegin;
         Vec2 interval;
         Vec2 leftEnd, rightEnd;
+        Array<float> slope;
+        Array<float> intercept;
 
         static LaneBG* instance;
 
@@ -39,6 +44,7 @@ namespace Lane {
 
         void update();
         void draw();
+        factor getFactor(int guide);
     };
 }
 
