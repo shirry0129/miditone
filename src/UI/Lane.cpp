@@ -1,6 +1,6 @@
 #include"Lane.hpp"
 
-namespace Lane {
+namespace ui {
     
     /**
      Constructor

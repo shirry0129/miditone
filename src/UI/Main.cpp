@@ -8,15 +8,15 @@ void Main() {
     Window::SetTitle(U"MusicGame");
     Graphics::SetBackground(Palette::Yellow);
 
-    Lane::LaneBG::create();
+    ui::LaneBG::create();
     
-    HitNote testNote(1, 1);
-    HoldNote testHold(2, 1, 2);
+    ui::HitNote testNote(1, 1);
+    ui::HoldNote testHold(2, 1, 2);
     
     Stopwatch count(true);
     
     while (System::Update()) {
-        Lane::LaneBG::getInstance().draw();
+        ui::LaneBG::getInstance().draw();
         testNote.update(count.sF(), 1);
         testHold.update(count.sF(), 1);
         testNote.draw();

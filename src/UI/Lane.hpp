@@ -10,7 +10,7 @@
 
 #include<Siv3D.hpp>
 
-namespace Lane {
+namespace ui {
     constexpr int laneEnd = 1000;
     
     struct factor {
