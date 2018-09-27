@@ -32,11 +32,11 @@ namespace score {
 	};
 
 	struct NoteTime {
-		NoteTime(int _bar, double _msec) noexcept
-			: bar(_bar), msec(_msec) {};
+		NoteTime(int _bar, double _sec) noexcept
+			: bar(_bar), sec(_sec) {};
 		
 		const int bar;
-		const double msec;
+		const double sec;
 	};
 
 	struct Note {
@@ -102,10 +102,10 @@ namespace score {
 		int getNumofHits() const noexcept;
 
 		const std::vector<Tempo>& getTempo() const noexcept;
-		float getTempo(double msec) const noexcept;
+		float getTempo(double sec) const noexcept;
 
 		const std::vector<Beat>& getBeat() const noexcept;
-		math::Fraction getBeat(double msec) const noexcept;
+		math::Fraction getBeat(double sec) const noexcept;
 
 		const Score::Header& getHeader() const noexcept;
 

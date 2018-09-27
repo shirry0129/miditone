@@ -55,8 +55,8 @@ namespace score {
 		if (!timeConv.create(h.beat, h.tempo))
 			return false;
 
-		double msec1 = 0.0f;
-		double msec2 = 0.0f;
+		double sec1 = 0.0f;
+		double sec2 = 0.0f;
 
 		int hitCount = 0;
 		int holdCount = 0;
@@ -67,11 +67,11 @@ namespace score {
 			case 0:
 				break;
 			case 1: // hit
-				msec1 = timeConv.calcSec(e.getBarLength());
+				sec1 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
 					Note(NoteType::HIT, e.lane, hitCount + holdCount, 
-						NoteTime(e.bar, msec1), NoteTime(e.bar, msec1))
+						NoteTime(e.bar, sec1), NoteTime(e.bar, sec1))
 				);
 
 				hitCount++;
@@ -83,13 +83,13 @@ namespace score {
 			case 3: // hold end
 			{
 				const auto begin = lastHoldBegin.at(e.lane);
-				msec1 = timeConv.calcSec(begin->getBarLength());
+				sec1 = timeConv.calcSec(begin->getBarLength());
 			}
-				msec2 = timeConv.calcSec(e.getBarLength());
+				sec2 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
 					Note(NoteType::HOLD, e.lane, hitCount + holdCount, 
-						NoteTime(e.bar, msec1), NoteTime(e.bar, msec2))
+						NoteTime(e.bar, sec1), NoteTime(e.bar, sec2))
 				);
 
 				lastHoldBegin.at(e.lane) = nullptr;  // end reference
@@ -152,9 +152,9 @@ namespace score {
 		return tempo;
 	}
 
-	float Score::getTempo(double msec) const noexcept {
+	float Score::getTempo(double sec) const noexcept {
 		for (auto it = tempo.crbegin(); it != tempo.crend(); it++) {
-			if (it->time.msec <= msec)
+			if (it->time.sec <= sec)
 				return it->tempo;
 		}
 
@@ -165,9 +165,9 @@ namespace score {
 		return beat;
 	}
 
-	math::Fraction Score::getBeat(double msec) const noexcept {
+	math::Fraction Score::getBeat(double sec) const noexcept {
 		for (auto it = beat.crbegin(); it != beat.crend(); it++) {
-			if (it->time.msec <= msec)
+			if (it->time.sec <= sec)
 				return it->beat;
 		}
 
