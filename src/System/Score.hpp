@@ -45,11 +45,11 @@ namespace score {
 			const NoteTime &time_begin, const NoteTime &time_end) noexcept
 			: type(_type), lane(_lane), index(_index), t_beg(time_begin), t_end(time_end) {}
 		
-		const NoteTime t_beg;
-		const NoteTime t_end;
 		const NoteType type;
 		const int lane;
 		const int index;
+		const NoteTime t_beg;
+		const NoteTime t_end;
 	};
 
 	struct Tempo {

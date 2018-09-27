@@ -43,21 +43,21 @@ namespace score {
 
 	struct TempoEvent : ScoreTime {
 		TempoEvent(float _tempo, int _bar, const math::Fraction &_posInBar) noexcept
-			: tempo(_tempo), ScoreTime(_bar, _posInBar) {}
+			: ScoreTime(_bar, _posInBar), tempo(_tempo) {}
 
 		const float tempo;
 	};
 
 	struct BeatEvent : ScoreTime {
 		BeatEvent(const math::Fraction &_beat, int _bar) noexcept
-			: beat(_beat), ScoreTime(_bar, math::Fraction(0)) {}
+			: ScoreTime(_bar, math::Fraction(0)), beat(_beat) {}
 
 		const math::Fraction beat;
 	};
 
 	struct NoteEvent : ScoreTime {
 		NoteEvent(int _type, int _lane, int _bar, const math::Fraction &_posInBar)
-			: type(_type), lane(_lane), ScoreTime(_bar, _posInBar) {}
+			: ScoreTime(_bar, _posInBar), lane(_lane), type(_type) {}
 
 		const int lane;
 		const int type;

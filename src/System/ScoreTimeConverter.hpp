@@ -21,7 +21,7 @@ namespace score {
 
 		struct ScoreTimeSec : ScoreTime {
 			ScoreTimeSec(double _sec, ScoreTime scoreTime) noexcept
-				: sec(_sec), ScoreTime(scoreTime) {}
+				: ScoreTime(scoreTime), sec(_sec) {}
 
 			const double sec;
 		};

@@ -134,10 +134,10 @@ namespace score {
 		// bar length before convert
 		const math::Fraction &srcBarLen = barLen;
 
-		math::Fraction deltaBarLen;
-		math::Fraction barLenBeg;
-		double deltaClockTime;
-		double clockTimeBeg;
+		math::Fraction deltaBarLen = 0;
+		math::Fraction barLenBeg = 0;
+		double deltaClockTime = 0.0;
+		double clockTimeBeg = 0.0;
 
 
 		if (srcBarLen < clockTime.back().getBarLength()) {
