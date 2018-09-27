@@ -77,7 +77,7 @@ namespace Lane {
      @param guide ガイド数
      @return 係数
      */
-    Lane::factor LaneBG::getFactor(int guide) {
+    factor LaneBG::getFactor(int guide) {
         return {slope[guide], intercept[guide]};
     }    
     
