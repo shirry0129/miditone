@@ -63,6 +63,10 @@ namespace score {
 
 		for (const auto &e : event) {
 
+			if (e.lane < 0 || e.lane > 3)
+				return false;	// invalied lane
+
+
 			switch (e.type) {
 			case 0:
 				break;
@@ -97,6 +101,7 @@ namespace score {
 
 				break;
 			default:
+				// invalied note type
 				return false;
 			}
 		}
