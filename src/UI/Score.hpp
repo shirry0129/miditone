@@ -11,7 +11,7 @@
 #include <Siv3D.hpp>
 #include <vector>
 #include "Note.hpp"
-#include "../System/Score.hpp"
+#include "../System/ScoreManager.hpp"
 
 namespace ui {
     

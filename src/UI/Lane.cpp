@@ -6,7 +6,6 @@ namespace ui {
      Constructor
      */
     LaneBG::LaneBG():
-    decisionLine(210,1000,1710,1000),
     laneBegin(Window::Width()/2, -200),
     interval(300, 0),
     leftEnd(360,Window::Height()),
@@ -23,6 +22,8 @@ namespace ui {
         for(auto s: slope){
             intercept.push_back(laneBegin.x - s * laneBegin.y);
         }
+        
+        decisionLine = Line(laneEnd * slope[0] + intercept[0], laneEnd ,laneEnd * slope[4] + intercept[4], laneEnd);
     }
     
     /**
