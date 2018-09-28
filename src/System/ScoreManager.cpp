@@ -74,8 +74,8 @@ namespace score {
 				sec1 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
-					Note(NoteType::HIT, e.lane, hitCount + holdCount, 
-						NoteTime(e.bar, sec1), NoteTime(e.bar, sec1))
+					NoteType::HIT, e.lane, hitCount + holdCount, 
+					NoteTime(e.bar, sec1), NoteTime(e.bar, sec1)
 				);
 
 				hitCount++;
@@ -92,8 +92,8 @@ namespace score {
 				sec2 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
-					Note(NoteType::HOLD, e.lane, hitCount + holdCount, 
-						NoteTime(e.bar, sec1), NoteTime(e.bar, sec2))
+					NoteType::HOLD, e.lane, hitCount + holdCount, 
+					NoteTime(e.bar, sec1), NoteTime(e.bar, sec2)
 				);
 
 				lastHoldBegin.at(e.lane) = nullptr;  // end reference
@@ -120,17 +120,17 @@ namespace score {
 
 		for (const auto &t : h.tempo) {
 			tempo.emplace_back(
-				NoteTime(t.bar, timeConv.calcSec(t.getBarLength())), t.tempo
+				t.bar, timeConv.calcSec(t.getBarLength()), t.tempo
 			);
 		}
 		for (const auto &b : h.beat) {
 			beat.emplace_back(
-				NoteTime(b.bar, timeConv.calcSec(b.getBarLength())), b.beat
+				b.bar, timeConv.calcSec(b.getBarLength()), b.beat
 			);
 		}
 		for (int i = 1; i <= numofBars + 1; i++) {
 			bar.emplace_back(
-				NoteTime(i, timeConv.calcSec(ScoreTime(i).getBarLength())), i
+				i, timeConv.calcSec(ScoreTime(i).getBarLength()), i
 			);
 		}
 

@@ -35,7 +35,7 @@ namespace score {
 
 		// add clock time of score head
 		clockTime.emplace_back(
-			ScoreTimeSec(offset, ScoreTime(1))
+			offset, ScoreTime(1)
 		);
 
 
