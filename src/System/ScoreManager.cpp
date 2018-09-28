@@ -120,17 +120,17 @@ namespace score {
 
 		for (const auto &t : h.tempo) {
 			tempo.emplace_back(
-				t.bar, timeConv.calcSec(t.getBarLength()), t.tempo
+				NoteTime(t.bar, timeConv.calcSec(t.getBarLength())), t.tempo
 			);
 		}
 		for (const auto &b : h.beat) {
 			beat.emplace_back(
-				b.bar, timeConv.calcSec(b.getBarLength()), b.beat
+				NoteTime(b.bar, timeConv.calcSec(b.getBarLength())), b.beat
 			);
 		}
 		for (int i = 1; i <= numofBars + 1; i++) {
 			bar.emplace_back(
-				i, timeConv.calcSec(ScoreTime(i).getBarLength()), i
+				NoteTime(i, timeConv.calcSec(ScoreTime(i).getBarLength())), i
 			);
 		}
 
