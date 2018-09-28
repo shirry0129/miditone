@@ -9,42 +9,28 @@
 #define Notes_hpp
 
 #include <Siv3D.hpp>
+#include "../System/Score.hpp"
 
 namespace ui{
     
     class Note {
     protected:
-        Array<Effect> decisionEffect;
         Texture looks;
         int laneNum;
-        
-    public:
-        Note(int _laneNum);
-        ~Note() = default;
-        
-        virtual void update(double currentTime, float speed) = 0;
-        virtual void draw() = 0;
-    };
-    
-    class HitNote final: public Note {
-    private:
-        float startTime;
-        RectF note;
-    public:
-        HitNote(int _laneNum, float _startTime);
-        virtual void update(double currentTime, float speed) override;
-        virtual void draw() override;
-    };
-    
-    class HoldNote final: public Note {
-    private:
         float startTime;
         float endTime;
+        const score::NoteType nType;
         Quad note;
+        void hitLocate(double currentTime, float speed);
+        void holdLocate(double currentTime, float speed);
+        
     public:
-        HoldNote(int _laneNum, float _startTime, float _endTime);
-        virtual void update(double currentTime, float speed) override;
-        virtual void draw() override;
+        Note(int _laneNum, float _startTime);
+        Note(int _laneNum, float _startTime, float _endTime);
+        ~Note() = default;
+        
+        void update(double currentTime, float speed);
+        void draw();
     };
     
 }

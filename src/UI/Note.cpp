@@ -10,69 +10,20 @@
 
 namespace ui {
 	
-	/**
-	 Constructor
-	 
-	 @param _laneNum レーン番号
-	 */
-	Note::Note(int _laneNum):laneNum(_laneNum) {}
-	
-	
-	/**
-	 Constructor
-	 
-	 @param _laneNum レーン番号
-	 @param _startTime 判定時間
-	 */
-	HitNote::HitNote(int _laneNum, float _startTime):
-	Note(_laneNum),
-	startTime(_startTime){}
-	
-	/**
-	 描画情報の更新
-	 
-	 @param currentTime 現在の再生位置
-	 @param speed ノーツスピード
-	 */
-	void HitNote::update(double currentTime, float speed) {
+	void Note::hitLocate(double currentTime, float speed) {
 		ui::LaneBG& inst = ui::LaneBG::getInstance();
 		
 		float nextY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
-		float nextX = inst.getFactor(laneNum - 1).slope * nextY + inst.getFactor(laneNum - 1).intercept;
-		float nextWidth = inst.getFactor(laneNum).slope * nextY + inst.getFactor(laneNum).intercept - nextX;
 		
-		note.set(nextX + 1, nextY, nextWidth - 2, 10);
+		Vec2 tl(inst.getFactor(laneNum - 1).slope * nextY + inst.getFactor(laneNum - 1).intercept + 1, nextY - 5);
+		Vec2 tr(inst.getFactor(laneNum).slope * nextY + inst.getFactor(laneNum).intercept - 1, nextY - 5);
+		Vec2 bl(inst.getFactor(laneNum - 1).slope * nextY + inst.getFactor(laneNum - 1).intercept + 1, nextY + 5);
+		Vec2 br(inst.getFactor(laneNum).slope * nextY + inst.getFactor(laneNum).intercept - 1, nextY + 5);
+		
+		note.set(tl, tr, br, bl);;
 	}
 	
-	/**
-	 ノーツの描画
-	 */
-	void HitNote::draw() {
-		if(note.y > 0 && note.y < Window::Height()){
-			note.draw();
-		}
-	}
-	
-	
-	/**
-	 Constructor
-	 
-	 @param _laneNum レーン番号
-	 @param _startTime 頭の時間
-	 @param _endTime 終わりの時間
-	 */
-	HoldNote::HoldNote(int _laneNum, float _startTime, float _endTime):
-	Note(_laneNum),
-	startTime(_startTime),
-	endTime(_endTime){}
-	
-	/**
-	 描画情報の更新
-	 
-	 @param currentTime 現在の再生時間
-	 @param speed ノーツスピード
-	 */
-	void HoldNote::update(double currentTime, float speed) {
+	void Note::holdLocate(double currentTime, float speed) {
 		ui::LaneBG& inst = ui::LaneBG::getInstance();
 		
 		float bottomY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
@@ -87,13 +38,34 @@ namespace ui {
 		Vec2 bl(inst.getFactor(laneNum - 1).slope * bottomY + inst.getFactor(laneNum - 1).intercept + 1, bottomY);
 		Vec2 br(inst.getFactor(laneNum).slope * bottomY + inst.getFactor(laneNum).intercept - 1, bottomY);
 		
-		note.set(tl, tr, br, bl);
+		note.set(tl, tr, br, bl);;
 	}
 	
-	/**
-	 ノーツ描画
-	 */
-	void HoldNote::draw() {
+	Note::Note(int _laneNum, float _startTime):
+		laneNum(_laneNum),
+		startTime(_startTime),
+		endTime(0),
+		nType(score::NoteType::HIT){}
+	
+	Note::Note(int _laneNum, float _startTime, float _endTime):
+		laneNum(_laneNum),
+		startTime(_startTime),
+		endTime(_endTime),
+		nType(score::NoteType::HOLD){}
+	
+	void Note::update(double currentTime, float speed) {
+		switch (nType) {
+			case score::NoteType::HIT:
+				hitLocate(currentTime, speed);
+				break;
+				
+			case score::NoteType::HOLD:
+				holdLocate(currentTime, speed);
+				break;
+		};
+	}
+	
+	void Note::draw() {
 		if(note.p3.y > 0 && note.p0.y < Window::Height()){
 			note.draw();
 		}

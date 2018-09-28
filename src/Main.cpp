@@ -1,7 +1,7 @@
 
 # include <Siv3D.hpp> // OpenSiv3D v0.2.8
-#include"Lane.hpp"
-#include"Note.hpp"
+#include"UI/Lane.hpp"
+#include"UI/Note.hpp"
 
 void Main() {
     Window::Resize(1920, 1080);
@@ -10,8 +10,8 @@ void Main() {
 
     ui::LaneBG::create();
     
-    ui::HitNote testNote(1, 1);
-    ui::HoldNote testHold(2, 1, 2);
+    ui::Note testNote(1, 1);
+    ui::Note testHold(2, 1, 2);
     
     Stopwatch count(true);
     
