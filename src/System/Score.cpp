@@ -178,6 +178,10 @@ namespace score {
 		return header;
 	}
 
+	const std::vector<Note> & Score::getNotes() const noexcept {
+		return notes;
+	} 
+
 	const score::ScoreTimeConverter &Score::getConverter() const noexcept {
 		return timeConv;
 	}

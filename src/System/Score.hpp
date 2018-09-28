@@ -109,6 +109,8 @@ namespace score {
 
 		const Score::Header& getHeader() const noexcept;
 
+		const std::vector<Note> &getNotes() const noexcept;
+
 		const score::ScoreTimeConverter &getConverter() const noexcept;
 
 	private:
