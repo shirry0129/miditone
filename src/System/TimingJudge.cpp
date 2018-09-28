@@ -1,225 +1,116 @@
-#include "ScoreTimeConverter.hpp"
+#include "TimingJudge.hpp"
 
+#include <cmath>
 
-namespace score {
+namespace musicgame {
 
-
-	ScoreTimeConverter::ScoreTimeConverter(
-		const std::vector<score::BeatEvent>& beat,
-		const std::vector<score::TempoEvent>& tempo,
-		double offset
-	) : isReady(false) {
-		create(beat, tempo, offset);
+	TimingJudge::TimingJudge(
+		const notes_t &_notes,
+		const judge_beg_func_t &_judgeBegFunc,
+		const judge_end_func_t &_judgeEndFunc,
+		double enumRangeSec
+	) noexcept : isReady(false) {
+		create(_notes, _judgeBegFunc, _judgeEndFunc, enumRangeSec);
 	}
 
-	ScoreTimeConverter::ScoreTimeConverter() : isReady(false) {}
+	TimingJudge::~TimingJudge() {};
 
-	ScoreTimeConverter::~ScoreTimeConverter() {}
+	bool TimingJudge::create(
+		const notes_t &_notes,
+		const judge_beg_func_t &_judgeBegFunc,
+		const judge_end_func_t &_judgeEndFunc,
+		double enumRangeSec
+	) noexcept {
+		if (enumRangeSec <= 0.0)
+			return false;
 
-	bool ScoreTimeConverter::create(
-		const std::vector<score::BeatEvent>& beat,
-		const std::vector<score::TempoEvent>& tempo,
-		double offset
-	) {
-		
 		init();
 
 
-		if (beat.empty() || tempo.empty())
-			return false;
+		// update member variable	
+		judgeBegFunc = _judgeBegFunc;
+		judgeEndFunc = _judgeEndFunc;
 
-		if (beat.front().getBarLength() != 0 ||
-			tempo.front().getBarLength() != 0)
-			return false;
-
-
-		// add clock time of score head
-		clockTime.emplace_back(
-			ScoreTimeSec(offset, ScoreTime(1))
-		);
-
-
-		math::Fraction begBarLen(0); // bar length from origin (origin is bar:1)
-		math::Fraction endBarLen(0); // bar length from origin (origin is bar:1)
-		auto beatEvent = beat.begin();
-		auto tempoEvent = tempo.begin();
-
-		// next event
-		beatEvent++;
-		tempoEvent++;
-
-		while (beatEvent != beat.end() || tempoEvent != tempo.end() ) {
-
-
-			// select earlier event or existing event.
-			enum class EventType {
-				BEAT,
-				TEMPO,
-				BOTH
-			} event;
-
-			if (tempoEvent == tempo.cend())
-				event = EventType::BEAT;
-			else if (beatEvent == beat.cend())
-				event = EventType::TEMPO;
-			else if (beatEvent->getBarLength() < tempoEvent->getBarLength())
-				event = EventType::BEAT;
-			else if (tempoEvent->getBarLength() < beatEvent->getBarLength())
-				event = EventType::TEMPO;
-			else
-				event = EventType::BOTH;
-
-
-			// assign time of selected event.
-			ScoreTime *endScoreTime;
-			switch (event) {
-			case EventType::BEAT:
-				endBarLen = beatEvent->getBarLength();
-				endScoreTime = const_cast<BeatEvent*>(&(*beatEvent));
-				
-				// next event
-				beatEvent++;
-				break;
-			case EventType::TEMPO:
-				endBarLen = tempoEvent->getBarLength();
-				endScoreTime = const_cast<TempoEvent*>(&(*tempoEvent));
-
-				// next event
-				tempoEvent++;
-				break;
-			case EventType::BOTH:
-				// If two events are same time, skip registering the other one.
-				endBarLen = beatEvent->getBarLength();
-				endScoreTime = const_cast<BeatEvent*>(&(*beatEvent));
-
-				// next event
-				beatEvent++;
-				tempoEvent++;
-				break;
-			}
-
-			
-			// calculate clock time
-
-			const math::Fraction delta = endBarLen - begBarLen;
-			// note: beat and tempo are constant within [delta]
-
-			const auto currentBeat = getBeat(beat, begBarLen);
-			const auto currentTempo = getTempo(tempo, begBarLen);
-
-			const double deltaClockTime = calcClockTimeLen(currentBeat, currentTempo, delta);
-
-			// add to [scoreTimeSecList]
-			const double ans = clockTime.back().sec + deltaClockTime;
-			clockTime.emplace_back(
-				ans, ScoreTime(*endScoreTime)
-			);
-
-
-			begBarLen = endBarLen;
+		for (const auto &n : _notes) {
+			notes.at(n.lane).push_back(n);
 		}
 
-		// update member variable
 		isReady = true;
-		lastBeat = beat.back().beat;
-		lastTempo = tempo.back().tempo;
-		
+
+
 		return true;
+	};
+
+	void TimingJudge::clear() {
+		init();
 	}
 
-	double ScoreTimeConverter::calcSec(const math::Fraction &barLen) const {
-		if (!isReady)
-			return 0.0;
+	const JudgeResult & TimingJudge::judge(double inputSec, bool keyState, int keyNum) noexcept {
+		
 
-		// bar length before convert
-		const math::Fraction &srcBarLen = barLen;
-
-		math::Fraction deltaBarLen = 0;
-		math::Fraction barLenBeg = 0;
-		double deltaClockTime = 0.0;
-		double clockTimeBeg = 0.0;
+		return result.back();
+	}
 
 
-		if (srcBarLen < clockTime.back().getBarLength()) {
-			// within clock time list
 
-			// calculate delta time between two the clock times
-			// get the clock time at previous [srcBarLen]
+	void TimingJudge::init() {
+		isReady = false;
+		result.clear();
+		for (auto &n : notes)
+			n.clear();
+		for (auto &n : judgingNote)
+			n = nullptr;
 
-			for (auto it = clockTime.crbegin(); it != clockTime.crend(); it++) {
-				barLenBeg = it->getBarLength();
+	}
 
-				if (barLenBeg <= srcBarLen) {
-					clockTimeBeg = it->sec;
-					math::Fraction barLenEnd = (it - 1)->getBarLength();
-					deltaBarLen = barLenEnd - barLenBeg;
-					deltaClockTime = (it - 1)->sec - it->sec;
-					break;
-				}
-			}
 
-			math::Fraction extraBarLen = srcBarLen - barLenBeg;
-			const double extraClockTime = deltaClockTime * (extraBarLen/deltaBarLen).to_f();
+	Judgement TimingJudge::defaultJudgeBegFunc(notes_t::const_iterator beg, notes_t::const_iterator end, double inputTime) {
+		
+		if (beg->type == score::NoteType::HIT) {
+			// hit note
 
-			return clockTimeBeg + extraClockTime;
+
+			if (abs(inputTime - beg->t_beg.sec) < 0.10)
+				return Judgement::BEST;
+			if (abs(inputTime - beg->t_beg.sec) < 0.20)
+				return Judgement::BETTER;
+			if (abs(inputTime - beg->t_beg.sec) < 0.40)
+				return Judgement::GOOD;
+			if (abs(inputTime - beg->t_beg.sec) < 0.50)
+				return Judgement::MISS;
 
 		} else {
-			// outside clock time list
+			// hold (begin) note 
 
-			clockTimeBeg = clockTime.back().sec;
-			barLenBeg = clockTime.back().getBarLength();
-			deltaBarLen = srcBarLen - barLenBeg;
+			if (abs(inputTime - beg->t_beg.sec) < 0.20)
+				return Judgement::BEST;
 
-			const double extraClockTime = calcClockTimeLen(lastBeat, lastTempo, deltaBarLen);
+		}
+		
 
-			return clockTimeBeg + extraClockTime;
+		return Judgement::NONE;
+	}
+
+	Judgement TimingJudge::defaultJudgeEndFunc(notes_t::const_iterator note, JudgeState state, double inputTime) {
+	
+		if (state == JudgeState::MIDDLE) {
+
+			// return Judgement::BEST; // CHUNITHM style
+			return Judgement::NONE;
+
+		} else {
+
+			if (inputTime - note->t_end.sec >= 0.0)
+				return Judgement::BEST;		// when user input time is same / later to the note time
+			if (inputTime - note->t_end.sec > -0.3)
+				return Judgement::BETTER;	// when user input time is earlier to the note time
+			if (inputTime - note->t_end.sec > -0.6)
+				return Judgement::BETTER;	// same as above
+			else
+				return Judgement::GOOD;		// same as above
+
 		}
 
 	}
-
-	void ScoreTimeConverter::clear() {
-		init();
-	}
-
-	void ScoreTimeConverter::init() {
-		clockTime.clear();
-		lastBeat = 0;
-		lastTempo = 0;
-		isReady = false;
-	}
-
-	const math::Fraction& ScoreTimeConverter::getBeat(
-		const std::vector<BeatEvent> &beat, const math::Fraction &barLen
-		) const {
-		for (auto it = beat.crbegin(); it != beat.crend(); it++) {
-			if (it->getBarLength() <= barLen)
-				return it->beat;
-		}
-
-		return std::move(math::Fraction(0));
-	}
-
-	double ScoreTimeConverter::getTempo(
-		const std::vector<TempoEvent> &tempo, const math::Fraction &barLen
-		) const {
-		for (auto it = tempo.crbegin(); it != tempo.crend(); it++) {
-			if (it->getBarLength() <= barLen)
-				return it->tempo;
-		}
-
-		return 0.0;
-	}
-
-	double ScoreTimeConverter::calcClockTimeLen(
-		const math::Fraction &beat, double tempo, const math::Fraction &barLen
-		) const {
-		const double oneBeatLength = 60.0 / tempo;
-		const double numofBeats = 4 * beat.to_f(); // the number of quarter notes in a bar
-		const double ClockTimeLen = oneBeatLength * numofBeats * barLen.to_f();
-
-		return ClockTimeLen;
-	}
-
-
 
 }
