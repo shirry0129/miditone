@@ -1,17 +1,17 @@
-#include "Score.hpp"
+#include "ScoreManager.hpp"
 #include "ScoreTimeConverter.hpp"
 
 namespace score {
 
-	Score::Score() noexcept {}
+	ScoreManager::ScoreManager() noexcept {}
 
-	Score::Score(const char *file, Difficulty difficulty) {
+	ScoreManager::ScoreManager(const char *file, Difficulty difficulty) {
 		create(file, difficulty);
 	}
 
-	Score::~Score() {}
+	ScoreManager::~ScoreManager() {}
 
-	bool Score::create(const char *file, Difficulty difficulty) {
+	bool ScoreManager::create(const char *file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
@@ -133,31 +133,31 @@ namespace score {
 		return true;
 	}
 
-	bool Score::recreate() {
+	bool ScoreManager::recreate() {
 		return create(path.c_str(), header.difficulty);
 	}
 
-	void Score::clear() {
+	void ScoreManager::clear() {
 		init();
 	}
 
-	int Score::getNumofBars() const noexcept {
+	int ScoreManager::getNumofBars() const noexcept {
 		return numofBars;
 	}
 
-	int Score::getNumofHolds() const noexcept {
+	int ScoreManager::getNumofHolds() const noexcept {
 		return numofHolds;
 	}
 
-	int Score::getNumofHits() const noexcept {
+	int ScoreManager::getNumofHits() const noexcept {
 		return numofHits;
 	}
 
-	const std::vector<Tempo>& Score::getTempo() const noexcept {
+	const std::vector<Tempo>& ScoreManager::getTempo() const noexcept {
 		return tempo;
 	}
 
-	float Score::getTempo(double sec) const noexcept {
+	float ScoreManager::getTempo(double sec) const noexcept {
 		for (auto it = tempo.crbegin(); it != tempo.crend(); it++) {
 			if (it->time.sec <= sec)
 				return it->tempo;
@@ -166,11 +166,11 @@ namespace score {
 		return 0.0f;
 	}
 
-	const std::vector<Beat>& Score::getBeat() const noexcept {
+	const std::vector<Beat>& ScoreManager::getBeat() const noexcept {
 		return beat;
 	}
 
-	math::Fraction Score::getBeat(double sec) const noexcept {
+	math::Fraction ScoreManager::getBeat(double sec) const noexcept {
 		for (auto it = beat.crbegin(); it != beat.crend(); it++) {
 			if (it->time.sec <= sec)
 				return it->beat;
@@ -179,19 +179,19 @@ namespace score {
 		return math::Fraction(0);
 	}
 
-	const Score::Header & Score::getHeader() const noexcept {
+	const ScoreManager::Header & ScoreManager::getHeader() const noexcept {
 		return header;
 	}
 
-	const std::vector<Note> & Score::getNotes() const noexcept {
+	const std::vector<Note> & ScoreManager::getNotes() const noexcept {
 		return notes;
 	} 
 
-	const score::ScoreTimeConverter &Score::getConverter() const noexcept {
+	const score::ScoreTimeConverter &ScoreManager::getConverter() const noexcept {
 		return timeConv;
 	}
 
-	void Score::init() {
+	void ScoreManager::init() {
 		notes.clear();
 		path.clear();
 		timeConv.clear();

@@ -15,7 +15,7 @@ Date	: 2018/9/26
 #include <functional>
 #include <array>
 
-#include "Score.hpp"
+#include "ScoreManager.hpp"
 
 
 namespace musicgame {

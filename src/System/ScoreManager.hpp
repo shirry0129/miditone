@@ -71,7 +71,7 @@ namespace score {
 
 
 
-	class Score {
+	class ScoreManager {
 	public:
 		struct Header {
 			std::basic_string<char_type> title;
@@ -88,9 +88,9 @@ namespace score {
 		};
 
 	
-		Score() noexcept;
-		Score(const char *file, Difficulty difficulty);
-		~Score();
+		ScoreManager() noexcept;
+		ScoreManager(const char *file, Difficulty difficulty);
+		~ScoreManager();
 
 		bool create(const char *file, Difficulty difficulty);
 		bool recreate();
@@ -107,7 +107,7 @@ namespace score {
 		const std::vector<Beat>& getBeat() const noexcept;
 		math::Fraction getBeat(double sec) const noexcept;
 
-		const Score::Header& getHeader() const noexcept;
+		const ScoreManager::Header& getHeader() const noexcept;
 
 		const std::vector<Note> &getNotes() const noexcept;
 
@@ -123,7 +123,7 @@ namespace score {
 		int numofBars;
 		int numofHolds;
 		int numofHits;
-		Score::Header header;
+		ScoreManager::Header header;
 
 		std::vector<Tempo> tempo;
 		std::vector<Beat> beat;
