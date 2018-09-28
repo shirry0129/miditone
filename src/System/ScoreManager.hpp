@@ -68,6 +68,14 @@ namespace score {
 		const math::Fraction beat;
 	};
 
+	struct Bar {
+		Bar(const NoteTime &_time, int _barCnt) noexcept
+			: time(_time), barCnt(_barCnt) {}
+
+		const NoteTime time;
+		const int barCnt;
+	};
+
 
 
 
@@ -107,6 +115,9 @@ namespace score {
 		const std::vector<Beat>& getBeat() const noexcept;
 		math::Fraction getBeat(double sec) const noexcept;
 
+		const std::vector<Bar>& getBar() const noexcept;
+		int getBar(double sec) const noexcept;
+
 		const ScoreManager::Header& getHeader() const noexcept;
 
 		const std::vector<Note> &getNotes() const noexcept;
@@ -127,6 +138,7 @@ namespace score {
 
 		std::vector<Tempo> tempo;
 		std::vector<Beat> beat;
+		std::vector<Bar> bar;
 
 		void init();
 

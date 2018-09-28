@@ -128,6 +128,11 @@ namespace score {
 				NoteTime(b.bar, timeConv.calcSec(b.getBarLength())), b.beat
 			);
 		}
+		for (int i = 1; i <= numofBars + 1; i++) {
+			bar.emplace_back(
+				NoteTime(i, timeConv.calcSec(ScoreTime(i).getBarLength())), i
+			);
+		}
 
 		
 		return true;
@@ -179,6 +184,19 @@ namespace score {
 		return math::Fraction(0);
 	}
 
+	const std::vector<Bar>& ScoreManager::getBar() const noexcept {
+		return bar;
+	}
+
+	int ScoreManager::getBar(double sec) const noexcept {
+		for (auto it = bar.crbegin(); it != bar.crend(); it++) {
+			if (it->time.sec <= sec)
+				return it->barCnt;
+		}
+
+		return 0;
+	}
+
 	const ScoreManager::Header & ScoreManager::getHeader() const noexcept {
 		return header;
 	}
@@ -201,6 +219,7 @@ namespace score {
 		header.clear();
 		tempo.clear();
 		beat.clear();
+		bar.clear();
 	}
 
 
