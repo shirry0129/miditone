@@ -19,17 +19,19 @@ namespace ui{
         int laneNum;
         float startTime;
         float endTime;
+        float speed;
         const score::NoteType nType;
         Quad note;
-        void hitLocate(double currentTime, float speed);
-        void holdLocate(double currentTime, float speed);
+        
+        void hitLocate(double currentTime);
+        void holdLocate(double currentTime);
         
     public:
-        Note(int _laneNum, float _startTime);
-        Note(int _laneNum, float _startTime, float _endTime);
+        Note(int _laneNum, float _startTime, float _speed);
+        Note(int _laneNum, float _startTime, float _endTime, float _speed);
         ~Note() = default;
         
-        void update(double currentTime, float speed);
+        void update(double currentTime);
         void draw();
     };
     

@@ -78,7 +78,7 @@ namespace ui {
      @param guide ガイド数
      @return 係数
      */
-    factor LaneBG::getFactor(int guide) {
+    factor LaneBG::getFactor(size_t guide) {
         return {slope[guide], intercept[guide]};
     }    
     

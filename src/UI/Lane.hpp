@@ -44,7 +44,7 @@ namespace ui {
 
         void update();
         void draw();
-        factor getFactor(int guide);
+        factor getFactor(size_t guide);
     };
 }
 
