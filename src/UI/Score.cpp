@@ -10,41 +10,27 @@
 
 namespace ui {
     
-    Score::Score(std::vector<score::Note>& _fromFile, float _speed) {
-        speed = _speed;
-        
-        for(auto n: _fromFile){
-            switch (n.type) {
-                case score::NoteType::HIT:
-                    score.emplace_back(n.lane, n.t_beg.sec);
-                    break;
-                    
-                case score::NoteType::HOLD:
-                    score.emplace_back(n.lane, n.t_beg.sec, n.t_end.sec);
-                    break;
-            }
-        }
+    Score::Score(const std::vector<score::Note>& _fromFile, float _speed) {
+        setFromFile(_fromFile, _speed);
     }
     
-    void Score::setFromFile(std::vector<score::Note>& _fromFile, float _speed) {
-        speed = _speed;
-        
+    void Score::setFromFile(const std::vector<score::Note>& _fromFile, float _speed) {
         for(auto n:_fromFile){
             switch (n.type) {
                 case score::NoteType::HIT:
-                    score.emplace_back(n.lane, n.t_beg.sec);
+                    score.emplace_back(n.lane, n.t_beg.sec, _speed);
                     break;
                     
                 case score::NoteType::HOLD:
-                    score.emplace_back(n.lane, n.t_beg.sec, n.t_end.sec);
+                    score.emplace_back(n.lane, n.t_beg.sec, n.t_end.sec, _speed);
                     break;
             }
         }
     }
     
     void Score::update(double currentTime) {
-        for(auto n:score){
-            n.update(currentTime, speed);
+        for(auto &n:score){
+            n.update(currentTime);
         }
     }
     
