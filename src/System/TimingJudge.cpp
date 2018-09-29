@@ -10,17 +10,7 @@ namespace musicgame {
 		const judge_beg_func_t &_judgeBegFunc,
 		const judge_end_func_t &_judgeEndFunc,
 		double _enumRangeSec
-	) noexcept : 
-		// initializetion for constructor
-		isReady(false), 
-		dummyResult(
-			JudgeResult(
-				score::Note(score::NoteType::HIT, 0, 0, score::NoteTime(0, 0.0), score::NoteTime(0, 0.0)), 
-				Judgement::NONE, 
-				0.0
-			)
-		)
-	{
+	) noexcept {
 		create(_notes, _judgeBegFunc, _judgeEndFunc, _enumRangeSec);
 	}
 
@@ -53,9 +43,6 @@ namespace musicgame {
 				enumBegNote.at(i) = notes.at(i).end();
 		}
 
-		isReady = true;
-
-
 		return true;
 	};
 
@@ -63,49 +50,97 @@ namespace musicgame {
 		init();
 	}
 
-	const JudgeResult & TimingJudge::judge(double inputSec, bool keyState, int keyNum) noexcept {
+	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec, bool keyState, int keyNum) noexcept {
+		std::vector<const JudgeResult*> presentResults;
+	
 		if (keyNum < 0 || keyNum > score::numofLanes)
-			 return dummyResult;
+			 return presentResults;
 
 
+		judgefunc_return_t ret;
+		
 		if (judgingNote.at(keyNum) != nullptr) {
 			// are judging the hold note
 
-			JudgeState state = (keyState) ? JudgeState::MIDDLE : JudgeState::END;
-
-			judgeEndFunc(judgingNote.at(keyNum), state, inputSec);
-
+			// set current state.
+			// note: key is down -> continue judging / key is released -> end judging
+			const JudgeState state
+				= (keyState) ? JudgeState::MIDDLE : JudgeState::END;
+			
+			// judge
+			ret = judgeEndFunc(judgingNote.at(keyNum), state, inputSec);
+			
 		} else {
 			// are NOT judging the hold note
-
-
+			
+			if (!keyState)
+				return presentResults;
+			
 			// enumerate the notes for judge
 			std::vector<const score::Note*> enumNotes;
-
-			for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).end(); it++) {
-				if (inputSec < it->t_beg.sec - enumRangeSec)
-					continue;	// user input time is much earlier
-				if (inputSec > it->t_beg.sec + enumRangeSec)
-					break;		// user input time is much later
-
-				enumNotes.push_back(&(*it));
-			}
-
-
+			enumJudgeNotes(
+				enumNotes, enumBegNote.at(keyNum), notes.at(keyNum).cend(),
+				inputSec, enumRangeSec
+			);
+			
 			// judge
-			judgeBegFunc(enumNotes, inputSec);
-
+			ret = judgeBegFunc(enumNotes, inputSec);
+			
+			const auto &judgedNote = notes.at(keyNum).at(ret.index);
+			
+			if (judgedNote.type == score::NoteType::HOLD) {
+				// previous judged note is hold note
+				judgingNote.at(keyNum) = &judgedNote; // start reference
+			}
+		}
+		
+		
+		if (ret.judge != Judgement::NONE) {
+			const notes_t::const_iterator judgedNoteItr
+				= notes.at(keyNum).begin() + ret.index;
+			
+			
+			// judge for missed notes
+			auto it = notes.at(keyNum).begin() + enumBegNote.at(keyNum)->index;
+			for (; it != judgedNoteItr; it++) {
+				results.emplace_back(
+					*it, Judgement::MISS, inputSec - it->t_beg.sec
+				);
+				
+				presentResults.push_back(&results.back());
+			}
+			
+		
+			// create judge result
+			double error;
+			if (judgingNote.at(keyNum))
+				error = inputSec - judgedNoteItr->t_end.sec; // hold end note
+			else
+				error = inputSec - judgedNoteItr->t_beg.sec; // hit note or hold begin note
+			
+			results.emplace_back(
+				*judgedNoteItr, ret.judge, error
+			);
+			presentResults.push_back(&results.back());
+			
+			
+			// update judging note
+			if (judgingNote.at(keyNum))
+				judgingNote.at(keyNum) = nullptr;  // end reference
+		
+			// update note enumeration start
+			enumBegNote.at(keyNum) = judgedNoteItr + 1;
 		}
 
-
-		return result.back();
+		
+		
+		return presentResults;
 	}
 
 
 
 	void TimingJudge::init() {
-		isReady = false;
-		result.clear();
+		results.clear();
 		for (auto &n : notes)
 			n.clear();
 		for (auto &n : judgingNote)
@@ -114,55 +149,85 @@ namespace musicgame {
 	}
 
 
-	Judgement TimingJudge::defaultJudgeBegFunc(const std::vector<const score::Note*> &notes, double inputTime) {
+	TimingJudge::judgefunc_return_t TimingJudge::defaultJudgeBegFunc(
+		const std::vector<const score::Note*> &notes,
+		double inputTime
+	) {
 		
 		const auto target = notes.front();
 
+		Judgement judge = Judgement::NONE;
+		
 		if (target->type == score::NoteType::HIT) {
 			// hit note
-
-
+			
 			if (abs(inputTime - target->t_beg.sec) < 0.10)
-				return Judgement::BEST;
+				judge = Judgement::BEST;
 			if (abs(inputTime - target->t_beg.sec) < 0.20)
-				return Judgement::BETTER;
+				judge =  Judgement::BETTER;
 			if (abs(inputTime - target->t_beg.sec) < 0.40)
-				return Judgement::GOOD;
+				judge = Judgement::GOOD;
 			if (abs(inputTime - target->t_beg.sec) < 0.50)
-				return Judgement::MISS;
+				judge = Judgement::MISS;
 
 		} else {
 			// hold (begin) note 
 
 			if (abs(inputTime - target->t_beg.sec) < 0.20)
-				return Judgement::BEST;
+				judge = Judgement::BEST;
 
 		}
 		
 
-		return Judgement::NONE;
+		return judgefunc_return_t(judge, target->index);
 	}
 
-	Judgement TimingJudge::defaultJudgeEndFunc(const score::Note* note, JudgeState state, double inputTime) {
-	
+	TimingJudge::judgefunc_return_t TimingJudge::defaultJudgeEndFunc(
+		const score::Note* note, JudgeState state, double inputTime
+	) {
+		Judgement judge;
+		
 		if (state == JudgeState::MIDDLE) {
-
+			
 			// return Judgement::BEST; // CHUNITHM style
-			return Judgement::NONE;
+			judge = Judgement::NONE;
 
 		} else {
 
 			if (inputTime - note->t_end.sec >= 0.0)
-				return Judgement::BEST;		// when user input time is same / later to the note time
+				judge = Judgement::BEST;		// when user input time is same / later to the note time
 			if (inputTime - note->t_end.sec > -0.3)
-				return Judgement::BETTER;	// when user input time is earlier to the note time
+				judge = Judgement::BETTER;	// when user input time is earlier to the note time
 			if (inputTime - note->t_end.sec > -0.6)
-				return Judgement::BETTER;	// same as above
+				judge = Judgement::BETTER;	// same as above
 			else
-				return Judgement::GOOD;		// same as above
+				judge = Judgement::GOOD;	// same as above
 
 		}
-
+		
+		
+		return judgefunc_return_t(judge, note->index);
 	}
+	
+	void TimingJudge::enumJudgeNotes(
+		std::vector<const score::Note *> &notes,
+		notes_t::const_iterator begin,
+		notes_t::const_iterator end,
+		double inputSec,
+		double rangeSec
+	) {
+	
+		for (auto it = begin; it != end; it++) {
+				if (inputSec < it->t_beg.sec - enumRangeSec)
+					continue;	// user input time is much earlier
+				if (inputSec > it->t_beg.sec + enumRangeSec)
+					break;		// user input time is much later
+
+				notes.push_back(&(*it));
+		}
+		
+	}
+	
+	
 
 }
