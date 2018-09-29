@@ -31,8 +31,11 @@ namespace musicgame {
 		};
 
 	struct JudgeResult : score::Note {
-		Judgement result;
-		double error;
+		JudgeResult(Note _note, Judgement _result, double _error) noexcept
+			: Note(_note), result(_result), error(_error) {}
+
+		const Judgement result;
+		const double error;
 	};
 
 	enum struct JudgeState {
@@ -47,12 +50,12 @@ namespace musicgame {
 		
 		// for hit notes / hold begin notes
 		using judge_beg_func_t = std::function<
-			Judgement(notes_t::const_iterator beg, notes_t::const_iterator end, double inputTime)
+			Judgement(const std::vector<const score::Note*> &notes, double inputTime)
 		>;
 
 		// for hold end notes
 		using judge_end_func_t = std::function<
-			Judgement(notes_t::const_iterator note, JudgeState state, double inputTime)
+			Judgement(const score::Note* note, JudgeState state, double inputTime)
 		>;
 
 	
@@ -80,24 +83,28 @@ namespace musicgame {
 
 	private:
 		std::array<notes_t, score::numofLanes> notes;
+		std::array<notes_t::const_iterator, score::numofLanes> enumBegNote;
 
 		judge_beg_func_t judgeBegFunc;
 		judge_end_func_t judgeEndFunc;
 
 		bool isReady;
+		double enumRangeSec;
 
 		std::vector<JudgeResult> result;
 
 		std::array<score::Note*, 4> judgingNote;
 
+		JudgeResult dummyResult;
+
 		void init();
 
 		static Judgement defaultJudgeBegFunc(
-			notes_t::const_iterator beg, notes_t::const_iterator end, double inputTime
+			const std::vector<const score::Note*> &notes, double inputTime
 		);
 
 		static Judgement defaultJudgeEndFunc(
-			notes_t::const_iterator note, JudgeState state, double inputTime
+			const score::Note* note, JudgeState state, double inputTime
 		);
 
 		
