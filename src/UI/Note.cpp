@@ -10,23 +10,35 @@
 
 namespace ui {
 	
-	void Note::hitLocate(double currentTime) {
+	void Note::hitLocateUpdate(double currentTime) {
 		ui::LaneBG& inst = ui::LaneBG::getInstance();
-		
+	
 		float nextY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
+		float height = 10;
 		
-		Vec2 tl(inst.getFactor(laneNum).slope * nextY + inst.getFactor(laneNum).intercept + 1, nextY - 5);
-		Vec2 tr(inst.getFactor(laneNum + 1).slope * nextY + inst.getFactor(laneNum + 1).intercept - 1, nextY - 5);
-		Vec2 bl(inst.getFactor(laneNum).slope * nextY + inst.getFactor(laneNum).intercept + 1, nextY + 5);
-		Vec2 br(inst.getFactor(laneNum + 1).slope * nextY + inst.getFactor(laneNum + 1).intercept - 1, nextY + 5);
+		if (nextY - height/2 < 0) {
+			note.set(0,0,0,0,0,0,0,0);
+			return;
+		}
 		
-		note.set(tl, tr, br, bl);;
+		Vec2 tl(inst.getFactor(laneNum).slope * (nextY - height / 2) + inst.getFactor(laneNum).intercept + 1, nextY - height / 2);
+		Vec2 tr(inst.getFactor(laneNum + 1).slope * (nextY - height / 2) + inst.getFactor(laneNum + 1).intercept - 1, nextY - height / 2);
+		Vec2 bl(inst.getFactor(laneNum).slope * (nextY + height / 2) + inst.getFactor(laneNum).intercept + 1, nextY + height / 2);
+		Vec2 br(inst.getFactor(laneNum + 1).slope * (nextY + height / 2) + inst.getFactor(laneNum + 1).intercept - 1, nextY + height / 2);
+		
+		note.set(tl, tr, br, bl);
 	}
 	
-	void Note::holdLocate(double currentTime) {
+	void Note::holdLocateUpdate(double currentTime) {
 		ui::LaneBG& inst = ui::LaneBG::getInstance();
 		
 		float bottomY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
+		
+		if (bottomY < 0) {
+			note.set(0, 0, 0, 0, 0, 0, 0, 0);
+			return;
+		}
+		
 		float topY = ui::laneEnd - ((endTime - currentTime) * ui::laneEnd * speed);
 		
 		if(topY < 0) {
@@ -58,18 +70,18 @@ namespace ui {
 	void Note::update(double currentTime) {
 		switch (nType) {
 			case score::NoteType::HIT:
-				hitLocate(currentTime);
+				hitLocateUpdate(currentTime);
 				break;
 				
 			case score::NoteType::HOLD:
-				holdLocate(currentTime);
+				holdLocateUpdate(currentTime);
 				break;
 		};
 	}
 	
 	void Note::draw() {
 		if(note.p3.y > 0 && note.p0.y < Window::Height()){
-			note.draw();
+			note.draw(Palette::Red);
 		}
 	}
 	

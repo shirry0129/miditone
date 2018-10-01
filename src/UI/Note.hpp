@@ -14,17 +14,17 @@
 namespace ui{
     
     class Note {
-    protected:
+    private:
         Texture looks;
-        int laneNum;
+        size_t laneNum;
         float startTime;
         float endTime;
         float speed;
         const score::NoteType nType;
         Quad note;
         
-        void hitLocate(double currentTime);
-        void holdLocate(double currentTime);
+        void hitLocateUpdate(double currentTime);
+        void holdLocateUpdate(double currentTime);
         
     public:
         Note(int _laneNum, float _startTime, float _speed);
