@@ -378,9 +378,9 @@ namespace score {
 		// get argument string
 		char_type tmp;
 		math::Fraction posInBar;
-		float tempo;
-		int bar;
-		int n, d;
+		float tempo = 0.0f;
+		int bar = 0;
+		int n = 0, d = 1;
 
 		for (int i = 0; i < 4; i++) {
 			switch (i) {
@@ -419,8 +419,8 @@ namespace score {
 
 		// get argument string
 		char_type tmp;
-		int bar;
-		int n, d;
+		int bar = 0;
+		int n = 0, d = 1;
 
 		for (int i = 0; i < 3; i++) {
 			switch (i) {
@@ -453,8 +453,8 @@ namespace score {
 
 		// get argument string as int
 		char_type tmp;
-		int lane;
-		int bar;
+		int lane = 0;
+		int bar = 0;
 		std::basic_string<char_type> timing;
 
 		for (int i = 0; i < 3; i++) {

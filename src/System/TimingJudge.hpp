@@ -21,26 +21,24 @@ Date	: 2018/9/26
 namespace musicgame {
 
 	enum class Judgement {
-		BEST = 0,
+		NONE = 0,
+		BEST,
 		BETTER,
 		GOOD,
 		NOTBAD,
 		BAD,
 		MISS,
-		NONE
-		};
+		HOLDBREAK,
+		HOLDCONTINUE
+	};
 
 	struct JudgeResult : score::Note {
-		JudgeResult(Note _note, Judgement _result, double _error) noexcept
+		JudgeResult(const Note &_note, Judgement _result, double _error) noexcept
 			: Note(_note), result(_result), error(_error) {}
 
 		const Judgement result;
+		// negative value express that user input is earlier than exact time
 		const double error;
-	};
-
-	enum struct JudgeState {
-		MIDDLE = 0,
-		END
 	};
 
 
@@ -48,21 +46,46 @@ namespace musicgame {
 	public:
 		using notes_t = std::vector<score::Note>;
 		
+        struct judgefunc_return_t {
+			judgefunc_return_t() {}
+			judgefunc_return_t(Judgement _judge, int _indexInLane)
+        		: judge(_judge), indexInLane(_indexInLane) {}
+			
+			Judgement judge;
+			int indexInLane;
+        };
+		
 		// for hit notes / hold begin notes
-		using judge_beg_func_t = std::function<
-			Judgement(const std::vector<const score::Note*> &notes, double inputTime)
+		using beg_judge_func_t = std::function<
+			judgefunc_return_t(
+				const std::vector<const score::Note*> &notes,
+				double inputTime
+			)
 		>;
 
 		// for hold end notes
-		using judge_end_func_t = std::function<
-			Judgement(const score::Note* note, JudgeState state, double inputTime)
+		using end_judge_func_t = std::function<
+			judgefunc_return_t(
+				const score::Note* note,
+				bool keyState,
+				double inputTime
+			)
+		>;
+		
+		// for missed judge
+		using missed_judge_func_t = std::function<
+			judgefunc_return_t(
+				const score::Note* note,
+				double inputTime
+			)
 		>;
 
 	
 		TimingJudge(
 			const notes_t &_notes,
-			const judge_beg_func_t &_judgeBegFunc = defaultJudgeBegFunc,
-			const judge_end_func_t &_judgeEndFunc = defaultJudgeEndFunc,
+			const beg_judge_func_t &_judgeBegFunc = defaultBegJudgeFunc,
+			const end_judge_func_t &_judgeEndFunc = defaultEndJudgeFunc,
+			const missed_judge_func_t &_judgeMissedFunc = defaultMissedJudgeFunc,
 			double enumRangeSec = 1.0 // amplitude
 		) noexcept;
 
@@ -71,40 +94,59 @@ namespace musicgame {
 
 		bool create(
 			const notes_t &_notes,
-			const judge_beg_func_t &_judgeBegFunc = defaultJudgeBegFunc,
-			const judge_end_func_t &_judgeEndFunc = defaultJudgeEndFunc,
+			const beg_judge_func_t &_judgeBegFunc = defaultBegJudgeFunc,
+			const end_judge_func_t &_judgeEndFunc = defaultEndJudgeFunc,
+			const missed_judge_func_t &_judgeMissedFunc = defaultMissedJudgeFunc,
 			double enumRangeSec = 1.0 // amplitude
 		) noexcept;
 
 		void clear();
 
-		const JudgeResult& judge(double inputSec, bool keyState, int keyNum) noexcept;
+		std::vector<const JudgeResult*> judge(
+			double inputSec, bool keyState, int keyNum
+		) noexcept;
 
-
+	
 	private:
 		std::array<notes_t, score::numofLanes> notes;
 		std::array<notes_t::const_iterator, score::numofLanes> enumBegNote;
 
-		judge_beg_func_t judgeBegFunc;
-		judge_end_func_t judgeEndFunc;
-
-		bool isReady;
+		beg_judge_func_t begJudgeFunc;
+		end_judge_func_t endJudgeFunc;
+		missed_judge_func_t missedJudgeFunc;
+	
 		double enumRangeSec;
 
-		std::vector<JudgeResult> result;
-
-		std::array<score::Note*, 4> judgingNote;
-
-		JudgeResult dummyResult;
+		std::array<const score::Note*, 4> judgingNote;
+		
+		std::vector<JudgeResult> results;
 
 		void init();
-
-		static Judgement defaultJudgeBegFunc(
-			const std::vector<const score::Note*> &notes, double inputTime
+		void enumJudgeNotes(
+			std::vector<const score::Note*> &notes,
+			notes_t::const_iterator begin,
+			notes_t::const_iterator end,
+			double inputSec,
+			double rangeSec
+		);
+		
+		void createAdditionalResults(
+			std::vector<const JudgeResult*> &v,
+			size_t begIndex
 		);
 
-		static Judgement defaultJudgeEndFunc(
-			const score::Note* note, JudgeState state, double inputTime
+		static judgefunc_return_t defaultBegJudgeFunc(
+			const std::vector<const score::Note*> &notes,
+			double inputTime
+		);
+
+		static judgefunc_return_t defaultEndJudgeFunc(
+			const score::Note* note, bool keyState, double inputTime
+		);
+		
+		static judgefunc_return_t defaultMissedJudgeFunc(
+			const score::Note* note,
+			double inputTime
 		);
 
 		
