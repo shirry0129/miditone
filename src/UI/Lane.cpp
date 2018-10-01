@@ -6,7 +6,7 @@ namespace ui {
      Constructor
      */
     LaneBG::LaneBG():
-    laneBegin(Window::Width()/2, -200),
+    laneBegin(Window::Width()/2, -500),
     interval(300, 0),
     leftEnd(360,Window::Height()),
     rightEnd(leftEnd + interval * 4)
@@ -66,7 +66,7 @@ namespace ui {
         
         // draw guide
         for(auto i:step(5)){
-            guide[i].draw(LineStyle::RoundCap, (i == 0 || i == 4) ? 8 : 2, Palette::Orange);
+            guide[i].draw(LineStyle::RoundCap, (i == 0 || i == 4) ? 8 : 1, (i == 0 || i == 4) ? Color(255, 165, 0) : Color(255, 165, 0, 127));
         }
         decisionLine.draw(LineStyle::RoundCap, 8, Palette::Orange);
     }
@@ -79,7 +79,7 @@ namespace ui {
      @return 係数
      */
     factor LaneBG::getFactor(size_t guide) {
-        return {slope[guide], intercept[guide]};
+        return {slope.at(guide), intercept.at(guide)};
     }    
     
     LaneBG* LaneBG::instance = nullptr;
