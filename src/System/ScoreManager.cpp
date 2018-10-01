@@ -60,6 +60,9 @@ namespace score {
 
 		int hitCount = 0;
 		int holdCount = 0;
+		std::array<int, numofLanes> laneNoteCnt;
+		for (auto &n : laneNoteCnt)
+			n = 0;
 
 		for (const auto &e : event) {
 
@@ -74,11 +77,12 @@ namespace score {
 				sec1 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
-					NoteType::HIT, e.lane, hitCount + holdCount, 
+					NoteType::HIT, e.lane, hitCount + holdCount, laneNoteCnt.at(e.lane),
 					NoteTime(e.bar, sec1), NoteTime(e.bar, sec1)
 				);
 
 				hitCount++;
+				laneNoteCnt.at(e.lane)++;
 
 				break;
 			case 2: // hold begin
@@ -92,12 +96,13 @@ namespace score {
 				sec2 = timeConv.calcSec(e.getBarLength());
 
 				notes.emplace_back(
-					NoteType::HOLD, e.lane, hitCount + holdCount, 
+					NoteType::HOLD, e.lane, hitCount + holdCount, laneNoteCnt.at(e.lane),
 					NoteTime(e.bar, sec1), NoteTime(e.bar, sec2)
 				);
 
 				lastHoldBegin.at(e.lane) = nullptr;  // end reference
 				holdCount++;
+				laneNoteCnt.at(e.lane)++;
 
 				break;
 			default:
@@ -111,6 +116,7 @@ namespace score {
 		numofBars = event.back().bar;
 		numofHits = hitCount;
 		numofHolds = holdCount;
+		numofNotesInLane = laneNoteCnt;
 		path.assign(file);
 
 		header.difficulty = difficulty;
@@ -220,6 +226,8 @@ namespace score {
 		tempo.clear();
 		beat.clear();
 		bar.clear();
+		for (auto &n : numofNotesInLane)
+			n = 0;
 	}
 
 

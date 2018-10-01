@@ -8,8 +8,8 @@ date	: 2018/9/20
 */
 
 
-#ifndef _SCORE_HPP_
-#define _SCORE_HPP_
+#ifndef _SCOREMANAGER_HPP_
+#define _SCOREMANAGER_HPP_
 
 #include "ScoreReader.hpp"
 #include "ScoreTimeConverter.hpp"
@@ -41,13 +41,15 @@ namespace score {
 
 	struct Note {
 		Note(
-			NoteType _type, int _lane, int _index, 
+			NoteType _type, int _lane, int _index, int _indexInLane,
 			const NoteTime &time_begin, const NoteTime &time_end) noexcept
-			: type(_type), lane(_lane), index(_index), t_beg(time_begin), t_end(time_end) {}
+			: type(_type), lane(_lane), index(_index), indexInLane(_indexInLane),
+			t_beg(time_begin), t_end(time_end) {}
 		
 		const NoteType type;
 		const int lane;
 		const int index;
+		const int indexInLane;
 		const NoteTime t_beg;
 		const NoteTime t_end;
 	};
@@ -134,6 +136,8 @@ namespace score {
 		int numofBars;
 		int numofHolds;
 		int numofHits;
+		std::array<int, numofLanes> numofNotesInLane;
+		
 		ScoreManager::Header header;
 
 		std::vector<Tempo> tempo;
@@ -147,4 +151,4 @@ namespace score {
 
 }
 
-#endif // !_SCORE_HPP_
+#endif // !_SCOREMANAGER_HPP_
