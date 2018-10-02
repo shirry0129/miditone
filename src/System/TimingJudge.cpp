@@ -29,7 +29,7 @@ namespace musicgame {
 		if (_enumRangeSec <= 0.0)
 			return false;
 
-		init();
+		initAll();
 
 
 		// update member variable	
@@ -44,14 +44,8 @@ namespace musicgame {
 			if (n.type == score::NoteType::HOLD)
 				holdCnt++;
 		}
-
-
-		for (size_t i = 0; i < score::numofLanes; i++) {
-			if (!notes.at(i).empty())
-				enumBegNote.at(i) = notes.at(i).begin();
-			else
-				enumBegNote.at(i) = notes.at(i).end();
-		}
+		
+		initJudge();
 		
 		results.reserve(_notes.size() + holdCnt);
 		
@@ -60,14 +54,14 @@ namespace musicgame {
 	};
 
 	void TimingJudge::clear() {
-		init();
+		initAll();
 	}
 
 	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec, bool keyState, int keyNum) noexcept {
 		std::vector<const JudgeResult*> addition;
 		const size_t numofResults = results.size();
 		
-		if (keyNum < 0 || keyNum > score::numofLanes) {
+		if (keyNum < 0 || keyNum >= score::numofLanes) {
 			createAdditionalResults(addition, numofResults);
 			return addition;
 		}
@@ -187,19 +181,43 @@ namespace musicgame {
 		return results;
 	}
 	
-	const score::Note &TimingJudge::getJudgeStartNote(int laneNum) const noexcept {
-		return *enumBegNote.at(laneNum);
+	const score::Note *TimingJudge::getJudgeStartNote(int keyNum) const noexcept {
+		if (keyNum < 0 || keyNum >= score::numofLanes)
+			return nullptr;
+		
+		if (enumBegNote.at(keyNum) == notes.at(keyNum).cend())
+			return nullptr;
+		else
+			return &*enumBegNote.at(keyNum);
 	}
 	
+	void TimingJudge::restart() noexcept {
+		size_t capacity = results.capacity();
+		initJudge();
+		results.reserve(capacity);
+	}
 
 
-	void TimingJudge::init() {
+	void TimingJudge::initAll() {
 		results.clear();
 		for (auto &n : notes)
 			n.clear();
 		for (auto &n : judgingNote)
 			n = nullptr;
 		enumRangeSec = 0.0;
+	}
+	
+	void TimingJudge::initJudge() {
+		for (auto &n : judgingNote)
+			n = nullptr;
+		results.clear();
+		
+		for (size_t i = 0; i < score::numofLanes; i++) {
+			if (!notes.at(i).empty())
+				enumBegNote.at(i) = notes.at(i).begin();
+			else
+				enumBegNote.at(i) = notes.at(i).end();
+		}
 	}
 	
 	void TimingJudge::createAdditionalResults(
