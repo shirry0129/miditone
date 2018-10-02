@@ -87,7 +87,7 @@ namespace musicgame {
 			const beg_judge_func_t &_judgeBegFunc = defaultBegJudgeFunc,
 			const end_judge_func_t &_judgeEndFunc = defaultEndJudgeFunc,
 			const missed_judge_func_t &_judgeMissedFunc = defaultMissedJudgeFunc,
-			double enumRangeSec = 1.0 // amplitude
+			double _enumRangeSec = 1.0 // amplitude
 		) noexcept;
 
 		~TimingJudge();
@@ -98,7 +98,7 @@ namespace musicgame {
 			const beg_judge_func_t &_judgeBegFunc = defaultBegJudgeFunc,
 			const end_judge_func_t &_judgeEndFunc = defaultEndJudgeFunc,
 			const missed_judge_func_t &_judgeMissedFunc = defaultMissedJudgeFunc,
-			double enumRangeSec = 1.0 // amplitude
+			double _enumRangeSec = 1.0 // amplitude
 		) noexcept;
 
 		void clear();
@@ -108,7 +108,9 @@ namespace musicgame {
 		) noexcept;
 		
 		const std::vector<JudgeResult> &getResults() const noexcept;
-		const score::Note &getJudgeStartNote(int laneNum) const noexcept;
+		const score::Note *getJudgeStartNote(int keyNum) const noexcept;
+		
+		void restart() noexcept;
 
 	
 	private:
@@ -125,7 +127,9 @@ namespace musicgame {
 		
 		std::vector<JudgeResult> results;
 
-		void init();
+		void initAll();
+		void initJudge();
+		
 		void enumJudgeNotes(
 			std::vector<const score::Note*> &notes,
 			notes_t::const_iterator begin,
