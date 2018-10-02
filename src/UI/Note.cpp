@@ -14,7 +14,7 @@ namespace ui {
 		ui::LaneBG& inst = ui::LaneBG::getInstance();
 	
 		float nextY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
-		float height = 10;
+		float height = 60 * (1. / 1250. * nextY + 0.2);
 		
 		if (nextY - height/2 < 0) {
 			note.set(0,0,0,0,0,0,0,0);
@@ -81,7 +81,7 @@ namespace ui {
 	
 	void Note::draw() {
 		if(note.p3.y > 0 && note.p0.y < Window::Height()){
-			note.draw(Palette::Red);
+			note.draw(Palette::Papayawhip);
 		}
 	}
 	

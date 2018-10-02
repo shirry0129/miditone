@@ -66,7 +66,11 @@ namespace ui {
         
         // draw guide
         for(auto i:step(5)){
-            guide[i].draw(LineStyle::RoundCap, (i == 0 || i == 4) ? 8 : 1, (i == 0 || i == 4) ? Color(255, 165, 0) : Color(255, 165, 0, 127));
+            if(i == 0 || i == 4){
+                guide[i].draw(8, Palette::Orange);
+            }else{
+                guide[i].draw(1, Color(Palette::Orange, 127));
+            }
         }
         decisionLine.draw(LineStyle::RoundCap, 8, Palette::Orange);
     }
