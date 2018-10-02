@@ -71,7 +71,7 @@ namespace score {
 
 
 			// assign time of selected event.
-			ScoreTime *endScoreTime;
+			ScoreTime *endScoreTime = nullptr;
 			switch (event) {
 			case EventType::BEAT:
 				endBarLen = beatEvent->getBarLength();
