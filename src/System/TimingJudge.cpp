@@ -4,6 +4,8 @@
 
 namespace musicgame {
 
+	TimingJudge::TimingJudge() noexcept {}
+
 	TimingJudge::TimingJudge(
 		// arguments
 		const notes_t &_notes,

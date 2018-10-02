@@ -80,6 +80,7 @@ namespace musicgame {
 			)
 		>;
 
+		TimingJudge() noexcept;
 	
 		TimingJudge(
 			const notes_t &_notes,
