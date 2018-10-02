@@ -106,6 +106,9 @@ namespace musicgame {
 		std::vector<const JudgeResult*> judge(
 			double inputSec, bool keyState, int keyNum
 		) noexcept;
+		
+		const std::vector<JudgeResult> &getResults() const noexcept;
+		const score::Note &getJudgeStartNote(int laneNum) const noexcept;
 
 	
 	private:

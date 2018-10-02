@@ -183,6 +183,14 @@ namespace musicgame {
 		return addition;
 	}
 
+	const std::vector<JudgeResult> &TimingJudge::getResults() const noexcept {
+		return results;
+	}
+	
+	const score::Note &TimingJudge::getJudgeStartNote(int laneNum) const noexcept {
+		return *enumBegNote.at(laneNum);
+	}
+	
 
 
 	void TimingJudge::init() {
