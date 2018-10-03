@@ -3,26 +3,28 @@
 
 namespace score {
 
-	ScoreManager::ScoreManager() noexcept {}
+	ScoreManager::ScoreManager() noexcept
+		: prevError(State::S_OK, createErrMessage) {}
 
-	ScoreManager::ScoreManager(const char *file, Difficulty difficulty) {
+	ScoreManager::ScoreManager(const std::string &file, Difficulty difficulty)
+		: prevError(State::S_OK, createErrMessage) {
 		create(file, difficulty);
 	}
 
 	ScoreManager::~ScoreManager() {}
 
-	bool ScoreManager::create(const char *file, Difficulty difficulty) {
+	score_err_t ScoreManager::create(const std::string &file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
 
-
-		ScoreReader reader(file);
+		reader.open(file.c_str());
 
 		// read header
 		score::Header h;
-		if (ScoreReader::failed(reader.readHeader(h, "header")))
-			return false;
+		
+		if (reader.readHeader(h, "header").isError())
+			return prevError = State::E_READER_FAILED;
 
 
 		// create chunk name of difficulty
@@ -39,21 +41,23 @@ namespace score {
 			chunkName = "hard";
 			break;
 		default:
-			return false;
+			return prevError = State::E_INVALID_ARGUMENT;
 		}
 
 
 		// read note data
 		std::vector<NoteEvent> event;
-		if (ScoreReader::failed(reader.readNote(event, chunkName)))
-			return false;
+		
+		if (reader.readNote(event, chunkName).isError())
+			return prevError = State::E_READER_FAILED;
 
 
 		// create note timing data
 		std::array<const NoteEvent*, numofLanes> lastHoldBegin;
 
 		if (!timeConv.create(h.beat, h.tempo))
-			return false;
+			return prevError = State::E_INVALID_TEMPO_BEAT;
+		
 
 		double sec1 = 0.0f;
 		double sec2 = 0.0f;
@@ -67,7 +71,7 @@ namespace score {
 		for (const auto &e : event) {
 
 			if (e.lane < 0 || e.lane > 3)
-				return false;	// invalied lane
+				return prevError = State::E_INVALID_LANE;	// invalied lane
 
 
 			switch (e.type) {
@@ -107,7 +111,7 @@ namespace score {
 				break;
 			default:
 				// invalied note type
-				return false;
+				return prevError = State::E_INVALID_NOTE;
 			}
 		}
 
@@ -141,10 +145,10 @@ namespace score {
 		}
 
 		
-		return true;
+		return prevError = State::S_OK;
 	}
 
-	bool ScoreManager::recreate() {
+	score_err_t ScoreManager::recreate() {
 		return create(path.c_str(), header.difficulty);
 	}
 
@@ -163,7 +167,18 @@ namespace score {
 	int ScoreManager::getNumofHits() const noexcept {
 		return numofHits;
 	}
-
+	
+	int ScoreManager::getNumofNotes() const noexcept {
+		return numofHits + numofHolds;
+	}
+	
+	int ScoreManager::getNumofLaneNotes(int laneNum) const noexcept {
+		if (laneNum < 0 || laneNum >= numofLanes)
+			return 0;
+		
+		return numofNotesInLane.at(laneNum);
+	}
+	
 	const std::vector<Tempo>& ScoreManager::getTempo() const noexcept {
 		return tempo;
 	}
@@ -214,6 +229,15 @@ namespace score {
 	const score::ScoreTimeConverter &ScoreManager::getConverter() const noexcept {
 		return timeConv;
 	}
+	
+	const Error<ScoreManager::State> &ScoreManager::getLastError() const noexcept {
+		return prevError;
+	}
+	
+	const ScoreReader &ScoreManager::getReader() const noexcept {
+		return reader;
+	}
+	
 
 	void ScoreManager::init() {
 		notes.clear();
@@ -226,10 +250,38 @@ namespace score {
 		tempo.clear();
 		beat.clear();
 		bar.clear();
+		prevError = State::S_OK;
 		for (auto &n : numofNotesInLane)
 			n = 0;
 	}
 
+
+	std::string ScoreManager::createErrMessage(State state) {
+		std::string msg;
+	
+		switch (state) {
+		  case State::S_OK:
+			msg += "成功";
+			return msg;
+		  case State::E_INVALID_ARGUMENT:
+		  	msg += "無効な引数です";
+		  	return msg;
+		  case State::E_INVALID_NOTE:
+		  	msg += "無効なノーツが存在します";
+		  	return msg;
+		  case State::E_READER_FAILED:
+		  	msg += "譜面の読み取りに失敗しました";
+		  	return msg;
+		  case State::E_INVALID_TEMPO_BEAT:
+		  	msg += "テンポまたは拍子が無効です";
+		  	return msg;
+		  case State::E_INVALID_LANE:
+		    msg += "無効なレーンが存在します";
+		    return msg;
+		  default:
+		  	return msg;
+		}
+	}
 
 	
 
