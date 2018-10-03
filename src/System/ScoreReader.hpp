@@ -115,11 +115,36 @@ namespace score {
 
 		Error<State> readNote(std::vector<NoteEvent> &notes, const std::basic_string<char_type> &chunkName);
 		
+		/**
+		  最後に読み込んだ行の行数を返す
+
+		  @return 行数
+		*/
 		size_t getCurrentLine() const noexcept;
+		
+		
+		/**
+		 現在読み込んでいるチャンク名を返す
+
+		 @return チャンク名(begin:***の***の部分)を返す
+		 */
 		std::basic_string<char_type> getCurrentChunk() const noexcept;
 		
+		
+		/**
+		 最後に発生したエラーを返す
+		 note:成功もエラーの一部になります
+
+		 @return エラーを格納したErrorのオブジェクト
+		 */
 		const Error<State> &getLastError() const noexcept;
 		
+		
+		/**
+		 現在読み込んでいる1行の内容を返す
+
+		 @return 譜面ファイル内のどこかの1行
+		 */
 		const std::array<char_type, buffer_size> &getBuffer() const noexcept;
 
 	private:
