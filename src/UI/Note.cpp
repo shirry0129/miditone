@@ -6,15 +6,32 @@
 //
 
 #include "Note.hpp"
-#include "Lane.hpp"
 
 namespace ui {
 	
-	void Note::hitLocateUpdate(double currentTime) {
-		ui::LaneBG& inst = ui::LaneBG::getInstance();
+	Note::Note(size_t _laneNum, float _speed):
+		laneNum(_laneNum),
+		speed(_speed),
+		inst(ui::LaneBG::getInstance()){}
 	
-		float nextY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
+	void Note::draw() {
+		if(note.p3.y > 0 && note.p0.y < Window::Height()){
+			note.draw(Palette::Papayawhip);
+		}
+	}
+	
+	
+	
+	
+	HitNote::HitNote(size_t _laneNum, float _judgeTime, float _speed):
+		Note(_laneNum, _speed),
+		judgeTime(_judgeTime){}
+	
+	void HitNote::update(double currentTime) {
+		float nextY = ui::laneEnd - ((judgeTime - currentTime) * ui::laneEnd * speed);
 		float height = 60 * (1. / 1250. * nextY + 0.2);
+		
+		//speed *= (note.p0.y - height / 2) * (1./2000.) + 0.5;
 		
 		if (nextY - height/2 < 0) {
 			note.set(0,0,0,0,0,0,0,0);
@@ -29,17 +46,25 @@ namespace ui {
 		note.set(tl, tr, br, bl);
 	}
 	
-	void Note::holdLocateUpdate(double currentTime) {
-		ui::LaneBG& inst = ui::LaneBG::getInstance();
-		
+	
+	
+	
+	HoldNote::HoldNote(size_t _laneNum, float _startTime, float _endTime, float _speed):
+		Note(_laneNum, _speed),
+		startTime(_startTime),
+		endTime(_endTime){}
+	
+	void HoldNote::update(double currentTime) {
 		float bottomY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
+		
+		float topY = ui::laneEnd - ((endTime - currentTime) * ui::laneEnd * speed);
+		
+		//speed *= note.p0.y * (1./2000.) + 0.5;
 		
 		if (bottomY < 0) {
 			note.set(0, 0, 0, 0, 0, 0, 0, 0);
 			return;
 		}
-		
-		float topY = ui::laneEnd - ((endTime - currentTime) * ui::laneEnd * speed);
 		
 		if(topY < 0) {
 			topY = 0;
@@ -50,39 +75,7 @@ namespace ui {
 		Vec2 bl(inst.getFactor(laneNum).slope * bottomY + inst.getFactor(laneNum).intercept + 1, bottomY);
 		Vec2 br(inst.getFactor(laneNum + 1).slope * bottomY + inst.getFactor(laneNum + 1).intercept - 1, bottomY);
 		
-		note.set(tl, tr, br, bl);;
-	}
-	
-	Note::Note(int _laneNum, float _startTime, float _speed):
-		laneNum(_laneNum),
-		startTime(_startTime),
-		endTime(0),
-		speed(_speed),
-		nType(score::NoteType::HIT){}
-	
-	Note::Note(int _laneNum, float _startTime, float _endTime, float _speed):
-		laneNum(_laneNum),
-		startTime(_startTime),
-		endTime(_endTime),
-		speed(_speed),
-		nType(score::NoteType::HOLD){}
-	
-	void Note::update(double currentTime) {
-		switch (nType) {
-			case score::NoteType::HIT:
-				hitLocateUpdate(currentTime);
-				break;
-				
-			case score::NoteType::HOLD:
-				holdLocateUpdate(currentTime);
-				break;
-		};
-	}
-	
-	void Note::draw() {
-		if(note.p3.y > 0 && note.p0.y < Window::Height()){
-			note.draw(Palette::Papayawhip);
-		}
+		note.set(tl, tr, br, bl);
 	}
 	
 }

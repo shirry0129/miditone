@@ -17,11 +17,13 @@ namespace ui {
     
     class Score {
     private:
-        Array<Note> score;
+        Array<HitNote> hit;
+        Array<HoldNote> hold;
+        Array<Note*> score;
         
     public:
-        ~Score() = default;
         Score(const std::vector<score::Note>& _fromFile, float _speed);
+        ~Score() = default;
         void setFromFile(const std::vector<score::Note>& _fromFile, float _speed);
         
         void update(double currentTime);

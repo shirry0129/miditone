@@ -9,32 +9,46 @@
 #define Notes_hpp
 
 #include <Siv3D.hpp>
+#include "Lane.hpp"
 #include "../System/ScoreManager.hpp"
 
 namespace ui{
     
     class Note {
-    private:
+    protected:
         Texture looks;
         size_t laneNum;
-        float startTime;
-        float endTime;
         float speed;
-        const score::NoteType nType;
         Quad note;
-        
-        void hitLocateUpdate(double currentTime);
-        void holdLocateUpdate(double currentTime);
+        LaneBG& inst;
         
     public:
-        Note(int _laneNum, float _startTime, float _speed);
-        Note(int _laneNum, float _startTime, float _endTime, float _speed);
+        Note(size_t _laneNum, float _speed);
         ~Note() = default;
         
-        void update(double currentTime);
-        void draw();
+        virtual void update(double currentTime) = 0;
+        virtual void draw() final;
     };
     
+    class HitNote final : public Note {
+    private:
+        float height;
+        
+    public:
+        const float judgeTime;
+        HitNote(size_t _laneNum, float _judgeTime, float _speed);
+        
+        virtual void update(double currentTime) override;
+    };
+    
+    class HoldNote final : public Note {
+    public:
+        const float startTime;
+        const float endTime;
+        
+        HoldNote(size_t _laneNum, float _startTime, float _endTime, float _speed);
+        virtual void update(double currentTime) override;
+    };
 }
 
 #endif /* Notes_hpp */
