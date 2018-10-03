@@ -78,6 +78,26 @@ namespace score {
 	bool operator!=(const Error<T> &L, const Error<T> &R) {
 		return !(L == R);
 	}
+	
+	template<class T>
+	bool operator==(const Error<T> &L, const T &R) {
+		return L.get() == R;
+	}
+	
+	template<class T>
+	bool operator!=(const Error<T> &L, const T &R) {
+		return !(L == R);
+	}
+	
+	template<class T>
+	bool operator==(const T &L, const Error<T> &R) {
+		return L == R.get();
+	}
+	
+	template<class T>
+	bool operator!=(const T &L, const Error<T> &R) {
+		return !(L == R);
+	}
 
 
 }
