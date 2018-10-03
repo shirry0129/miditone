@@ -78,11 +78,18 @@ namespace score {
 		const int barCnt;
 	};
 
-
-
-
 	class ScoreManager {
 	public:
+		
+		enum class State {
+			S_OK = 0,
+			E_INVALID_ARGUMENT = -1,
+			E_INVALID_NOTE = -2,
+			E_READER_FAILED = -3,
+			E_INVALID_TEMPO_BEAT = -4,
+			E_INVALID_LANE = -5
+		};
+	
 		struct Header {
 			std::basic_string<char_type> title;
 			std::basic_string<char_type> artist;
@@ -99,17 +106,19 @@ namespace score {
 
 	
 		ScoreManager() noexcept;
-		ScoreManager(const char *file, Difficulty difficulty);
+		ScoreManager(const std::string &file, Difficulty difficulty);
 		~ScoreManager();
 
-		bool create(const char *file, Difficulty difficulty);
-		bool recreate();
+		Error<State> create(const std::string &file, Difficulty difficulty);
+		Error<State> recreate();
 
 		void clear();
 
 		int getNumofBars() const noexcept;
 		int getNumofHolds() const noexcept;
 		int getNumofHits() const noexcept;
+		int getNumofNotes() const noexcept;
+		int getNumofLaneNotes(int laneNum) const noexcept;
 
 		const std::vector<Tempo>& getTempo() const noexcept;
 		float getTempo(double sec) const noexcept;
@@ -125,29 +134,42 @@ namespace score {
 		const std::vector<Note> &getNotes() const noexcept;
 
 		const score::ScoreTimeConverter &getConverter() const noexcept;
-
+		
+		const Error<ScoreManager::State> &getLastError() const noexcept;
+		
+		const ScoreReader &getReader() const noexcept;
+		
 	private:
+	
+		ScoreReader reader;
+	
 		std::vector<Note> notes;
 
 		std::basic_string<char_type> path;
 
 		score::ScoreTimeConverter timeConv;
+		
+		static std::string createErrMessage(State state);
 
 		int numofBars;
 		int numofHolds;
 		int numofHits;
 		std::array<int, numofLanes> numofNotesInLane;
 		
+
 		ScoreManager::Header header;
 
 		std::vector<Tempo> tempo;
 		std::vector<Beat> beat;
 		std::vector<Bar> bar;
-
+		
+		Error<ScoreManager::State> prevError;
+		
 		void init();
 
 	};
 
+	using score_err_t = Error<ScoreManager::State>;
 
 }
 

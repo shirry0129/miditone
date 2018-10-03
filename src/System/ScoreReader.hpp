@@ -18,6 +18,7 @@ This class reads the score file of music game
 #include <vector>
 
 #include "Fraction.hpp"
+#include "Error.hpp"
 
 
 namespace score {
@@ -91,12 +92,12 @@ namespace score {
 			E_UNEXPECTED_STRING = -4,		// when read header or note data
 			E_SET_NOFILE = -5,				// after constructed
 			E_EMBED_NO_BEAT_OR_TEMPO = -6,	// when read header
-			E_CANNOT_FIND_CHUNK = -7		// when move file pointer
+			E_CANNOT_FIND_CHUNK = -7,		// when move file pointer
 		};
 
-		static bool success(State s);
-		static bool failed(State s);
-		static bool readable(State s);
+		static bool success(Error<State> s);
+		static bool failed(Error<State> s);
+		static bool readable(Error<State> s);
 		
 	
 		ScoreReader();
@@ -104,16 +105,22 @@ namespace score {
 		ScoreReader(const char *file, char_type delim = ':');
 		~ScoreReader();
 
-		State open(const wchar_t *file);
-		State open(const char * file);
+		Error<State> open(const wchar_t *file);
+		Error<State> open(const char * file);
 
 
 		void setDelim(char_type delim) noexcept;
 
-		State readHeader(Header &header, const std::basic_string<char_type> &chunkName);
+		Error<State> readHeader(Header &header, const std::basic_string<char_type> &chunkName);
 
-		State readNote(std::vector<NoteEvent> &notes, const std::basic_string<char_type> &chunkName);
-
+		Error<State> readNote(std::vector<NoteEvent> &notes, const std::basic_string<char_type> &chunkName);
+		
+		size_t getCurrentLine() const noexcept;
+		std::basic_string<char_type> getCurrentChunk() const noexcept;
+		
+		const Error<State> &getLastError() const noexcept;
+		
+		const std::array<char_type, buffer_size> &getBuffer() const noexcept;
 
 	private:
 		std::basic_ifstream<char_type> score;
@@ -121,9 +128,12 @@ namespace score {
 		Header header;
 		std::vector<NoteEvent> notes;
 
-		State prevState;
+		Error<State> prevState;
 		// name of chunk where exist current file pointer
 		std::basic_string<char_type> currentChunk;
+		
+		size_t currentLine;
+		
 		// whether process arguments
 		bool argProcessFlag;
 		char_type delim;
@@ -132,59 +142,63 @@ namespace score {
 
 
 		void init();
-		State processLine();
-		State moveToBegin();
+		Error<State> processLine();
+		Error<State> moveToBegin();
 		// move file pointer
-		State moveChunk(const std::basic_string<char_type> &chunkName);
+		Error<State> moveChunk(const std::basic_string<char_type> &chunkName);
 		
+		bool isFailReadLine(const std::basic_ifstream<char_type> &ifs);
+		
+		
+		static std::basic_string<char_type> createErrMessage(State state);
 
 
 		struct Command {
-			virtual State execute(ScoreReader &sr, const char_type *line) = 0;
+			virtual Error<State> execute(ScoreReader &sr, const char_type *line) = 0;
 		};
 
 		struct BeginCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct EndCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct IdCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct TitleCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct ArtistCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct GenreCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct LevelCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct TempoCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct BeatCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct NoteCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct NullCmd : Command {
-			State execute(ScoreReader &sr, const char_type *line) override;
+			Error<State> execute(ScoreReader &sr, const char_type *line) override;
 		};
 
 		struct CommandManager {
@@ -206,9 +220,9 @@ namespace score {
 
 		} cmdMng;
 
-
-	
 	};
+	
+	using scorereader_err_t = Error<ScoreReader::State>;
 
 }
 
