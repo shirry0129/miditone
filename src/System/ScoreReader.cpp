@@ -11,44 +11,47 @@
 namespace score {
 
 
-	bool ScoreReader::success(State s) {
-		return static_cast<int>(s) >= 0;
+	bool ScoreReader::success(Error<State> s) {
+		return s.getCode() >= 0;
 	}
 
-	bool ScoreReader::failed(State s) {
-		return static_cast<int>(s) < 0;
+	bool ScoreReader::failed(Error<State> s) {
+		return s.getCode() < 0;
 	}
 
-	bool ScoreReader::readable(State s) {
-		return (s != State::E_SET_NOFILE && s != State::E_CANNOT_OPEN_FILE);
+	bool ScoreReader::readable(Error<State> s) {
+		return (s.get() != State::E_SET_NOFILE && s.get() != State::E_CANNOT_OPEN_FILE);
 	}
 
 	
 
 
-	ScoreReader::ScoreReader() {
+	ScoreReader::ScoreReader()
+		: prevState(State::E_SET_NOFILE, createErrMessage) {
 		init();
 	}
 
-	ScoreReader::ScoreReader(const wchar_t *file, char_type delim) {
+	ScoreReader::ScoreReader(const wchar_t *file, char_type delim)
+		: prevState(State::E_SET_NOFILE, createErrMessage) {
 		prevState = open(file);
 		this->delim = delim;
 	}
 
-	ScoreReader::ScoreReader(const char *file, char_type delim) {
+	ScoreReader::ScoreReader(const char *file, char_type delim)
+		: prevState(State::E_SET_NOFILE, createErrMessage)  {
 		prevState = open(file);
 		this->delim = delim;
 	}
 
 	ScoreReader::~ScoreReader() {}
 
-	ScoreReader::State ScoreReader::open(const wchar_t * file) {
+	Error<ScoreReader::State> ScoreReader::open(const wchar_t * file) {
 		char path[256];
 		wcstombs(path, file, 256);
 		return open(path);
 	}
 
-	ScoreReader::State ScoreReader::open(const char *file) {
+	Error<ScoreReader::State> ScoreReader::open(const char *file) {
 		// init
 		char_type d = delim;
 		init();
@@ -64,8 +67,8 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::moveChunk(const std::basic_string<char_type> &chunkName) {
-		if (!readable(prevState))
+	Error<ScoreReader::State> ScoreReader::moveChunk(const std::basic_string<char_type> &chunkName) {
+		if (!readable(prevState.get()))
 			return prevState = State::E_SET_NOFILE;
 
 
@@ -89,7 +92,7 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
+	Error<ScoreReader::State> ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
 		if (!readable(prevState))
 			return prevState;
 
@@ -121,7 +124,7 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::readNote(std::vector<NoteEvent> &_notes, const std::basic_string<char_type> &chunkName) {
+	Error<ScoreReader::State> ScoreReader::readNote(std::vector<NoteEvent> &_notes, const std::basic_string<char_type> &chunkName) {
 		if (!readable(prevState))
 			return prevState;
 
@@ -147,6 +150,22 @@ namespace score {
 
 		return prevState = State::S_OK;
 	}
+	
+	size_t ScoreReader::getCurrentLine() const noexcept {
+		return currentLine;
+	}
+	
+	std::basic_string<char_type> ScoreReader::getCurrentChunk() const noexcept {
+		return currentChunk;
+	}
+	
+	const Error<ScoreReader::State> &ScoreReader::getLastError() const noexcept {
+		return prevState;
+	}
+	
+	const std::array<char_type, ScoreReader::buffer_size> &ScoreReader::getBuffer() const noexcept {
+		return buffer;
+	}
 
 	void score::ScoreReader::init() {
 
@@ -154,6 +173,7 @@ namespace score {
 			score.close();
 
 		currentChunk.erase(currentChunk.cbegin(), currentChunk.cend());
+		currentLine = 0;
 		prevState = State::E_SET_NOFILE;
 		delim = U':';
 		argProcessFlag = false;
@@ -172,12 +192,14 @@ namespace score {
 
 	}
 
-	ScoreReader::State ScoreReader::processLine() {
+	Error<ScoreReader::State> ScoreReader::processLine() {
+		currentLine++;
+	
 		// read a line
 		score.getline(buffer.data(), buffer.size());
 
-		// fstream can have read a whole line ? 
-		if (score.fail()) {
+		// fstream can have read a whole line ?
+		if (isFailReadLine(score)) {
 			score.clear(score.rdstate() & ~std::ios_base::failbit); // unset flag of fail
 			return prevState = State::E_CANNOT_READ_WHOLELINE;
 		}
@@ -187,7 +209,7 @@ namespace score {
 		if (cmd == nullptr)
 			return prevState = State::E_CANNOT_FIND_COMMAND;
 
-		//// execute
+		// execute
 		cmd->execute(*this, buffer.data());
 		return prevState;
 	}
@@ -196,23 +218,68 @@ namespace score {
 		delim = _delim;
 	}
 
-	ScoreReader::State score::ScoreReader::moveToBegin() {
+	Error<ScoreReader::State> score::ScoreReader::moveToBegin() {
 		if (failed(prevState))
 			return prevState;
 
 		score.seekg(0, std::ios_base::beg);
 		currentChunk = "";
+		currentLine = 0;
 
 		argProcessFlag = false;
 
 		return prevState = State::S_OK;
 	}
+	
+	std::string ScoreReader::createErrMessage(State state) {
+		std::basic_string<char_type> msg;
+	
+		switch (state) {
+		  case State::S_REACH_CHUNK_END:
+			msg += "チャンクの終端に達しました";
+			return msg;
+		  case State::S_OK:
+		  	msg += "成功";
+		  	return msg;
+		  case State::E_CANNOT_OPEN_FILE:
+		  	msg += "ファイルを開けません";
+		  	return msg;
+		  case State::E_CANNOT_READ_WHOLELINE:
+		  	msg += "1行が長すぎます";
+		  	return msg;
+		  case State::E_CANNOT_FIND_COMMAND:
+		  	msg += "コマンドが見つかりませんでした";
+		  	return msg;
+		  case State::E_UNEXPECTED_STRING:
+		  	msg += "予期せぬ文字列が見つかりました";
+		  	return msg;
+		  case State::E_SET_NOFILE:
+		  	msg += "ファイルが設定されていません";
+		  	return msg;
+		  case State::E_EMBED_NO_BEAT_OR_TEMPO:
+		  	msg += "拍子またはテンポ情報が埋め込まれていません";
+			return msg;
+		  case State::E_CANNOT_FIND_CHUNK:
+		    msg += "チャンクが見つかりませんでした";
+		    return msg;
+		  default:
+			return msg;
+		}
+	}
+	
+	bool ScoreReader::isFailReadLine(const std::basic_ifstream<char_type> &ifs) {
+		if (!ifs.bad() && !ifs.eof() && ifs.fail())
+			return true;
+		else
+			return false;
+	}
+	
+	
 
 
 
 
-
-	ScoreReader::State ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
+	Error<ScoreReader::State> ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
 		if (sr.currentChunk != "")
 			return State::E_UNEXPECTED_STRING;
 
@@ -237,7 +304,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
+	Error<ScoreReader::State> ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
 		if (sr.prevState == State::S_REACH_CHUNK_END)
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 		
@@ -247,7 +314,7 @@ namespace score {
 		return sr.prevState = State::S_REACH_CHUNK_END;
 	}
 
-	ScoreReader::State ScoreReader::IdCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::IdCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -268,7 +335,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -291,7 +358,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -314,7 +381,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -337,7 +404,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -363,7 +430,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -405,7 +472,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -442,7 +509,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::NoteCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::NoteCmd::execute(ScoreReader & sr, const char_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
@@ -487,7 +554,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::State ScoreReader::NullCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::NullCmd::execute(ScoreReader & sr, const char_type * line) {
 		return sr.prevState = State::S_OK;
 	}
 
