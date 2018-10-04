@@ -15,8 +15,10 @@
 
 namespace math {
 
+	using int_type = int64_t;
+
 	struct frac_t {
-		int n, d;
+		int_type n, d;
 	};
 
 
@@ -24,14 +26,14 @@ namespace math {
 
 	public:
 		Fraction();
-		Fraction(int n, int d = 1);
+		Fraction(int_type n, int_type d = 1);
 		~Fraction();
 
-		Fraction &set(int n, int d = 1);
+		Fraction &set(int_type n, int_type d = 1);
 		frac_t get() const { return { numer, denom }; }
 
 		float to_f() const { return static_cast<float>(numer)/denom; }
-		int to_i() const { return numer/denom; }
+		int_type to_i() const { return numer/denom; }
 
 		std::string get_str() const { return std::to_string(numer) + '/' + std::to_string(denom); }
 
@@ -43,27 +45,27 @@ namespace math {
 
 		Fraction operator+() const;
 		Fraction operator-() const;
-		Fraction &operator=(int R);
+		Fraction &operator=(int_type R);
 		Fraction &operator+=(const Fraction &R);
-		Fraction &operator+=(int R);
+		Fraction &operator+=(int_type R);
 		Fraction &operator-=(const Fraction &R);
-		Fraction &operator-=(int R);
+		Fraction &operator-=(int_type R);
 		Fraction &operator*=(const Fraction &R);
-		Fraction &operator*=(int R);
+		Fraction &operator*=(int_type R);
 		Fraction &operator/=(const Fraction &R);
-		Fraction &operator/=(int R);
+		Fraction &operator/=(int_type R);
 
-		explicit operator int() const noexcept { return to_i();}
+		explicit operator int_type() const noexcept { return to_i(); }
 		explicit operator float() const noexcept { return to_f();}
 
 	private:
-		int numer;
-		int denom;
+		int_type numer;
+		int_type denom;
 	};
 
 
-	int gcd(int a, int b);
-	int lcm(int a, int b);
+	int_type gcd(int_type a, int_type b);
+	int_type lcm(int_type a, int_type b);
 
 	void adjustDenom(Fraction &a, Fraction &b);
 
@@ -133,7 +135,7 @@ namespace math {
 		Fraction fracR(R);
 
 		adjustDenom(fracL, fracR);
-		int ans_numer = fracL.get().n + fracR.get().n;
+		int_type ans_numer = fracL.get().n + fracR.get().n;
 
 		return Fraction(ans_numer, fracL.get().d);
 	}
@@ -144,7 +146,7 @@ namespace math {
 		Fraction fracR(R);
 
 		adjustDenom(fracL, fracR);
-		int ans_numer = fracL.get().n - fracR.get().n;
+		int_type ans_numer = fracL.get().n - fracR.get().n;
 
 		return Fraction(ans_numer, fracL.get().d);
 	}
@@ -155,8 +157,8 @@ namespace math {
 		Fraction fracL(L);
 		Fraction fracR(R);
 
-		int n = fracL.get().n * fracR.get().n;
-		int d = fracL.get().d * fracR.get().d;
+		int_type n = fracL.get().n * fracR.get().n;
+		int_type d = fracL.get().d * fracR.get().d;
 
 		return Fraction(n, d);
 	}
@@ -176,8 +178,8 @@ namespace math {
 			throw;
 		}
 
-		int n = fracL.get().n * fracR.get().d;
-		int d = fracL.get().d * fracR.get().n;
+		int_type n = fracL.get().n * fracR.get().d;
+		int_type d = fracL.get().d * fracR.get().n;
 
 		return Fraction(n, d);
 	}
