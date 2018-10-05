@@ -197,6 +197,14 @@ namespace score {
 	
 		// read a line
 		score.getline(buffer.data(), buffer.size());
+		
+		// remove CR
+		for (auto &ch : buffer) {
+			if (ch == '\r') {
+				ch = '\0';
+				break;
+			}
+		}
 
 		// fstream can have read a whole line ?
 		if (isFailReadLine(score)) {
