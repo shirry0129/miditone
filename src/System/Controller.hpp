@@ -55,6 +55,9 @@ namespace musicgame {
 		~Controller();
 		
 		bool create(size_t numofKeys);
+		void clear();
+		
+		size_t size() const noexcept;
 		
 		Key& key(size_t keyNum);
 		
