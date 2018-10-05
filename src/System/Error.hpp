@@ -30,8 +30,9 @@ namespace score {
 		
 		virtual ~Error() {}
 		
-		void assign(T value) noexcept {
+		const Error<T> &assign(T value) noexcept {
 			errorVal = value;
+			return *this;
 		}
 		
 		T get() const noexcept {

@@ -8,13 +8,13 @@ namespace math {
 
 	Fraction::Fraction() {}
 
-	Fraction::Fraction(int n, int d) {
+	Fraction::Fraction(int_type n, int_type d) {
 		set(n, d);
 	}
 
 
 
-	Fraction &Fraction::set(int n, int d) {
+	Fraction &Fraction::set(int_type n, int_type d) {
 
 		try {
 
@@ -44,7 +44,7 @@ namespace math {
 
 	Fraction &Fraction::reduce() {
 		if (numer != 0) {
-			int lcm_frac = gcd(denom, numer);
+			int_type lcm_frac = gcd(denom, numer);
 			denom /= lcm_frac;
 			numer /= lcm_frac;
 		}
@@ -62,7 +62,7 @@ namespace math {
 	}
 
 
-	Fraction & Fraction::operator=(int R) {
+	Fraction & Fraction::operator=(int_type R) {
 		return set(R);
 	}
 
@@ -73,7 +73,7 @@ namespace math {
 		return *this;
 	}
 
-	Fraction & Fraction::operator+=(int R) {
+	Fraction & Fraction::operator+=(int_type R) {
 		return this->operator+=(Fraction(R));
 	}
 
@@ -83,7 +83,7 @@ namespace math {
 		return *this;
 	}
 
-	Fraction & Fraction::operator-=(int R) {
+	Fraction & Fraction::operator-=(int_type R) {
 		return this->operator-=(Fraction(R));
 	}
 
@@ -93,7 +93,7 @@ namespace math {
 		return *this;
 	}
 
-	Fraction & Fraction::operator*=(int R) {
+	Fraction & Fraction::operator*=(int_type R) {
 		return this->operator*=(Fraction(R));
 	}
 
@@ -103,24 +103,24 @@ namespace math {
 		return *this;
 	}
 
-	Fraction & Fraction::operator/=(int R) {
+	Fraction & Fraction::operator/=(int_type R) {
 		return this->operator/=(Fraction(R));
 	}
 
 
-	int gcd(int a, int b) {
+	int_type gcd(int_type a, int_type b) {
 		if (a == 0 || b == 0)
 			return 0;
 
 		if (a < b) {
-			int tmp = a;
+			int_type tmp = a;
 			a = b;
 			b = tmp;
 		}
 
-		int r = a%b;
+		int_type r = a%b;
 		while (r != 0) {
-			int tmp = b%r;
+			int_type tmp = b%r;
 			b = r;
 			r = tmp;
 		}
@@ -128,16 +128,16 @@ namespace math {
 		return b;
 	}
 
-	int lcm(int a, int b) {
+	int_type lcm(int_type a, int_type b) {
 		return  a * b / gcd(a, b);
 	}
 
 	void adjustDenom(Fraction & a, Fraction & b) {	
 
-		int ans_denom = lcm(a.get().d, b.get().d);
+		int_type ans_denom = lcm(a.get().d, b.get().d);
 
-		int a_numer = (ans_denom/a.get().d)*a.get().n;
-		int b_numer = (ans_denom/b.get().d)*b.get().n;
+		int_type a_numer = (ans_denom/a.get().d)*a.get().n;
+		int_type b_numer = (ans_denom/b.get().d)*b.get().n;
 
 		a.set(a_numer, ans_denom);
 		b.set(b_numer, ans_denom);

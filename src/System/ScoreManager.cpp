@@ -1,6 +1,8 @@
 #include "ScoreManager.hpp"
 #include "ScoreTimeConverter.hpp"
 
+#include <list>
+
 namespace score {
 
 	ScoreManager::ScoreManager() noexcept
@@ -67,7 +69,9 @@ namespace score {
 		std::array<int, numofLanes> laneNoteCnt;
 		for (auto &n : laneNoteCnt)
 			n = 0;
-
+		
+		std::list<Note> unorderedNote;
+	
 		for (const auto &e : event) {
 
 			if (e.lane < 0 || e.lane > 3)
@@ -80,7 +84,7 @@ namespace score {
 			case 1: // hit
 				sec1 = timeConv.calcSec(e.getBarLength());
 
-				notes.emplace_back(
+				unorderedNote.emplace_back(
 					NoteType::HIT, e.lane, hitCount + holdCount, laneNoteCnt.at(e.lane),
 					NoteTime(e.bar, sec1), NoteTime(e.bar, sec1)
 				);
@@ -99,7 +103,7 @@ namespace score {
 			}
 				sec2 = timeConv.calcSec(e.getBarLength());
 
-				notes.emplace_back(
+				unorderedNote.emplace_back(
 					NoteType::HOLD, e.lane, hitCount + holdCount, laneNoteCnt.at(e.lane),
 					NoteTime(e.bar, sec1), NoteTime(e.bar, sec2)
 				);
@@ -114,8 +118,36 @@ namespace score {
 				return prevError = State::E_INVALID_NOTE;
 			}
 		}
-
-
+		
+		
+		// sort
+		unorderedNote.sort(
+			[](const Note& a, const Note&b) { return a.t_beg.sec < b.t_beg.sec; }
+		);
+	
+	
+		// add notes
+		hitCount = 0;
+		holdCount = 0;
+		for (auto &n : laneNoteCnt)
+			n = 0;
+		
+		notes.reserve(hitCount + holdCount);
+		for (const auto& n : unorderedNote) {
+			notes.emplace_back(
+				n.type, n.lane, hitCount + holdCount, laneNoteCnt.at(n.lane),
+				n.t_beg, n.t_end
+			);
+			
+			switch (n.type) {
+			  case NoteType::HIT: hitCount++; break;
+			  case NoteType::HOLD: holdCount++; break;
+			}
+			
+			laneNoteCnt.at(n.lane)++;
+		}
+		
+		
 		// update member variable
 		numofBars = event.back().bar;
 		numofHits = hitCount;

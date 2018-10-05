@@ -541,7 +541,7 @@ namespace score {
 		// create note data
 		int count = 0;
 		for (const auto t : timing) {
-			int type = std::atoi(&t);
+			int type = t - '0';
 			if (type != 0) {
 				sr.notes.emplace_back(
 					type, lane, bar, math::Fraction(count, static_cast<int>(timing.size())).reduce()
