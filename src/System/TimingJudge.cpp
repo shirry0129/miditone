@@ -4,7 +4,8 @@
 
 namespace musicgame {
 
-	TimingJudge::TimingJudge() noexcept {}
+	TimingJudge::TimingJudge() noexcept
+		: controller(4) {}
 
 	TimingJudge::TimingJudge(
 		// arguments
@@ -13,7 +14,9 @@ namespace musicgame {
 		const end_judge_func_t &_endJudgeFunc,
 		const missed_judge_func_t &_missedJudgeFunc,
 		double _enumRangeSec
-	) noexcept {
+	) noexcept :
+		controller(4)
+	{
 		create(_notes, _begJudgeFunc, _endJudgeFunc, _missedJudgeFunc, _enumRangeSec);
 	}
 
@@ -66,6 +69,10 @@ namespace musicgame {
 			return addition;
 		}
 
+		// update key state
+		Key &key = controller.key(keyNum);
+		key.update(keyState);
+
 		
 		// judge for missed notes
 		for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).cend(); it++) {
@@ -91,12 +98,12 @@ namespace musicgame {
 			// are judging the hold note
 
 			// judge
-			ret = endJudgeFunc(judgingNote.at(keyNum), keyState, inputSec);
+			ret = endJudgeFunc(judgingNote.at(keyNum), key.isOn(), inputSec);
 			
 		} else {
 			// are NOT judging the hold note
 			
-			if (!keyState) {
+			if (!key.isPressedMoment()) {
 				createAdditionalResults(addition, numofResults);
 				return addition;
 			}

@@ -16,6 +16,7 @@ Date	: 2018/9/26
 #include <array>
 
 #include "ScoreManager.hpp"
+#include "Controller.cpp"
 
 
 namespace musicgame {
@@ -126,6 +127,8 @@ namespace musicgame {
 		std::array<const score::Note*, 4> judgingNote;
 		
 		std::vector<JudgeResult> results;
+		
+		Controller controller;
 
 		void initAll();
 		void initJudge();
