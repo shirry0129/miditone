@@ -18,19 +18,19 @@ namespace score {
 	class Error {
 	
 		using char_type = char;
-		using get_errormsg_func_t = std::function<std::basic_string<char_type>(T)>;
+		using create_errmsg_func_t = std::function<std::basic_string<char_type>(T)>;
 	
 	public:
-		Error(T value, const get_errormsg_func_t& _msgFunc = defaultMsgFunc) noexcept
+		Error(T value, const create_errmsg_func_t& _msgFunc = defaultMsgFunc) noexcept
 			: msgFunc(_msgFunc), errorVal(value) {}
 		
-		Error(const get_errormsg_func_t& _msgFunc = defaultMsgFunc) noexcept
+		Error(const create_errmsg_func_t& _msgFunc = defaultMsgFunc) noexcept
 			: msgFunc(_msgFunc), errorVal(static_cast<T>(0)) {}
 		
 		
 		virtual ~Error() {}
 		
-		const Error<T> &assign(T value) noexcept {
+		Error<T>& assign(T value) noexcept {
 			errorVal = value;
 			return *this;
 		}
@@ -56,13 +56,13 @@ namespace score {
 			return *this;
 		}
 		
-		const get_errormsg_func_t &_getErrorMsgFunc() const noexcept {
+		const create_errmsg_func_t &_getErrorMsgFunc() const noexcept {
 			return msgFunc;
 		}
 		
 	private:
 		T errorVal;
-		get_errormsg_func_t msgFunc;
+		create_errmsg_func_t msgFunc;
 		
 		static std::basic_string<char_type> defaultMsgFunc(T val) {
 			std::basic_string<char_type> msg;
