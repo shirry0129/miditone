@@ -4,25 +4,27 @@
 
 namespace musicgame {
 
-	TimingJudge::TimingJudge() noexcept
-		: controller(4) {}
+	TimingJudge::TimingJudge(size_t numofKeys) noexcept
+		: controller(numofKeys) {}
 
 	TimingJudge::TimingJudge(
 		// arguments
+		size_t numofKeys,
 		const notes_t &_notes,
 		const beg_judge_func_t &_begJudgeFunc,
 		const end_judge_func_t &_endJudgeFunc,
 		const missed_judge_func_t &_missedJudgeFunc,
 		double _enumRangeSec
 	) noexcept :
-		controller(4)
+		controller(numofKeys)
 	{
-		create(_notes, _begJudgeFunc, _endJudgeFunc, _missedJudgeFunc, _enumRangeSec);
+		create(numofKeys, _notes, _begJudgeFunc, _endJudgeFunc, _missedJudgeFunc, _enumRangeSec);
 	}
 
 	TimingJudge::~TimingJudge() {};
 
 	bool TimingJudge::create(
+		size_t numofKeys,
 		const notes_t &_notes,
 		const beg_judge_func_t &_begJudgeFunc,
 		const end_judge_func_t &_endJudgeFunc,
@@ -40,6 +42,8 @@ namespace musicgame {
 		begJudgeFunc = _begJudgeFunc;
 		endJudgeFunc = _endJudgeFunc;
 		missedJudgeFunc = _missedJudgeFunc;
+	
+		controller.create(numofKeys);
 
 		size_t holdCnt = 0;
 		for (const auto &n : _notes) {
@@ -59,21 +63,33 @@ namespace musicgame {
 	void TimingJudge::clear() {
 		initAll();
 	}
+	
+	TimingJudge& TimingJudge::input(size_t keyNum, bool isPressed) noexcept {
+		if (keyNum < controller.size())
+			controller.key(keyNum).update(isPressed);
+		
+		return *this;
+	}
 
-	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec, bool keyState, int keyNum) noexcept {
+	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec) noexcept {
+		std::vector<const JudgeResult*> results;
+		
+		for (size_t i = 0; i < controller.size(); i++) {
+			auto keyJudge = judgeForKey(i, inputSec);
+
+			for (auto &j : keyJudge)
+				results.emplace_back(j);
+		}
+		
+		return results;
+	}
+
+	std::vector<const JudgeResult*> TimingJudge::judgeForKey(size_t keyNum, double inputSec) noexcept {
 		std::vector<const JudgeResult*> addition;
 		const size_t numofResults = results.size();
 		
-		if (keyNum < 0 || keyNum >= score::numofLanes) {
-			createAdditionalResults(addition, numofResults);
-			return addition;
-		}
+		Key& key = controller.key(keyNum);
 
-		// update key state
-		Key &key = controller.key(keyNum);
-		key.update(keyState);
-
-		
 		// judge for missed notes
 		for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).cend(); it++) {
 			
@@ -212,13 +228,13 @@ namespace musicgame {
 		for (auto &n : judgingNote)
 			n = nullptr;
 		enumRangeSec = 0.0;
+		controller.clear();
 	}
 	
 	void TimingJudge::initJudge() {
 		for (auto &n : judgingNote)
 			n = nullptr;
 		results.clear();
-		
 		for (size_t i = 0; i < score::numofLanes; i++) {
 			if (!notes.at(i).empty())
 				enumBegNote.at(i) = notes.at(i).begin();
