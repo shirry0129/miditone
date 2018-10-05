@@ -103,13 +103,13 @@ namespace musicgame {
 		if (numofKeys == 0) return false;
 		
 		for (int i = 0; i < numofKeys; i++)
-			key.push_back(Key());
+			keys.push_back(Key());
 		
 		return true;
     }
     
-    musicgame::Key &Controller::getKey(size_t keyNum) {
-		return key.at(keyNum);
+    musicgame::Key &Controller::key(size_t keyNum) {
+		return keys.at(keyNum);
     }
     
 

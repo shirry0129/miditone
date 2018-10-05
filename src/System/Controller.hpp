@@ -56,10 +56,10 @@ namespace musicgame {
 		
 		bool create(size_t numofKeys);
 		
-		Key& getKey(size_t keyNum);
+		Key& key(size_t keyNum);
 		
 	private:
-		std::vector<Key> key;
+		std::vector<Key> keys;
 	};
 
 
