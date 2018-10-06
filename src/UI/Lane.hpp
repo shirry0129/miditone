@@ -27,6 +27,7 @@ namespace ui {
         Vec2 laneBegin;
         Vec2 interval;
         Vec2 leftEnd, rightEnd;
+        bool isCreated;
         Array<float> slope;
         Array<float> intercept;
 
@@ -43,8 +44,8 @@ namespace ui {
         static void destroy();
 
         void update();
-        void draw();
-        factor getFactor(size_t guide);
+        void draw() const;
+        factor getFactor(size_t guide) const;
     };
 }
 

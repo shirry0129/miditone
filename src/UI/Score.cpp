@@ -27,22 +27,47 @@ namespace ui {
             }
         }
         
-        int hitCount = 0;
-        int holdCount = 0;
+        auto hitCount = hit.begin();
+        auto holdCount = hold.begin();
         
-        for(auto i:step(hit.size() + hold.size())){
-            if (hit.at(hitCount).judgeTime >= hold.at(holdCount).startTime) {
-                score.push_back(&hold.at(holdCount));
-                if(++holdCount > hold.size() - 1){
-                    holdCount = hold.size() - 1;
+        while (hitCount != hit.end() || holdCount != hold.end()) {
+            
+            if(hitCount == hit.cend()){
+                for (; holdCount != hold.cend(); holdCount++) {
+                    score.push_back(&(*holdCount));
                 }
+            }else if(holdCount == hold.cend()){
+                for (; hitCount != hit.cend(); hitCount++) {
+                    score.push_back(&(*hitCount));
+                }
+            }else if(hitCount->judgeTime > holdCount->startTime){
+                score.push_back(&(*holdCount));
+                ++holdCount;
+            }else if(holdCount->startTime > hitCount->judgeTime){
+                score.push_back(&(*hitCount));
+                ++hitCount;
             }else{
-                score.push_back(&hit.at(hitCount));
-                if(++hitCount > hit.size() - 1){
-                    hitCount = hit.size() - 1;
-                }
+                score.push_back(&(*holdCount));
+                score.push_back(&(*hitCount));
+                ++holdCount;
+                ++hitCount;
             }
+            
         }
+        
+//        for(auto i:step(hit.count() + hold.count())){
+//            if(hitCount->judgeTime >= holdCount->startTime){
+//                score.push_back(&(*holdCount));
+//                if(holdCount != hold.end()){
+//                    ++holdCount;
+//                }
+//            }else{
+//                score.push_back(&(*hitCount));
+//                if(hitCount != hit.end()){
+//                    ++hitCount;
+//                }
+//            }
+//        }
     }
     
     void Score::update(double currentTime) {
@@ -51,7 +76,7 @@ namespace ui {
         }
     }
     
-    void Score::draw() {
+    void Score::draw() const{
         for (auto n:score) {
             n->draw();
         }

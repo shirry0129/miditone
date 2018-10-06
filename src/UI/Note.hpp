@@ -27,7 +27,7 @@ namespace ui{
         ~Note() = default;
         
         virtual void update(double currentTime) = 0;
-        virtual void draw() final;
+        virtual void draw() const final;
     };
     
     class HitNote final : public Note {

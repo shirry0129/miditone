@@ -9,7 +9,8 @@ namespace ui {
     laneBegin(Window::Width()/2, -500),
     interval(300, 0),
     leftEnd(360,Window::Height()),
-    rightEnd(leftEnd + interval * 4)
+    rightEnd(leftEnd + interval * 4),
+    isCreated(false)
     {
         for(auto i:step(5)){
             guide.emplace_back(laneBegin, leftEnd + interval * i);
@@ -60,7 +61,7 @@ namespace ui {
     /**
      レーンとガイドを描画
      */
-    void LaneBG::draw(){
+    void LaneBG::draw() const{
         // draw background
         Triangle(laneBegin,leftEnd,rightEnd).draw(Color(65, 65, 65));
         
@@ -82,7 +83,7 @@ namespace ui {
      @param guide ガイド数
      @return 係数
      */
-    factor LaneBG::getFactor(size_t guide) {
+    factor LaneBG::getFactor(size_t guide) const{
         return {slope.at(guide), intercept.at(guide)};
     }    
     

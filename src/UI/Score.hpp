@@ -9,7 +9,6 @@
 #define Score_hpp
 
 #include <Siv3D.hpp>
-#include <vector>
 #include "Note.hpp"
 #include "../System/ScoreManager.hpp"
 
@@ -22,12 +21,13 @@ namespace ui {
         Array<Note*> score;
         
     public:
+        Score() = default;
         Score(const std::vector<score::Note>& _fromFile, float _speed);
         ~Score() = default;
         void setFromFile(const std::vector<score::Note>& _fromFile, float _speed);
         
         void update(double currentTime);
-        void draw();
+        void draw() const;
     };
     
 }

@@ -14,7 +14,7 @@ namespace ui {
 		speed(_speed),
 		inst(ui::LaneBG::getInstance()){}
 	
-	void Note::draw() {
+	void Note::draw() const{
 		if(note.p3.y > 0 && note.p0.y < Window::Height()){
 			note.draw(Palette::Papayawhip);
 		}
