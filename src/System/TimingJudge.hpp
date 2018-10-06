@@ -30,7 +30,8 @@ namespace musicgame {
 		BAD,
 		MISS,
 		HOLDBREAK,
-		HOLDCONTINUE
+		HOLDCONTINUE, 
+		HOLDFINISHED
 	};
 
 	struct JudgeResult : score::Note {
@@ -119,7 +120,10 @@ namespace musicgame {
 		) noexcept;
 		
 		const std::vector<JudgeResult> &getResults() const noexcept;
-		const score::Note *getJudgeStartNote(int keyNum) const noexcept;
+		
+		const score::Note* getJudgeStartNote(int keyNum) const noexcept;
+		
+		const score::Note* getJudgingHoldNote(int keyNum) const noexcept;
 		
 		void restart() noexcept;
 

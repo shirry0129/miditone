@@ -91,18 +91,19 @@ namespace musicgame {
 		Key& key = controller.key(keyNum);
 
 		// judge for missed notes
-		for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).cend(); it++) {
+		if (!judgingNote.at(keyNum)) {
+			for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).cend(); it++) {
+				const judgefunc_return_t ret = missedJudgeFunc(&(*it), inputSec);
+				if (ret.judge == Judgement::NONE)
+					break;
+				
+				results.emplace_back(
+					*it, ret.judge, inputSec - it->t_beg.sec
+				);
 			
-			const judgefunc_return_t ret = missedJudgeFunc(&(*it), inputSec);
-			if (ret.judge == Judgement::NONE)
-				break;
-			
-			results.emplace_back(
-				*it, ret.judge, inputSec - it->t_beg.sec
-			);
-		
-			// update note enumeration start
-			enumBegNote.at(keyNum) = it + 1;
+				// update note enumeration start
+				enumBegNote.at(keyNum) = it + 1;
+			}
 		}
 		
 
@@ -140,17 +141,11 @@ namespace musicgame {
 			// judge
 			ret = begJudgeFunc(enumNotes, inputSec);
 			
-			const auto judgedNote = notes.at(keyNum).cbegin() + ret.indexInLane;
+//			if (judgedNote->type == score::NoteType::HIT) {
+//				if (ret.judge == Judgement::HOLDBREAK)
+//					ret.judge = Judgement::MISS;
+//			}
 			
-			if (judgedNote->type == score::NoteType::HIT) {
-				if (ret.judge == Judgement::HOLDBREAK)
-					ret.judge = Judgement::MISS;
-			}
-			
-			if (judgedNote->type == score::NoteType::HOLD) {
-				// previous judged note is hold note
-				judgingNote.at(keyNum) = &*judgedNote; // start reference
-			}
 		}
 		
 		
@@ -169,7 +164,7 @@ namespace musicgame {
 			}
 			
 			
-			// create key-down-judge result
+			// create user-input-judge result
 			double error;
 			if (judgingNote.at(keyNum)) {
 				// hold end note
@@ -187,12 +182,29 @@ namespace musicgame {
 			);
 			
 			
-			// update judging note
-			if (ret.judge == Judgement::HOLDBREAK && judgingNote.at(keyNum))
-				judgingNote.at(keyNum) = nullptr;  // end reference
 		
-			// update note enumeration start
-			enumBegNote.at(keyNum) = judgedNote + 1;
+			if (judgingNote.at(keyNum)) {
+				// hold note
+			
+				if (ret.judge != Judgement::HOLDCONTINUE) {
+					// update judging note
+					judgingNote.at(keyNum) = nullptr;  // end reference
+					// update note enumeration start
+					enumBegNote.at(keyNum) = judgedNote + 1;
+				}
+				
+			} else {
+			
+				if (judgedNote->type == score::NoteType::HOLD) {
+					// previous judged note is hold note
+					judgingNote.at(keyNum) = &*judgedNote; // start reference
+				} else {
+					// update note enumeration start
+					enumBegNote.at(keyNum) = judgedNote + 1;
+				}
+				
+			}
+		
 		}
 
 		
@@ -204,7 +216,7 @@ namespace musicgame {
 		return results;
 	}
 	
-	const score::Note *TimingJudge::getJudgeStartNote(int keyNum) const noexcept {
+	const score::Note* TimingJudge::getJudgeStartNote(int keyNum) const noexcept {
 		if (keyNum < 0 || keyNum >= score::numofLanes)
 			return nullptr;
 		
@@ -213,6 +225,15 @@ namespace musicgame {
 		else
 			return &*enumBegNote.at(keyNum);
 	}
+	
+	const score::Note* TimingJudge::getJudgingHoldNote(int keyNum) const noexcept {
+		if (keyNum < 0 || keyNum >= score::numofLanes)
+			return nullptr;
+		
+		return judgingNote.at(keyNum);
+	}
+	
+	
 	
 	void TimingJudge::restart() noexcept {
 		size_t capacity = results.capacity();
@@ -292,7 +313,7 @@ namespace musicgame {
 		if (keyState) {
 			
 			if (inputTime >= note->t_end.sec)
-				judge = Judgement::BEST;	// user kept pressing key until the hold end note.
+				judge = Judgement::HOLDFINISHED;	// user kept pressing key until the hold end note.
 			else
 				//judge = Judgement::HOLDCONTINUE;
 				judge = Judgement::NONE;
@@ -300,7 +321,7 @@ namespace musicgame {
 		} else {
 
 			if (inputTime - note->t_end.sec >= 0.0)
-				judge = Judgement::BEST;	// when user input time is same / later to the note time
+				judge = Judgement::HOLDFINISHED;	// when user input time is same / later to the note time
 			else if (inputTime - note->t_end.sec > -0.3)
 				judge = Judgement::BETTER;	// when user input time is earlier to the note time
 			else if (inputTime - note->t_end.sec > -0.6)
