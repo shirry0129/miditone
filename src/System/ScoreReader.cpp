@@ -268,7 +268,7 @@ namespace score {
 		  	msg += "拍子またはテンポ情報が埋め込まれていません";
 			return msg;
 		  case State::E_CANNOT_FIND_CHUNK:
-		    msg += "チャンクが見つかりませんでした";
+		    msg += "難易度が見つかりませんでした";
 		    return msg;
 		  default:
 			return msg;
