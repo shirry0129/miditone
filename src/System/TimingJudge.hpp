@@ -22,17 +22,53 @@ Date	: 2018/9/26
 namespace musicgame {
 
 	enum class Judgement {
-		NONE = 0,
-		BEST,
-		BETTER,
-		GOOD,
-		NOTBAD,
-		BAD,
-		MISS,
-		HOLDBREAK,
-		HOLDCONTINUE, 
-		HOLDFINISHED
+		// don't judge, so don't store that result.
+		NONE			= 0x00,
+		
+		// judge, and store that result.
+		BEST			= 0x01,
+		
+		// same as above
+		BETTER			= 0x02,
+		
+		// same as above
+		GOOD			= 0x03,
+		
+		// same as above
+		NOTBAD			= 0x04,
+		
+		// same as above
+		BAD				= 0x05,
+		
+		// same as above
+		MISS			= 0x06,
+		
+		
+		//
+		// following constants has extra meaning for the hold note.
+		//
+		
+		// Delete the note from target of judgement, and so the note is not judged in the next frame and after.
+		HOLDBREAK		= 0x10,
+		
+		// Continue judging the current note also after that frame.
+		HOLDCONTINUE	= 0x20,
+		
+		// This effect is same of HOLDBREAK.
+		// HOLDBREAK mean bad judgement, but HOLDFINSHED is good one like BEST.
+		HOLDFINISHED	= 0x30
 	};
+	
+	Judgement operator | (const Judgement& L, const Judgement& R);
+	
+	Judgement operator & (const Judgement& L, const Judgement& R);
+	Judgement operator & (const Judgement& L, const int& R);
+	
+	Judgement getJudge(const Judgement& j);
+	
+	Judgement getHoldcmd(const Judgement& j);
+	
+	
 
 	struct JudgeResult : score::Note {
 		JudgeResult(const Note &_note, Judgement _result, double _error) noexcept
@@ -42,8 +78,12 @@ namespace musicgame {
 		// negative value express that user input is earlier than exact time
 		const double error;
 	};
-
+	
 	using judge_results_t = std::vector<const JudgeResult*>;
+	
+	
+	
+	
 
 	class TimingJudge {
 	public:
@@ -83,6 +123,8 @@ namespace musicgame {
 			)
 		>;
 
+
+
 		TimingJudge(
 			size_t numofKeys
 		) noexcept;
@@ -97,7 +139,6 @@ namespace musicgame {
 		) noexcept;
 
 		~TimingJudge();
-
 
 		bool create(
 			size_t numofKeys,
