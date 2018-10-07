@@ -172,6 +172,7 @@ namespace score {
 		if (score.is_open())
 			score.close();
 
+		buffer.fill('\0');
 		currentChunk.erase(currentChunk.cbegin(), currentChunk.cend());
 		currentLine = 0;
 		prevState = State::E_SET_NOFILE;
@@ -198,19 +199,16 @@ namespace score {
 		// read a line
 		score.getline(buffer.data(), buffer.size());
 		
-		// remove CR
-		for (auto &ch : buffer) {
-			if (ch == '\r') {
-				ch = '\0';
-				break;
-			}
-		}
-
 		// fstream can have read a whole line ?
 		if (isFailReadLine(score)) {
 			score.clear(score.rdstate() & ~std::ios_base::failbit); // unset flag of fail
 			return prevState = State::E_CANNOT_READ_WHOLELINE;
 		}
+		
+		// remove CR
+		auto strEnd = score.gcount() - 2;
+		if (strEnd >= 0 && buffer.at(strEnd) == '\r')
+			buffer.at(strEnd) = '\0';
 
 		// get command object
 		Command *cmd = cmdMng.inputHandler(buffer.data(), delim);
@@ -231,6 +229,9 @@ namespace score {
 			return prevState;
 
 		score.seekg(0, std::ios_base::beg);
+		
+		skipBOM();
+		
 		currentChunk = "";
 		currentLine = 0;
 
@@ -282,10 +283,31 @@ namespace score {
 			return false;
 	}
 	
+	void ScoreReader::skipBOM() {
+		char_type s[4];
+		
+		score.seekg(0, std::ios_base::beg);
+		score.getline(s, 4);
+		
+		if (score.fail()) {
+			score.clear(score.rdstate() & ~std::ios_base::failbit); // unset flag of fail
+		}
+		
+		std::basic_string<char_type> bom(s);
 	
-
-
-
+		if (bom == "\xef\xbb\xbf") {
+			// UTF-8 with BOM
+			score.seekg(3, std::ios_base::beg);
+		} else if (bom == "\xfe\xff") {
+			// UTF-16BE with BOM
+			score.seekg(2, std::ios_base::beg);
+		} else if (bom == "\xff\xfe") {
+			// UTF-16LE with BOM
+			score.seekg(2, std::ios_base::beg);
+		} else {
+			score.seekg(0, std::ios_base::beg);
+		}
+	}
 
 	Error<ScoreReader::State> ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
 		if (sr.currentChunk != "")
