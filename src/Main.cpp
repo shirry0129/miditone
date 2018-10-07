@@ -13,27 +13,42 @@ void Main() {
 
     ui::LaneBG::create();
     ui::Score testScore;
-    double measureLength;
+    double measureLength = 0.0;
     auto score = Dialog::OpenFile({{U"譜面データ(*.txt)", {U"txt"}}});
     
-    score::ScoreManager testFile(score.value().narrow().c_str(), score::Difficulty::HARD);
-    
-    if(testFile.getLastError().isError()){
-        Print << U"譜面読み込み失敗:" << Unicode::Widen(testFile.getLastError().getMessage());
-    }else{
-        measureLength = testFile.getBar()[1].time.sec;
-        
-        testScore.setFromFile(testFile.getNotes(), 0.8);
+    if(!score){
+        score = Optional<String>(U"not a path");
     }
-
+    
     const Audio testAudio = Dialog::OpenAudio();
 
     EventTimer time;
+    measureLength = 3;//testFile.getBar()[1].time.sec;
     time.addEvent(U"Start", SecondsF(measureLength));
     
-    time.start();
+    const Array<String> difficulty = {U"EASY", U"NORMAL", U"HARD"};
+    size_t index = 1;
+    bool selectDiff = true;
     
     while (System::Update()) {
+        
+        SimpleGUI::RadioButtons(index, difficulty, Vec2(100,100), unspecified, selectDiff);
+        if(SimpleGUI::Button(U"決定", Vec2(100, 250), unspecified, selectDiff)){
+            selectDiff = false;
+            
+            score::ScoreManager testFile(score.value().narrow().c_str(), static_cast<score::Difficulty>(index));
+            
+            if(testFile.getLastError().isError()){
+                Print << U"譜面読み込み失敗:" << Unicode::Widen(testFile.getLastError().getMessage());
+                Print << U"エラー箇所:" << Unicode::Widen(testFile.getReader().getLastError().getMessage()) <<  U" 行数:" << testFile.getReader().getCurrentLine();
+                Print << U"ファイルパス:" << score.value();
+            }else{
+                testScore.setFromFile(testFile.getNotes(), 1);
+            }
+            
+            time.start();
+        }
+        
         time.update();
         ui::LaneBG::getInstance().draw();
         

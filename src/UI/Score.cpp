@@ -54,20 +54,6 @@ namespace ui {
             }
             
         }
-        
-//        for(auto i:step(hit.count() + hold.count())){
-//            if(hitCount->judgeTime >= holdCount->startTime){
-//                score.push_back(&(*holdCount));
-//                if(holdCount != hold.end()){
-//                    ++holdCount;
-//                }
-//            }else{
-//                score.push_back(&(*hitCount));
-//                if(hitCount != hit.end()){
-//                    ++hitCount;
-//                }
-//            }
-//        }
     }
     
     void Score::update(double currentTime) {

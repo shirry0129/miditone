@@ -10,13 +10,16 @@
 namespace ui {
 	
 	Note::Note(size_t _laneNum, float _speed):
-		laneNum(_laneNum),
-		speed(_speed),
-		inst(ui::LaneBG::getInstance()){}
+//	looks(U"example/windmill.png"),
+	laneNum(_laneNum),
+	wakeUpTime(2 * xMax / (_speed * xMax)),
+	acceleration((_speed * xMax * _speed * xMax) / (2 * xMax)),
+	inst(ui::LaneBG::getInstance()){}
 	
 	void Note::draw() const{
 		if(note.p3.y > 0 && note.p0.y < Window::Height()){
-			note.draw(Palette::Papayawhip);
+			note.draw(Color(U"#7fffd4"));
+			//note(looks).draw();
 		}
 	}
 	
@@ -28,15 +31,14 @@ namespace ui {
 		judgeTime(_judgeTime){}
 	
 	void HitNote::update(double currentTime) {
-		float nextY = ui::laneEnd - ((judgeTime - currentTime) * ui::laneEnd * speed);
-		float height = 60 * (1. / 1250. * nextY + 0.2);
 		
-		//speed *= (note.p0.y - height / 2) * (1./2000.) + 0.5;
-		
-		if (nextY - height/2 < 0) {
-			note.set(0,0,0,0,0,0,0,0);
+		if(wakeUpTime - (judgeTime - currentTime) < 0){
+			note.set(0, 0, 0, 0, 0, 0, 0, 0);
 			return;
 		}
+		
+		float nextY = 0.5 * acceleration * pow(wakeUpTime - (judgeTime - currentTime), 2) - 500;
+		float height = 60 * (1. / 1250. * nextY + 0.2);
 		
 		Vec2 tl(inst.getFactor(laneNum).slope * (nextY - height / 2) + inst.getFactor(laneNum).intercept + 1, nextY - height / 2);
 		Vec2 tr(inst.getFactor(laneNum + 1).slope * (nextY - height / 2) + inst.getFactor(laneNum + 1).intercept - 1, nextY - height / 2);
@@ -55,18 +57,17 @@ namespace ui {
 		endTime(_endTime){}
 	
 	void HoldNote::update(double currentTime) {
-		float bottomY = ui::laneEnd - ((startTime - currentTime) * ui::laneEnd * speed);
 		
-		float topY = ui::laneEnd - ((endTime - currentTime) * ui::laneEnd * speed);
-		
-		//speed *= note.p0.y * (1./2000.) + 0.5;
-		
-		if (bottomY < 0) {
+		if (wakeUpTime - (startTime - currentTime) < 0) {
 			note.set(0, 0, 0, 0, 0, 0, 0, 0);
 			return;
 		}
 		
-		if(topY < 0) {
+		float bottomY = 0.5 * acceleration * pow(wakeUpTime - (startTime - currentTime), 2) - 500;
+		
+		float topY = 0.5 * acceleration * pow(wakeUpTime - (endTime - currentTime), 2) - 500;
+		
+		if (wakeUpTime - (endTime - currentTime) < 0) {
 			topY = 0;
 		}
 		

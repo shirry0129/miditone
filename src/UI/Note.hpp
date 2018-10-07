@@ -14,13 +14,16 @@
 
 namespace ui{
     
+    constexpr int xMax = laneEnd + 500;
+    
     class Note {
     protected:
-        Texture looks;
-        size_t laneNum;
-        float speed;
+        const Texture looks;
+        const size_t laneNum;
+        const float wakeUpTime;
+        const float acceleration;
         Quad note;
-        LaneBG& inst;
+        const LaneBG& inst;
         
     public:
         Note(size_t _laneNum, float _speed);
