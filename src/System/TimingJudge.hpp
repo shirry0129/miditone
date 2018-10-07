@@ -13,7 +13,6 @@ Date	: 2018/9/26
 
 
 #include <functional>
-#include <array>
 
 #include "ScoreManager.hpp"
 #include "Controller.hpp"
@@ -80,9 +79,7 @@ namespace musicgame {
 
 
 
-		TimingJudge(
-			size_t numofKeys
-		) noexcept;
+		TimingJudge() noexcept;
 	
 		TimingJudge(
 			size_t numofKeys,
@@ -125,23 +122,26 @@ namespace musicgame {
 
 	
 	private:
-		std::array<notes_t, score::numofLanes> notes;
-		std::array<notes_t::const_iterator, score::numofLanes> enumBegNote;
-
+	
+		Controller controller;
+		
+		std::vector<notes_t> notes;
+	
 		beg_judge_func_t begJudgeFunc;
 		end_judge_func_t endJudgeFunc;
 		missed_judge_func_t missedJudgeFunc;
 	
 		double enumRangeSec;
 
-		std::array<const score::Note*, 4> judgingNote;
+		std::vector<notes_t::const_iterator> enumBegNote;
+	
+		std::vector<const score::Note*> judgingNote;
 		
 		std::vector<JudgeResult> results;
 		
-		Controller controller;
-
+		
 		void initAll();
-		void initJudge();
+		void readyJudge();
 		
 		std::vector<const JudgeResult*> judgeForKey(
 			size_t keyNum,
