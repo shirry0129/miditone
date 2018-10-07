@@ -57,7 +57,7 @@ namespace musicgame {
 		bool create(size_t numofKeys);
 		void clear();
 		
-		size_t size() const noexcept;
+		size_t numofKeys() const noexcept;
 		
 		Key& key(size_t keyNum);
 		

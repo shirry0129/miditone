@@ -114,7 +114,7 @@ namespace musicgame {
     	keys.clear();
 	}
 	
-	size_t Controller::size() const noexcept {
+	size_t Controller::numofKeys() const noexcept {
 		return keys.size();
 	}
     
