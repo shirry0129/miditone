@@ -66,6 +66,10 @@ namespace musicgame {
 	bool Judgement::isJudged() const noexcept {
 		return this->enumVal != JudgeState::NONE;
 	}
+	
+	bool Judgement::isMiss() const noexcept {
+		return getJudge() == JudgeState::MISS;
+	}
 
 	std::basic_string<Judgement::char_type> Judgement::createErrMsg(JudgeState val) {
 		using namespace musicgame;

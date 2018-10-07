@@ -82,6 +82,8 @@ namespace musicgame {
 		
 		bool isJudged() const noexcept;
 		
+		bool isMiss() const noexcept;
+		
 	private:
 		
 		static std::basic_string<char_type> createErrMsg(JudgeState val);
