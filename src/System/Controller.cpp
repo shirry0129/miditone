@@ -102,14 +102,24 @@ namespace musicgame {
 	bool Controller::create(size_t numofKeys) {
 		if (numofKeys == 0) return false;
 		
+		keys.clear();
+		
 		for (int i = 0; i < numofKeys; i++)
-			key.push_back(Key());
+			keys.push_back(Key());
 		
 		return true;
     }
+	
+    void Controller::clear() {
+    	keys.clear();
+	}
+	
+	size_t Controller::size() const noexcept {
+		return keys.size();
+	}
     
-    musicgame::Key &Controller::getKey(size_t keyNum) {
-		return key.at(keyNum);
+    musicgame::Key &Controller::key(size_t keyNum) {
+		return keys.at(keyNum);
     }
     
 

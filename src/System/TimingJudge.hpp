@@ -16,31 +16,29 @@ Date	: 2018/9/26
 #include <array>
 
 #include "ScoreManager.hpp"
+#include "Controller.hpp"
+#include "Judgement.hpp"
 
 
 namespace musicgame {
 
-	enum class Judgement {
-		NONE = 0,
-		BEST,
-		BETTER,
-		GOOD,
-		NOTBAD,
-		BAD,
-		MISS,
-		HOLDBREAK,
-		HOLDCONTINUE
-	};
+
+	
 
 	struct JudgeResult : score::Note {
-		JudgeResult(const Note &_note, Judgement _result, double _error) noexcept
+		JudgeResult(const Note &_note, const Judgement &_result, double _error) noexcept
 			: Note(_note), result(_result), error(_error) {}
 
 		const Judgement result;
 		// negative value express that user input is earlier than exact time
 		const double error;
 	};
-
+	
+	using judge_results_t = std::vector<const JudgeResult*>;
+	
+	
+	
+	
 
 	class TimingJudge {
 	public:
@@ -48,7 +46,7 @@ namespace musicgame {
 		
         struct judgefunc_return_t {
 			judgefunc_return_t() {}
-			judgefunc_return_t(Judgement _judge, int _indexInLane)
+			judgefunc_return_t(const Judgement &_judge, int _indexInLane)
         		: judge(_judge), indexInLane(_indexInLane) {}
 			
 			Judgement judge;
@@ -80,9 +78,14 @@ namespace musicgame {
 			)
 		>;
 
-		TimingJudge() noexcept;
+
+
+		TimingJudge(
+			size_t numofKeys
+		) noexcept;
 	
 		TimingJudge(
+			size_t numofKeys,
 			const notes_t &_notes,
 			const beg_judge_func_t &_judgeBegFunc = defaultBegJudgeFunc,
 			const end_judge_func_t &_judgeEndFunc = defaultEndJudgeFunc,
@@ -92,8 +95,8 @@ namespace musicgame {
 
 		~TimingJudge();
 
-
 		bool create(
+			size_t numofKeys,
 			const notes_t &_notes,
 			const beg_judge_func_t &_judgeBegFunc = defaultBegJudgeFunc,
 			const end_judge_func_t &_judgeEndFunc = defaultEndJudgeFunc,
@@ -102,13 +105,21 @@ namespace musicgame {
 		) noexcept;
 
 		void clear();
+		
+		TimingJudge& input(
+			size_t keyNum,
+			bool isPressed
+		) noexcept;
 
-		std::vector<const JudgeResult*> judge(
-			double inputSec, bool keyState, int keyNum
+		judge_results_t judge(
+			double inputSec
 		) noexcept;
 		
 		const std::vector<JudgeResult> &getResults() const noexcept;
-		const score::Note *getJudgeStartNote(int keyNum) const noexcept;
+		
+		const score::Note* getJudgeStartNote(int keyNum) const noexcept;
+		
+		const score::Note* getJudgingHoldNote(int keyNum) const noexcept;
 		
 		void restart() noexcept;
 
@@ -126,9 +137,16 @@ namespace musicgame {
 		std::array<const score::Note*, 4> judgingNote;
 		
 		std::vector<JudgeResult> results;
+		
+		Controller controller;
 
 		void initAll();
 		void initJudge();
+		
+		std::vector<const JudgeResult*> judgeForKey(
+			size_t keyNum,
+			double inputSec
+		) noexcept;
 		
 		void enumJudgeNotes(
 			std::vector<const score::Note*> &notes,

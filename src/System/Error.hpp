@@ -2,105 +2,40 @@
 //  Error.hpp
 //  MusicGame
 //
-//  Created by NanamiYamamoto on 2018/10/02.
+//  Created by NanamiYamamoto on 2018/10/06.
 //
 
 #ifndef Error_hpp
 #define Error_hpp
 
-#include <string>
-#include <functional>
+
+#include "Enum.hpp"
 
 
 namespace score {
 
+
 	template <class T>
-	class Error {
-	
+	class Error : public Enum<T> {
+
 		using char_type = char;
-		using get_errormsg_func_t = std::function<std::basic_string<char_type>(T)>;
-	
+		using create_errmsg_func_t = std::function<std::basic_string<char_type>(T)>;
+
 	public:
-		Error(T value, const get_errormsg_func_t& _msgFunc = defaultMsgFunc) noexcept
-			: msgFunc(_msgFunc), errorVal(value) {}
+		Error(T value, const create_errmsg_func_t& _msgFunc = Enum<T>::defaultMsgFunc) noexcept
+			: Enum<T>(value, _msgFunc) {}
 		
-		Error(const get_errormsg_func_t& _msgFunc = defaultMsgFunc) noexcept
-			: msgFunc(_msgFunc), errorVal(static_cast<T>(0)) {}
+		Error(const create_errmsg_func_t& _msgFunc = Enum<T>::defaultMsgFunc) noexcept
+			: Enum<T>(static_cast<T>(0), _msgFunc) {}
 		
 		
-		virtual ~Error() {}
-		
-		const Error<T> &assign(T value) noexcept {
-			errorVal = value;
-			return *this;
-		}
-		
-		T get() const noexcept {
-			return errorVal;
-		}
+		~Error() {}
 		
 		bool isError() const noexcept {
-			return getCode() < 0;
-		}
-		
-		int getCode() const noexcept {
-			return static_cast<int>(errorVal);
-		}
-		
-		std::string getMessage() const noexcept {
-			return msgFunc(errorVal);
-		}
-		
-		Error& operator= (T _errVal) noexcept {
-			assign(_errVal);
-			return *this;
-		}
-		
-		const get_errormsg_func_t &_getErrorMsgFunc() const noexcept {
-			return msgFunc;
-		}
-		
-	private:
-		T errorVal;
-		get_errormsg_func_t msgFunc;
-		
-		static std::basic_string<char_type> defaultMsgFunc(T val) {
-			std::basic_string<char_type> msg;
-			return msg;
+			return this->getCode() < 0;
 		}
 	};
 	
-	template<class T>
-	bool operator==(const Error<T> &L, const Error<T> &R) {
-		return L.get() == R.get();
-	}
-	
-	template<class T>
-	bool operator!=(const Error<T> &L, const Error<T> &R) {
-		return !(L == R);
-	}
-	
-	template<class T>
-	bool operator==(const Error<T> &L, const T &R) {
-		return L.get() == R;
-	}
-	
-	template<class T>
-	bool operator!=(const Error<T> &L, const T &R) {
-		return !(L == R);
-	}
-	
-	template<class T>
-	bool operator==(const T &L, const Error<T> &R) {
-		return L == R.get();
-	}
-	
-	template<class T>
-	bool operator!=(const T &L, const Error<T> &R) {
-		return !(L == R);
-	}
-
-
 }
 
 

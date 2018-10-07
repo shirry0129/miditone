@@ -55,11 +55,14 @@ namespace musicgame {
 		~Controller();
 		
 		bool create(size_t numofKeys);
+		void clear();
 		
-		Key& getKey(size_t keyNum);
+		size_t size() const noexcept;
+		
+		Key& key(size_t keyNum);
 		
 	private:
-		std::vector<Key> key;
+		std::vector<Key> keys;
 	};
 
 

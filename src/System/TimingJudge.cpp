@@ -4,22 +4,29 @@
 
 namespace musicgame {
 
-	TimingJudge::TimingJudge() noexcept {}
+	
+
+	TimingJudge::TimingJudge(size_t numofKeys) noexcept
+		: controller(numofKeys) {}
 
 	TimingJudge::TimingJudge(
 		// arguments
+		size_t numofKeys,
 		const notes_t &_notes,
 		const beg_judge_func_t &_begJudgeFunc,
 		const end_judge_func_t &_endJudgeFunc,
 		const missed_judge_func_t &_missedJudgeFunc,
 		double _enumRangeSec
-	) noexcept {
-		create(_notes, _begJudgeFunc, _endJudgeFunc, _missedJudgeFunc, _enumRangeSec);
+	) noexcept :
+		controller(numofKeys)
+	{
+		create(numofKeys, _notes, _begJudgeFunc, _endJudgeFunc, _missedJudgeFunc, _enumRangeSec);
 	}
 
 	TimingJudge::~TimingJudge() {};
 
 	bool TimingJudge::create(
+		size_t numofKeys,
 		const notes_t &_notes,
 		const beg_judge_func_t &_begJudgeFunc,
 		const end_judge_func_t &_endJudgeFunc,
@@ -37,6 +44,8 @@ namespace musicgame {
 		begJudgeFunc = _begJudgeFunc;
 		endJudgeFunc = _endJudgeFunc;
 		missedJudgeFunc = _missedJudgeFunc;
+	
+		controller.create(numofKeys);
 
 		size_t holdCnt = 0;
 		for (const auto &n : _notes) {
@@ -56,47 +65,76 @@ namespace musicgame {
 	void TimingJudge::clear() {
 		initAll();
 	}
+	
+	TimingJudge& TimingJudge::input(size_t keyNum, bool isPressed) noexcept {
+		if (keyNum < controller.size())
+			controller.key(keyNum).update(isPressed);
+		
+		return *this;
+	}
 
-	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec, bool keyState, int keyNum) noexcept {
+	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec) noexcept {
+		std::vector<const JudgeResult*> results;
+		
+		for (size_t i = 0; i < controller.size(); i++) {
+			auto keyJudge = judgeForKey(i, inputSec);
+
+			for (auto &j : keyJudge)
+				results.emplace_back(j);
+		}
+		
+		return results;
+	}
+	
+	
+	// judge by following order.
+	// 1. judge missed notes (except in the middle of judgeing the hold end note).
+	// 2. judge by user input.
+	// 3. judge overtaken note.
+	std::vector<const JudgeResult*> TimingJudge::judgeForKey(size_t keyNum, double inputSec) noexcept {
 		std::vector<const JudgeResult*> addition;
 		const size_t numofResults = results.size();
 		
-		if (keyNum < 0 || keyNum >= score::numofLanes) {
-			createAdditionalResults(addition, numofResults);
-			return addition;
+		Key& key = controller.key(keyNum);
+
+		//
+		// 1. judge for missed notes
+		//
+		if (!judgingNote.at(keyNum)) {
+			for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).cend(); it++) {
+				const judgefunc_return_t ret = missedJudgeFunc(&(*it), inputSec);
+				if (!ret.judge.isJudged())
+					break;
+				
+				results.emplace_back(
+					*it, ret.judge, inputSec - it->t_beg.sec
+				);
+				
+				if (it->type == score::NoteType::HOLD && ret.judge.isContinueHold()) {
+					// start reference
+					judgingNote.at(keyNum) = &*it;
+				} else {
+					// update note enumeration start
+					enumBegNote.at(keyNum) = it + 1;
+				}
+		
+			}
 		}
-
-		
-		// judge for missed notes
-		for (auto it = enumBegNote.at(keyNum); it != notes.at(keyNum).cend(); it++) {
-			
-			const judgefunc_return_t ret = missedJudgeFunc(&(*it), inputSec);
-			if (ret.judge == Judgement::NONE)
-				break;
-			
-			results.emplace_back(
-				*it, ret.judge, inputSec - it->t_beg.sec
-			);
-		
-			// update note enumeration start
-			enumBegNote.at(keyNum) = it + 1;
-		}
 		
 
 
-		// judge by key down / released
+		//
+		// 2. judge by user input
+		//
 		judgefunc_return_t ret;
 		
 		if (judgingNote.at(keyNum) != nullptr) {
 			// are judging the hold note
-
 			// judge
-			ret = endJudgeFunc(judgingNote.at(keyNum), keyState, inputSec);
-			
+			ret = endJudgeFunc(judgingNote.at(keyNum), key.isOn(), inputSec);
 		} else {
 			// are NOT judging the hold note
-			
-			if (!keyState) {
+			if (!key.isPressedMoment()) {
 				createAdditionalResults(addition, numofResults);
 				return addition;
 			}
@@ -113,65 +151,67 @@ namespace musicgame {
 				return addition;
 			}
 			
-			
 			// judge
 			ret = begJudgeFunc(enumNotes, inputSec);
-			
-			const auto judgedNote = notes.at(keyNum).cbegin() + ret.indexInLane;
-			
-			if (judgedNote->type == score::NoteType::HIT) {
-				if (ret.judge == Judgement::HOLDBREAK)
-					ret.judge = Judgement::MISS;
+		}
+		
+		if (ret.judge.getJudge() == JudgeState::NONE) {
+			createAdditionalResults(addition, numofResults);
+			return addition;
+		}
+		
+		
+		
+		//
+		// process the judged note
+		//
+		const notes_t::const_iterator judgedNote
+			= notes.at(keyNum).cbegin() + ret.indexInLane;
+		
+		
+		// 3. judge overtaken notes
+		for (auto it = enumBegNote.at(keyNum); it != judgedNote; it++) {
+			results.emplace_back(*it, JudgeState::MISS, inputSec - it->t_beg.sec);
+			enumBegNote.at(keyNum) = it + 1;
+		}
+		
+		// calculation error
+		double error;
+		if (judgingNote.at(keyNum)) {
+			// hold end note
+			if (ret.judge.isContinueHold())
+				error = 0;	// for hold middle judge.
+			else
+				error = inputSec - judgedNote->t_end.sec;
+				
+		} else {
+			error = inputSec - judgedNote->t_beg.sec; // hit note or hold begin note
+		}
+		
+		// store result
+		results.emplace_back(
+			*judgedNote, ret.judge, error
+		);
+		
+		
+		if (judgingNote.at(keyNum)) {
+			// hold note
+			if (!ret.judge.isContinueHold()) {
+				// update judging note
+				judgingNote.at(keyNum) = nullptr;  // end reference
+				// update note enumeration start
+				enumBegNote.at(keyNum) = judgedNote + 1;
 			}
-			
-			if (judgedNote->type == score::NoteType::HOLD) {
+		} else {
+			if (judgedNote->type == score::NoteType::HOLD &&
+				ret.judge.isContinueHold()) {
 				// previous judged note is hold note
 				judgingNote.at(keyNum) = &*judgedNote; // start reference
-			}
-		}
-		
-		
-		
-		// process the judged note
-		if (ret.judge != Judgement::NONE) {
-		
-			const notes_t::const_iterator judgedNote
-				= notes.at(keyNum).cbegin() + ret.indexInLane;
-			
-			
-			// judge overtaken notes
-			for (auto it = enumBegNote.at(keyNum); it != judgedNote; it++) {
-				results.emplace_back(*it, Judgement::MISS, inputSec - it->t_beg.sec);
-				enumBegNote.at(keyNum) = it + 1;
-			}
-			
-			
-			// create key-down-judge result
-			double error;
-			if (judgingNote.at(keyNum)) {
-				// hold end note
-				if (ret.judge == Judgement::HOLDCONTINUE)
-					error = 0;	// for hold middle judge.
-				else
-					error = inputSec - judgedNote->t_end.sec;
-					
 			} else {
-				error = inputSec - judgedNote->t_beg.sec; // hit note or hold begin note
+				// update note enumeration start
+				enumBegNote.at(keyNum) = judgedNote + 1;
 			}
-			
-			results.emplace_back(
-				*judgedNote, ret.judge, error
-			);
-			
-			
-			// update judging note
-			if (ret.judge == Judgement::HOLDBREAK && judgingNote.at(keyNum))
-				judgingNote.at(keyNum) = nullptr;  // end reference
-		
-			// update note enumeration start
-			enumBegNote.at(keyNum) = judgedNote + 1;
 		}
-
 		
 		createAdditionalResults(addition, numofResults);
 		return addition;
@@ -181,7 +221,7 @@ namespace musicgame {
 		return results;
 	}
 	
-	const score::Note *TimingJudge::getJudgeStartNote(int keyNum) const noexcept {
+	const score::Note* TimingJudge::getJudgeStartNote(int keyNum) const noexcept {
 		if (keyNum < 0 || keyNum >= score::numofLanes)
 			return nullptr;
 		
@@ -190,6 +230,15 @@ namespace musicgame {
 		else
 			return &*enumBegNote.at(keyNum);
 	}
+	
+	const score::Note* TimingJudge::getJudgingHoldNote(int keyNum) const noexcept {
+		if (keyNum < 0 || keyNum >= score::numofLanes)
+			return nullptr;
+		
+		return judgingNote.at(keyNum);
+	}
+	
+	
 	
 	void TimingJudge::restart() noexcept {
 		size_t capacity = results.capacity();
@@ -205,13 +254,13 @@ namespace musicgame {
 		for (auto &n : judgingNote)
 			n = nullptr;
 		enumRangeSec = 0.0;
+		controller.clear();
 	}
 	
 	void TimingJudge::initJudge() {
 		for (auto &n : judgingNote)
 			n = nullptr;
 		results.clear();
-		
 		for (size_t i = 0; i < score::numofLanes; i++) {
 			if (!notes.at(i).empty())
 				enumBegNote.at(i) = notes.at(i).begin();
@@ -237,23 +286,23 @@ namespace musicgame {
 		
 		const auto target = notes.front();
 
-		Judgement judge = Judgement::NONE;
+		JudgeState judge = JudgeState::NONE;
 		
 		if (target->type == score::NoteType::HIT) {
 			// hit note
 			
 			if (abs(inputTime - target->t_beg.sec) < 0.05)
-				judge = Judgement::BEST;
+				judge = JudgeState::BEST;
 			else if (abs(inputTime - target->t_beg.sec) < 0.10)
-				judge = Judgement::BETTER;
+				judge = JudgeState::BETTER;
 			else if (abs(inputTime - target->t_beg.sec) < 0.30)
-				judge = Judgement::GOOD;
+				judge = JudgeState::GOOD;
 
 		} else {
 			// hold begin note
 
 			if (abs(inputTime - target->t_beg.sec) < 0.20)
-				judge = Judgement::BEST;
+				judge = JudgeState::BEST | JudgeState::HOLDCONTINUE;
 
 		}
 		
@@ -264,26 +313,26 @@ namespace musicgame {
 	TimingJudge::judgefunc_return_t TimingJudge::defaultEndJudgeFunc(
 		const score::Note* note, bool keyState, double inputTime
 	) {
-		Judgement judge = Judgement::NONE;
+		JudgeState judge = JudgeState::NONE;
 		
 		if (keyState) {
 			
 			if (inputTime >= note->t_end.sec)
-				judge = Judgement::BEST;	// user kept pressing key until the hold end note.
+				judge = JudgeState::BEST | JudgeState::HOLDFINISHED;	// user kept pressing key until the hold end note.
 			else
 				//judge = Judgement::HOLDCONTINUE;
-				judge = Judgement::NONE;
+				judge = JudgeState::NONE | JudgeState::HOLDCONTINUE;
 
 		} else {
 
 			if (inputTime - note->t_end.sec >= 0.0)
-				judge = Judgement::BEST;	// when user input time is same / later to the note time
-			else if (inputTime - note->t_end.sec > -0.3)
-				judge = Judgement::BETTER;	// when user input time is earlier to the note time
-			else if (inputTime - note->t_end.sec > -0.6)
-				judge = Judgement::BETTER;	// same as above
+				judge = JudgeState::BEST | JudgeState::HOLDFINISHED;	// when user input time is same / later to the note time
+			else if (inputTime - note->t_end.sec > -0.2)
+				judge = JudgeState::BETTER | JudgeState::HOLDFINISHED;	// when user input time is earlier to the note time
+			else if (inputTime - note->t_end.sec > -0.4)
+				judge = JudgeState::GOOD | JudgeState::HOLDFINISHED;	// same as above
 			else
-				judge = Judgement::GOOD;	// same as above
+				judge = JudgeState::NOTBAD | JudgeState::HOLDFINISHED;	// same as above
 
 		}
 		
@@ -296,20 +345,20 @@ namespace musicgame {
 		double inputTime
 	) {
 		
-		Judgement judge = Judgement::NONE;
+		JudgeState judge = JudgeState::NONE;
 		
 		switch (note->type) {
 		case score::NoteType::HIT:
 			
 			if (inputTime - note->t_beg.sec >= 0.30)
-				judge = Judgement::MISS;
+				judge = JudgeState::MISS;
 			
 		    break;
 		case score::NoteType::HOLD:
 		
 			if (inputTime - note->t_beg.sec >= 0.30)
 				//judge = Judgement::HOLDBREAK;
-				judge = Judgement::MISS;
+				judge = JudgeState::MISS | JudgeState::HOLDBREAK;
 			
 	  		break;
 		}
