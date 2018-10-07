@@ -28,12 +28,14 @@ void Main() {
     
     const Array<String> difficulty = {U"EASY", U"NORMAL", U"HARD"};
     size_t index = 1;
+    double speed = 5;
     bool selectDiff = true;
     
     while (System::Update()) {
         
         SimpleGUI::RadioButtons(index, difficulty, Vec2(100,100), unspecified, selectDiff);
-        if(SimpleGUI::Button(U"決定", Vec2(100, 250), unspecified, selectDiff)){
+        SimpleGUI::Slider(U"スピード: {:.1f}"_fmt(speed), speed, 1, 10, Vec2(100, 250), 200, 120, selectDiff);
+        if(SimpleGUI::Button(U"決定", Vec2(100, 300), unspecified, selectDiff)){
             selectDiff = false;
             
             score::ScoreManager testFile(score.value().narrow().c_str(), static_cast<score::Difficulty>(index));
@@ -43,7 +45,7 @@ void Main() {
                 Print << U"エラー箇所:" << Unicode::Widen(testFile.getReader().getLastError().getMessage()) <<  U" 行数:" << testFile.getReader().getCurrentLine();
                 Print << U"ファイルパス:" << score.value();
             }else{
-                testScore.setFromFile(testFile.getNotes(), 1);
+                testScore.setFromFile(testFile.getNotes(), speed/10);
             }
             
             time.start();
