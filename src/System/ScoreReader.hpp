@@ -164,8 +164,8 @@ namespace score {
 		char_type delim;
 		
 		std::array<char_type, buffer_size> buffer;
-
-
+		
+		
 		void init();
 		Error<State> processLine();
 		Error<State> moveToBegin();
@@ -174,6 +174,7 @@ namespace score {
 		
 		bool isFailReadLine(const std::basic_ifstream<char_type> &ifs);
 		
+		void skipBOM();
 		
 		static std::basic_string<char_type> createErrMessage(State state);
 
