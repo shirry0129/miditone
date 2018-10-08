@@ -71,12 +71,12 @@ namespace musicgame {
 		Judgement() noexcept;
 	
 		JudgeState getJudge() const noexcept;
-		
+        
 		JudgeState getHoldState() const noexcept;
 		
-		std::basic_string<char_type> getJudgeMsg(JudgeState val);
+		std::basic_string<char_type> getJudgeMsg() const noexcept;
 		
-		std::basic_string<char_type> getHoldMsg(JudgeState val);
+		std::basic_string<char_type> getHoldMsg() const noexcept;
 		
 		bool isContinueHold() const noexcept;
 		

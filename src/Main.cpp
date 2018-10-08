@@ -5,6 +5,7 @@
 #include "UI/Score.hpp"
 #include "System/ScoreManager.hpp"
 #include "System/EventTimer.hpp"
+#include "System/TimingJudge.hpp"
 
 void Main() {
     Window::Resize(1920, 1080);
@@ -31,6 +32,10 @@ void Main() {
     double speed = 5;
     bool selectDiff = true;
     
+    musicgame::TimingJudge judger;
+    size_t combo = 0;
+    Font comboCount(100);
+    
     while (System::Update()) {
         
         SimpleGUI::RadioButtons(index, difficulty, Vec2(100,100), unspecified, selectDiff);
@@ -46,6 +51,7 @@ void Main() {
                 Print << U"ファイルパス:" << score.value();
             }else{
                 testScore.setFromFile(testFile.getNotes(), speed/10);
+                judger.create(score::numofLanes, testFile.getNotes());
             }
             
             time.start();
@@ -56,6 +62,30 @@ void Main() {
         
         if (time.onTriggered(U"Start")) {
             testAudio.play();
+        }
+        
+        musicgame::judge_results_t results =
+        judger.input(0, KeyD.pressed())
+        .input(1, KeyF.pressed())
+        .input(2, KeyJ.pressed())
+        .input(3, KeyK.pressed())
+        .judge(time.sF() - measureLength);
+        
+        comboCount(combo).drawAt(Window::Width() / 2, 400);
+        
+        for(const auto &r : results){
+            Logger << U"lane: " << r->lane
+            << U"   " << Unicode::Widen(r->result.getMessage())
+            << U"   error: " << r->error << U"s";
+            
+            Print << U"Lane: " << r->lane
+            << U"   " << Unicode::Widen(r->result.getJudgeMsg());
+            
+            if(r->result.isMiss()){
+                combo = 0;
+            }else{
+                combo++;
+            }
         }
         
         testScore.update(time.sF() - measureLength);

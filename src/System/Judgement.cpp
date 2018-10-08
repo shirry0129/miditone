@@ -51,12 +51,12 @@ namespace musicgame {
 		return this->enumVal & 0xf0;
 	}
 
-	std::basic_string<Judgement::char_type> Judgement::getJudgeMsg(JudgeState val) {
-		return createJudgeMsg(val);
+	std::basic_string<Judgement::char_type> Judgement::getJudgeMsg() const noexcept{
+		return createJudgeMsg(this->enumVal);
 	}
 
-	std::basic_string<Judgement::char_type> Judgement::getHoldMsg(JudgeState val) {
-		return createHoldMsg(val);
+	std::basic_string<Judgement::char_type> Judgement::getHoldMsg() const noexcept{
+		return createHoldMsg(this->enumVal);
 	}
 
 	bool Judgement::isContinueHold() const noexcept {
