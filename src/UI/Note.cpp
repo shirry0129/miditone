@@ -14,14 +14,22 @@ namespace ui {
 	laneNum(_laneNum),
 	wakeUpTime(2 * xMax / (_speed * xMax)),
 	acceleration((_speed * xMax * _speed * xMax) / (2 * xMax)),
+	isJudged(false),
 	inst(ui::LaneBG::getInstance()){}
 	
 	void Note::draw() const{
-		if(note.p3.y > 0 && note.p0.y < Window::Height()){
-			note.draw(Color(U"#7fffd4"));
-			//note(looks).draw();
+		if (!isJudged) {
+			if(note.p3.y > 0 && note.p0.y < Window::Height()){
+				note.draw(Color(U"#7fffd4"));
+				//note(looks).draw();
+			}
 		}
 	}
+	
+	void Note::makeJudged() {
+		isJudged = true;
+	}
+	
 	
 	
 	

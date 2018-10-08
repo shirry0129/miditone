@@ -16,15 +16,16 @@ namespace ui {
     
     class Score {
     private:
-        Array<HitNote> hit;
-        Array<HoldNote> hold;
-        Array<Note*> score;
+        Array<Array<HitNote>> hit;
+        Array<Array<HoldNote>> hold;
+        Array<Array<Note*>> score;
         
     public:
-        Score() = default;
+        Score();
         Score(const std::vector<score::Note>& _fromFile, float _speed);
         ~Score() = default;
         void setFromFile(const std::vector<score::Note>& _fromFile, float _speed);
+        void deleteJudgedNote(size_t _lane, int spot);
         
         void update(double currentTime);
         void draw() const;

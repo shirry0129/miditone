@@ -10,7 +10,15 @@
 
 namespace ui {
     
-    Score::Score(const std::vector<score::Note>& _fromFile, float _speed) {
+    Score::Score():
+    hit(numObLane),
+    hold(numObLane),
+    score(numObLane){}
+    
+    Score::Score(const std::vector<score::Note>& _fromFile, float _speed):
+    hit(numObLane),
+    hold(numObLane),
+    score(numObLane){
         setFromFile(_fromFile, _speed);
     }
     
@@ -18,55 +26,65 @@ namespace ui {
         for(auto n:_fromFile){
             switch (n.type) {
                 case score::NoteType::HIT:
-                    hit.emplace_back(n.lane, n.t_beg.sec, _speed);
+                    hit.at(n.lane).emplace_back(n.lane, n.t_beg.sec, _speed);
                     break;
                     
                 case score::NoteType::HOLD:
-                    hold.emplace_back(n.lane, n.t_beg.sec, n.t_end.sec, _speed);
+                    hold.at(n.lane).emplace_back(n.lane, n.t_beg.sec, n.t_end.sec, _speed);
                     break;
             }
         }
         
-        auto hitCount = hit.begin();
-        auto holdCount = hold.begin();
         
-        while (hitCount != hit.end() || holdCount != hold.end()) {
+        for(auto i:step(numObLane)){
+            auto hitCount = hit.at(i).begin();
+            auto holdCount = hold.at(i).begin();
             
-            if(hitCount == hit.cend()){
-                for (; holdCount != hold.cend(); holdCount++) {
-                    score.push_back(&(*holdCount));
+            while (hitCount != hit.at(i).end() || holdCount != hold.at(i).end()) {
+                
+                if(hitCount == hit.at(i).cend()){
+                    for (; holdCount != hold.at(i).cend(); holdCount++) {
+                        score.at(i).push_back(&(*holdCount));
+                    }
+                }else if(holdCount == hold.at(i).cend()){
+                    for (; hitCount != hit.at(i).cend(); hitCount++) {
+                        score.at(i).push_back(&(*hitCount));
+                    }
+                }else if(hitCount->judgeTime > holdCount->startTime){
+                    score.at(i).push_back(&(*holdCount));
+                    ++holdCount;
+                }else if(holdCount->startTime > hitCount->judgeTime){
+                    score.at(i).push_back(&(*hitCount));
+                    ++hitCount;
+                }else{
+                    score.at(i).push_back(&(*holdCount));
+                    score.at(i).push_back(&(*hitCount));
+                    ++holdCount;
+                    ++hitCount;
                 }
-            }else if(holdCount == hold.cend()){
-                for (; hitCount != hit.cend(); hitCount++) {
-                    score.push_back(&(*hitCount));
-                }
-            }else if(hitCount->judgeTime > holdCount->startTime){
-                score.push_back(&(*holdCount));
-                ++holdCount;
-            }else if(holdCount->startTime > hitCount->judgeTime){
-                score.push_back(&(*hitCount));
-                ++hitCount;
-            }else{
-                score.push_back(&(*holdCount));
-                score.push_back(&(*hitCount));
-                ++holdCount;
-                ++hitCount;
+                
             }
-            
         }
     }
     
     void Score::update(double currentTime) {
-        for(auto &n:score){
-            n->update(currentTime);
+        for(auto &l:score){
+            for(auto &n:l){
+                n->update(currentTime);
+            }
         }
     }
     
     void Score::draw() const{
-        for (auto n:score) {
-            n->draw();
+        for (auto l:score) {
+            for(auto n:l){
+                n->draw();
+            }
         }
     }
     
+    void Score::deleteJudgedNote(size_t _lane, int spot) {
+        score.at(_lane).at(spot)->makeJudged();
+    }
     
 }

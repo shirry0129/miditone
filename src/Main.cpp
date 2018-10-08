@@ -35,6 +35,11 @@ void Main() {
     musicgame::TimingJudge judger;
     size_t combo = 0;
     Font comboCount(100);
+    const Audio hitSound(U"../resource/hitSound.mp3");
+    
+    auto button = KeyD | KeyF | KeyJ | KeyK;
+    
+    Texture hoge(U"example/windmill.png");
     
     while (System::Update()) {
         
@@ -71,7 +76,7 @@ void Main() {
         .input(3, KeyK.pressed())
         .judge(time.sF() - measureLength);
         
-        comboCount(combo).drawAt(Window::Width() / 2, 400);
+        comboCount(combo).drawAt(Window::Width() / 2, 800);
         
         for(const auto &r : results){
             Logger << U"lane: " << r->lane
@@ -81,10 +86,16 @@ void Main() {
             Print << U"Lane: " << r->lane
             << U"   " << Unicode::Widen(r->result.getJudgeMsg());
             
+            if (!r->result.isMiss() && r->result.getHoldState() != musicgame::JudgeState::HOLDFINISHED) {
+                hitSound.playOneShot();
+            }
+            
             if(r->result.isMiss()){
                 combo = 0;
-            }else{
+                testScore.deleteJudgedNote(r->lane, r->indexInLane);
+            }else if(r->result.getHoldState() != musicgame::JudgeState::HOLDCONTINUE){
                 combo++;
+                testScore.deleteJudgedNote(r->lane, r->indexInLane);
             }
         }
         

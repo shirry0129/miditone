@@ -18,16 +18,18 @@ namespace ui{
     
     class Note {
     protected:
+        const LaneBG& inst;
         const Texture looks;
         const size_t laneNum;
         const float wakeUpTime;
         const float acceleration;
         Quad note;
-        const LaneBG& inst;
+        bool isJudged;
         
     public:
         Note(size_t _laneNum, float _speed);
         ~Note() = default;
+        virtual void makeJudged() final;
         
         virtual void update(double currentTime) = 0;
         virtual void draw() const final;

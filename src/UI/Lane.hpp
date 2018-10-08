@@ -12,6 +12,7 @@
 
 namespace ui {
     constexpr int laneEnd = 1000;
+    constexpr int numObLane = 4;
     
     struct factor {
         float slope;
