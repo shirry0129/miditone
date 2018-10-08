@@ -115,12 +115,12 @@ public:
 	
 	virtual ~Enum() {}
 	
-	Enum<T>& assign(T value) noexcept {
+	Enum<T>& assign(const T& value) noexcept {
 		enumVal = value;
 		return *this;
 	}
 	
-	Enum<T>& assign(int value) noexcept {
+	Enum<T>& assign(const int& value) noexcept {
 		enumVal = static_cast<T>(value);
 		return *this;
 	}
@@ -136,14 +136,14 @@ public:
 	virtual std::string getMessage() const noexcept {
 		return msgFunc(enumVal);
 	}
-	
-	Enum<T>& operator= (const T& _errVal) noexcept {
-		assign(_errVal);
+
+	Enum<T>& operator= (const T& _enumVal) noexcept {
+		assign(_enumVal);
 		return *this;
 	}
 	
-	Enum<T>& operator= (const int& _errVal) noexcept {
-		assign(_errVal);
+	Enum<T>& operator= (const int& _enumVal) noexcept {
+		assign(_enumVal);
 		return *this;
 	}
 	
