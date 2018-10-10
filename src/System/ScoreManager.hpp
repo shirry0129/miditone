@@ -30,6 +30,13 @@ namespace score {
 		HIT = 0,
 		HOLD = 1
 	};
+	
+	enum class Genre {
+		JPOP_ANIME = 0,
+		GAME,
+		NICONICO,
+		VARIETY
+	};
 
 	struct NoteTime {
 		NoteTime(int _bar, double _sec) noexcept
@@ -91,10 +98,11 @@ namespace score {
 		};
 	
 		struct Header {
-			std::basic_string<char_type> title;
-			std::basic_string<char_type> artist;
-			std::basic_string<char_type> level;
-			Difficulty difficulty;
+			std::basic_string<char_type>	title;
+			std::basic_string<char_type>	artist;
+			std::basic_string<char_type>	level;
+			Genre							genre;
+			Difficulty						difficulty;
 
 			void clear() {
 				title.clear();

@@ -159,6 +159,15 @@ namespace score {
 		header.title = h.title;
 		header.artist = h.artist;
 		header.level = h.level.at(static_cast<int>(difficulty));
+		if (h.genre == "0")
+			header.genre = Genre::JPOP_ANIME;
+		else if (h.genre == "1")
+			header.genre = Genre::GAME;
+		else if (h.genre == "2")
+			header.genre = Genre::NICONICO;
+		else if (h.genre == "3")
+			header.genre = Genre::VARIETY;
+	
 
 		for (const auto &t : h.tempo) {
 			tempo.emplace_back(
