@@ -71,7 +71,29 @@ namespace musicgame {
 		
 		return *this;
 	}
-
+	
+	TimingJudge& TimingJudge::inputAuto(double currentSec) noexcept {
+		for (size_t i = 0; i < score::numofLanes; i++) {
+			if (judgingNote.at(i)) {
+				// when judge the hold note
+				if (currentSec < judgingNote.at(i)->t_end.sec) {
+					// before the hold end note
+					controller.key(i).update(true);
+				} else {
+					controller.key(i).update(false);
+				}
+			} else {
+				// when judge the hit note / the hold begin note
+				if (currentSec >= enumBegNote.at(i)->t_beg.sec)
+					controller.key(i).update(true);
+				else
+					controller.key(i).update(false);
+			}
+		}
+		
+		return *this;
+	}
+	
 	std::vector<const JudgeResult*> TimingJudge::judge(double inputSec) noexcept {
 		std::vector<const JudgeResult*> results;
 		

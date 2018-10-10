@@ -107,6 +107,10 @@ namespace musicgame {
 			size_t keyNum,
 			bool isPressed
 		) noexcept;
+		
+		TimingJudge& inputAuto(
+			double currentSec
+		) noexcept;
 
 		judge_results_t judge(
 			double inputSec
