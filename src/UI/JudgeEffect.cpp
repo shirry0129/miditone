@@ -152,18 +152,19 @@ namespace ui {
 
 
 	_1stJudgeEffect::_1stJudgeEffect(
-		const Texture &shineTexture, double _x, double _y, double _remainSec
+		const Texture &shineTexture, double _x, double _y,
+		double _remainSec, bool _hasDrawShine
 	) noexcept
 	: JudgeEffect(
-		shineTexture, _x, _y, _remainSec, radius, 45, HSV(60, 0.7, 1.0)
+		shineTexture, _x, _y, _remainSec, radius, 45, HSV(60, 0.7, 1.0), _hasDrawShine
 	) {};
 	
 	
 	_1stJudgeEffect::_1stJudgeEffect(
-		const Texture &shineTexture, const Point& pos, double _remainSec
+		const Texture &shineTexture, const Point& pos, double _remainSec, bool _hasDrawShine
 	) noexcept
 	: _1stJudgeEffect(
-		shineTexture, pos.x, pos.y, _remainSec
+		shineTexture, pos.x, pos.y, _remainSec, _hasDrawShine
 	) {}
 	
 	_1stJudgeEffect::~_1stJudgeEffect() {};
@@ -171,18 +172,18 @@ namespace ui {
 	
 
 	_2ndJudgeEffect::_2ndJudgeEffect(
-		const Texture &shineTexture, double _x, double _y, double _remainSec
+		const Texture &shineTexture, double _x, double _y, double _remainSec, bool _hasDrawShine
 	) noexcept
 	: JudgeEffect(
-		shineTexture, _x, _y, _remainSec, radius, 45, Palette::Hotpink
+		shineTexture, _x, _y, _remainSec, radius, 45, Palette::Hotpink, _hasDrawShine
 	) {};
 	
 	
 	_2ndJudgeEffect::_2ndJudgeEffect(
-		const Texture &shineTexture, const Point& pos, double _remainSec
+		const Texture &shineTexture, const Point& pos, double _remainSec, bool _hasDrawShine
 	) noexcept
 	: _2ndJudgeEffect(
-		shineTexture, pos.x, pos.y, _remainSec
+		shineTexture, pos.x, pos.y, _remainSec, _hasDrawShine
 	) {}
 	
 	_2ndJudgeEffect::~_2ndJudgeEffect() {};
@@ -191,18 +192,18 @@ namespace ui {
 
 	
 	_3rdJudgeEffect::_3rdJudgeEffect(
-		const Texture &shineTexture, double _x, double _y, double _remainSec
+		const Texture &shineTexture, double _x, double _y, double _remainSec, bool _hasDrawShine
 	) noexcept
 	: JudgeEffect(
-		shineTexture, _x, _y, _remainSec, radius, 45, Palette::Skyblue
+		shineTexture, _x, _y, _remainSec, radius, 45, Palette::Skyblue, _hasDrawShine
 	) {};
 	
 	
 	_3rdJudgeEffect::_3rdJudgeEffect(
-		const Texture &shineTexture, const Point& pos, double _remainSec
+		const Texture &shineTexture, const Point& pos, double _remainSec, bool _hasDrawShine
 	) noexcept
 	: _3rdJudgeEffect(
-		shineTexture, pos.x, pos.y, _remainSec
+		shineTexture, pos.x, pos.y, _remainSec, _hasDrawShine
 	) {}
 	
 	_3rdJudgeEffect::~_3rdJudgeEffect() {};
