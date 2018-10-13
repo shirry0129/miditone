@@ -61,11 +61,13 @@ namespace ui {
 		static constexpr int radius = 250;
 		
 		_1stJudgeEffect(
-			const Texture &shineTexture, double _x, double _y, double _remainSec
+			const Texture &shineTexture, double _x, double _y,
+			double _remainSec, bool _hasDrawShine = true
 		) noexcept;
 		
 		_1stJudgeEffect(
-			const Texture &shineTexture, const Point& pos, double _remainSec
+			const Texture &shineTexture, const Point& pos,
+			double _remainSec, bool _hasDrawShine = true
 		) noexcept;
 		
 		~_1stJudgeEffect();
@@ -78,11 +80,13 @@ namespace ui {
 		static constexpr int radius = 200;
 
 		_2ndJudgeEffect(
-			const Texture &shineTexture, double _x, double _y, double _remainSec
+			const Texture &shineTexture, double _x, double _y,
+			double _remainSec, bool _hasDrawShine = true
 		) noexcept;
 		
 		_2ndJudgeEffect(
-			const Texture &shineTexture, const Point& pos, double _remainSec
+			const Texture &shineTexture, const Point& pos,
+			double _remainSec, bool _hasDrawShine = true
 		) noexcept;
 		
 		~_2ndJudgeEffect();
@@ -95,16 +99,20 @@ namespace ui {
 		static constexpr int radius = 150;
 
 		_3rdJudgeEffect(
-			const Texture &shineTexture, double _x, double _y, double _remainSec
+			const Texture &shineTexture, double _x, double _y,
+			double _remainSecx, bool _hasDrawShine = true
 		) noexcept;
 		
 		_3rdJudgeEffect(
-			const Texture &shineTexture, const Point& pos, double _remainSec
+			const Texture &shineTexture, const Point& pos,
+			double _remainSec, bool _hasDrawShine = true
 		) noexcept;
 		
 		~_3rdJudgeEffect();
 		
 	};
+	
+	
 	
 	
 	
