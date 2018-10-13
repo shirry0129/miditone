@@ -11,7 +11,8 @@ date	: 2018/9/20
 #ifndef _SCOREMANAGER_HPP_
 #define _SCOREMANAGER_HPP_
 
-#include "ScoreReader.hpp"
+
+#include "Header.hpp"
 #include "ScoreTimeConverter.hpp"
 
 
@@ -31,14 +32,8 @@ namespace score {
 		HOLD = 1
 	};
 	
-	enum class Genre {
-		JPOP_ANIME = 0,
-		GAME,
-		NICONICO,
-		VARIETY
-	};
 	
-
+	
 	struct NoteTime {
 		NoteTime(int _bar, double _sec) noexcept
 			: bar(_bar), sec(_sec) {};
@@ -63,7 +58,7 @@ namespace score {
 		const NoteTime t_end;
 	};
 	
-
+	
 	struct Tempo {
 		Tempo(const NoteTime &_time, float _tempo) noexcept
 			: time(_time), tempo(_tempo) {}
@@ -81,7 +76,7 @@ namespace score {
 		const math::Fraction beat;
 	};
 	
-
+	
 	struct Bar {
 		Bar(const NoteTime &_time, int _barCnt) noexcept
 			: time(_time), barCnt(_barCnt) {}
