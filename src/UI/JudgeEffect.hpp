@@ -17,7 +17,7 @@
 namespace ui {
 
 	void writeShineImage(
-		Image &image, int radiusOut, int radiusIn, int blurSize,
+		Image &image, int radiusOut = 100, int radiusIn = 15, int blurSize = 15,
 		const Color& color = Palette::White
 	);
 	
