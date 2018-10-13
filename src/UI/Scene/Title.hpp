@@ -8,7 +8,7 @@
 #ifndef Title_hpp
 #define Title_hpp
 
-#include "CommonInfo.hpp"
+#include "Common.hpp"
 
 namespace ui{
 

@@ -8,7 +8,7 @@
 #ifndef MusicSelect_hpp
 #define MusicSelect_hpp
 
-#include "CommonInfo.hpp"
+#include "Common.hpp"
 
 namespace ui{
 

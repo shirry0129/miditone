@@ -8,7 +8,7 @@
 #ifndef GameOver_hpp
 #define GameOver_hpp
 
-#include "CommonInfo.hpp"
+#include "Common.hpp"
 
 namespace ui{
 

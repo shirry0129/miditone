@@ -8,7 +8,7 @@
 #ifndef Play_hpp
 #define Play_hpp
 
-#include "CommonInfo.hpp"
+#include "Common.hpp"
 #include "../Lane.hpp"
 #include "../Score.hpp"
 #include "../Note.hpp"

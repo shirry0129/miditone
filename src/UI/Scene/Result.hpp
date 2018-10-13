@@ -8,7 +8,7 @@
 #ifndef Result_hpp
 #define Result_hpp
 
-#include "CommonInfo.hpp"
+#include "Common.hpp"
 
 namespace ui{
     

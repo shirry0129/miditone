@@ -24,19 +24,21 @@ namespace ui{
             scoreFile = Optional<String>(U"not a path");
         }
         
-        m_file.create(scoreFile.value().narrow().c_str(), score::Difficulty::HARD);
+        m_file.create(scoreFile.value().narrow().c_str(), static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
             Print << U"譜面読み込み失敗:" << Unicode::Widen(m_file.getLastError().getMessage());
             Print << U"エラー箇所:" << Unicode::Widen(m_file.getReader().getLastError().getMessage()) <<  U" 行数:" << m_file.getReader().getCurrentLine();
             Print << U"ファイルパス:" << scoreFile.value();
         }else{
-            m_score.setFromFile(m_file.getNotes(), 1);
+            m_score.setFromFile(m_file.getNotes(), getData().speed / 10);
             judger.create(score::numofLanes, m_file.getNotes());
             measureLength = m_file.getBar().at(1).time.sec;
             time.addEvent(U"Start", SecondsF(measureLength));
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + measureLength));
         }
+        
+        hitSound.setVolume(getData().decisionVolume / 100);
         
         time.start();
     }

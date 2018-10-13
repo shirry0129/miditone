@@ -11,6 +11,9 @@ namespace ui{
 
     Title::Title(const InitData& init):IScene(init) {
         getData().trackCount = 0;
+        getData().decisionVolume = 80;
+        getData().speed = 5;
+        getData().currentDiff = 1;
     }
     
     void Title::update() {
