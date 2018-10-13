@@ -23,8 +23,7 @@ namespace score {
 		reader.open(file.c_str());
 
 		// read header
-		score::Header h;
-		
+		ScoreReader::Header h;
 		if (reader.readHeader(h, "header").isError())
 			return prevError = State::E_READER_FAILED;
 

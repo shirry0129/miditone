@@ -64,24 +64,26 @@ namespace score {
 		const int type;
 	};
 
-	struct Header {
-		int								id;
-		std::basic_string<char_type>	title;
-		std::basic_string<char_type>	artist;
-		std::array<
-			std::basic_string<char_type>,
-			3
-		>								level;
-		std::basic_string<char_type>	genre;
-		std::vector<TempoEvent>			tempo;
-		std::vector<BeatEvent>			beat;
-	};
-
-
-
+	
+	
 	class ScoreReader {
 	public:
 		static constexpr size_t buffer_size = 256;
+		
+		
+		struct Header {
+			int								id;
+			std::basic_string<char_type>	title;
+			std::basic_string<char_type>	artist;
+			std::array<
+				std::basic_string<char_type>,
+				3
+			>								level;
+			std::basic_string<char_type>	genre;
+			std::vector<TempoEvent>			tempo;
+			std::vector<BeatEvent>			beat;
+		};
+		
 
 		enum class State {
 			S_REACH_CHUNK_END = 1,

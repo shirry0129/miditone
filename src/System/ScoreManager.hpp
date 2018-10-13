@@ -37,6 +37,7 @@ namespace score {
 		NICONICO,
 		VARIETY
 	};
+	
 
 	struct NoteTime {
 		NoteTime(int _bar, double _sec) noexcept
@@ -45,6 +46,7 @@ namespace score {
 		const int bar;
 		const double sec;
 	};
+	
 
 	struct Note {
 		Note(
@@ -60,6 +62,7 @@ namespace score {
 		const NoteTime t_beg;
 		const NoteTime t_end;
 	};
+	
 
 	struct Tempo {
 		Tempo(const NoteTime &_time, float _tempo) noexcept
@@ -68,6 +71,7 @@ namespace score {
 		const NoteTime time;
 		const float tempo;
 	};
+	
 
 	struct Beat {
 		Beat(const NoteTime &_time, const math::Fraction &_beat) noexcept
@@ -76,6 +80,7 @@ namespace score {
 		const NoteTime time;
 		const math::Fraction beat;
 	};
+	
 
 	struct Bar {
 		Bar(const NoteTime &_time, int _barCnt) noexcept
@@ -84,6 +89,7 @@ namespace score {
 		const NoteTime time;
 		const int barCnt;
 	};
+
 
 	class ScoreManager {
 	public:
