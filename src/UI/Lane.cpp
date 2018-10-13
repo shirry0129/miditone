@@ -7,8 +7,8 @@ namespace ui {
      */
     LaneBG::LaneBG():
     laneBegin(Window::Width()/2, -500),
-    interval(300, 0),
-    leftEnd(360,Window::Height()),
+    interval(ui::interval, 0),
+    leftEnd(ui::leftEnd, Window::Height()),
     rightEnd(leftEnd + interval * 4),
     isCreated(false)
     {

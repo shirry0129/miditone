@@ -312,13 +312,25 @@ namespace musicgame {
 		if (target->type == score::NoteType::HIT) {
 			// hit note
 			
-			if (abs(inputTime - target->t_beg.sec) < 0.05)
-				judge = JudgeState::BEST;
-			else if (abs(inputTime - target->t_beg.sec) < 0.10)
-				judge = JudgeState::BETTER;
-			else if (abs(inputTime - target->t_beg.sec) < 0.30)
-				judge = JudgeState::GOOD;
-
+			const double error = inputTime - target->t_beg.sec;
+			
+			if (error >= 0) {
+				if (error < 0.05)
+					judge = JudgeState::BEST;
+				else if (error < 0.1)
+					judge = JudgeState::BETTER;
+				else if (error < 0.3)
+					judge = JudgeState::GOOD;
+			} else {
+				if (error > -0.05)
+					judge = JudgeState::BEST;
+				else if (error > -0.08)
+					judge = JudgeState::BETTER;
+				else if (error > -0.20)
+					judge = JudgeState::GOOD;
+			}
+			
+			
 		} else {
 			// hold begin note
 
@@ -348,12 +360,12 @@ namespace musicgame {
 
 			if (inputTime - note->t_end.sec >= 0.0)
 				judge = JudgeState::BEST | JudgeState::HOLDFINISHED;	// when user input time is same / later to the note time
-			else if (inputTime - note->t_end.sec > -0.2)
+			else if (inputTime - note->t_end.sec > -0.1)
 				judge = JudgeState::BETTER | JudgeState::HOLDFINISHED;	// when user input time is earlier to the note time
-			else if (inputTime - note->t_end.sec > -0.4)
+			else if (inputTime - note->t_end.sec > -0.3)
 				judge = JudgeState::GOOD | JudgeState::HOLDFINISHED;	// same as above
 			else
-				judge = JudgeState::NOTBAD | JudgeState::HOLDFINISHED;	// same as above
+				judge = JudgeState::MISS | JudgeState::HOLDBREAK;	// same as above
 
 		}
 		
