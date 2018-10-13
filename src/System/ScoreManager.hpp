@@ -98,6 +98,7 @@ namespace score {
 		};
 	
 		struct Header {
+			int								id;
 			std::basic_string<char_type>	title;
 			std::basic_string<char_type>	artist;
 			std::basic_string<char_type>	level;

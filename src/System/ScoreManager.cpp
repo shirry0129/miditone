@@ -156,6 +156,7 @@ namespace score {
 		path.assign(file);
 
 		header.difficulty = difficulty;
+		header.id = h.id;
 		header.title = h.title;
 		header.artist = h.artist;
 		header.level = h.level.at(static_cast<int>(difficulty));
