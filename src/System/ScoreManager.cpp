@@ -1,5 +1,4 @@
 #include "ScoreManager.hpp"
-#include "ScoreTimeConverter.hpp"
 
 #include <list>
 
@@ -20,13 +19,14 @@ namespace score {
 
 		init();
 
-		reader.open(file.c_str());
 
 		// read header
 		score::Header h;
-		
-		if (reader.readHeader(h, "header").isError())
+		if (h.read(file.c_str()).isError())
 			return prevError = State::E_READER_FAILED;
+		
+		
+		reader.open(file.c_str());
 
 
 		// create chunk name of difficulty
@@ -57,7 +57,7 @@ namespace score {
 		// create note timing data
 		std::array<const NoteEvent*, numofLanes> lastHoldBegin;
 
-		if (!timeConv.create(h.beat, h.tempo))
+		if (!timeConv.create(h.beat(), h.tempo()))
 			return prevError = State::E_INVALID_TEMPO_BEAT;
 		
 
@@ -156,26 +156,19 @@ namespace score {
 		path.assign(file);
 
 		header.difficulty = difficulty;
-		header.id = h.id;
-		header.title = h.title;
-		header.artist = h.artist;
-		header.level = h.level.at(static_cast<int>(difficulty));
-		if (h.genre == "0")
-			header.genre = Genre::JPOP_ANIME;
-		else if (h.genre == "1")
-			header.genre = Genre::GAME;
-		else if (h.genre == "2")
-			header.genre = Genre::NICONICO;
-		else if (h.genre == "3")
-			header.genre = Genre::VARIETY;
+		header.id = h.id();
+		header.title = h.title();
+		header.artist = h.artist();
+		header.level = h.level().at(static_cast<int>(difficulty));
+		header.genre = h.genre();
 	
 
-		for (const auto &t : h.tempo) {
+		for (const auto &t : h.tempo()) {
 			tempo.emplace_back(
 				NoteTime(t.bar, timeConv.calcSec(t.getBarLength())), t.tempo
 			);
 		}
-		for (const auto &b : h.beat) {
+		for (const auto &b : h.beat()) {
 			beat.emplace_back(
 				NoteTime(b.bar, timeConv.calcSec(b.getBarLength())), b.beat
 			);
