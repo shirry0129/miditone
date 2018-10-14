@@ -443,4 +443,4 @@ a.out.dSYM
 
 # extra
 test/
-resource/**
+/resource/**
