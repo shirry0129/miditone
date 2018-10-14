@@ -10,7 +10,8 @@
 namespace ui{
     
     PrefBox::PrefBox(const PrefItem _item, const String& content, const RectF& _entity):
-    IBox(content, _entity),
+    IBox(_entity),
+    m_content(content),
     m_item(_item){}
     
     void PrefBox::draw(const Vec2& moveWidth, bool isSelected) const {
@@ -54,8 +55,6 @@ namespace ui{
     
     
     
-    
-
     Preference::Preference(const InitData &init):
     IScene(init),
     boxSize(400, 600),
@@ -107,7 +106,7 @@ namespace ui{
                         }
                         break;
                     case PrefItem::DECISIONVOL:
-                        if (getData().decisionVolume < 100) {
+                        if (getData().decisionVolume < 10) {
                             getData().decisionVolume++;
                         }
                         break;
@@ -128,6 +127,7 @@ namespace ui{
         
         if (gameinfo::decide.down()) {
             if (prefItem.at(currentItem).getEntry() == PrefItem::GAMESTART) {
+                getData().resultDiff.push_back(static_cast<score::Difficulty>(getData().currentDiff));
                 changeScene(SceneName::PLAY, 2000);
             }else{
                 adjustment = true;

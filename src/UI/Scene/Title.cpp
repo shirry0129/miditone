@@ -11,7 +11,7 @@ namespace ui{
 
     Title::Title(const InitData& init):IScene(init) {
         getData().trackCount = 0;
-        getData().decisionVolume = 80;
+        getData().decisionVolume = 8;
         getData().speed = 5;
         getData().currentDiff = 1;
     }

@@ -16,15 +16,15 @@
 namespace ui{
     
     struct IBox{
-        String m_content;
         Texture design;
         RectF entity;
-        IBox(const String& _content, const RectF& _entity);
+        IBox(const RectF& _entity):entity(_entity){};
     };
     
     struct PlayData {
         size_t trackCount;
         FilePath scoreFile;
+        FilePath musicFile;
         double decisionVolume;
         double speed;
         Array<score::ScoreManager::Header> songInfo;
@@ -39,6 +39,7 @@ namespace ui{
         PREFERENCE,
         PLAY,
         RESULT,
+        TOTALRESULT,
         GAMEOVER
     };
     

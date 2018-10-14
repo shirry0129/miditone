@@ -7,6 +7,7 @@
 #include "UI/Scene/Preference.hpp"
 #include "UI/Scene/Play.hpp"
 #include "UI/Scene/Result.hpp"
+#include "UI/Scene/TotalResult.hpp"
 #include "UI/Scene/GameOver.hpp"
 
 void Main() {
@@ -24,6 +25,7 @@ void Main() {
     sceneManager.add<ui::Preference>(ui::SceneName::PREFERENCE);
     sceneManager.add<ui::Play>(ui::SceneName::PLAY);
     sceneManager.add<ui::Result>(ui::SceneName::RESULT);
+    sceneManager.add<ui::TotalResult>(ui::SceneName::TOTALRESULT);
     sceneManager.add<ui::GameOver>(ui::SceneName::GAMEOVER);
     
     while (System::Update()) {

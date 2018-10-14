@@ -12,25 +12,25 @@ namespace ui{
 
     Play::Play(const InitData& init):
     IScene(init),
-    m_song(Dialog::OpenAudio()),
+    m_song(getData().musicFile),
     comboCount(100),
-    hitSound(Resource(U"resource/hitSound.mp3")){
+    hitSound(Resource(U"resource/forSystem/hitSound.wav")){
         ClearPrint();
         LaneBG::create();
         
-        auto scoreFile = Dialog::OpenFile(gameinfo::scoreData);
+//        auto scoreFile = Dialog::OpenFile(gameinfo::scoreData);
         
-        if(!scoreFile){
-            scoreFile = Optional<String>(U"not a path");
-        }
+//        if(!scoreFile){
+//            scoreFile = Optional<String>(U"not a path");
+//        }
         
-        m_file.create(scoreFile.value().narrow().c_str(), static_cast<score::Difficulty>(getData().currentDiff));
+        m_file.create(getData().scoreFile.narrow().c_str(), static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
             Print << U"譜面読み込み失敗:" << Unicode::Widen(m_file.getLastError().getMessage());
             Print << U"エラー箇所:" << Unicode::Widen(m_file.getReader().getLastError().getMessage()) <<  U" 行数:" << m_file.getReader().getCurrentLine();
-            Print << U"ファイルパス:" << scoreFile.value();
         }else{
+            getData().songInfo.push_back(m_file.getHeader());
             m_score.setFromFile(m_file.getNotes(), getData().speed / 10);
             judger.create(score::numofLanes, m_file.getNotes());
             measureLength = m_file.getBar().at(1).time.sec;
@@ -38,7 +38,7 @@ namespace ui{
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + measureLength));
         }
         
-        hitSound.setVolume(getData().decisionVolume / 100);
+        hitSound.setVolume(getData().decisionVolume / 10);
         
         time.start();
     }

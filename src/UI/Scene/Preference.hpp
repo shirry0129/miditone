@@ -24,7 +24,7 @@ namespace ui{
     class PrefBox : public IBox {
     private:
         PrefItem m_item;
-        
+        String m_content;
     public:
         PrefBox() = default;
         PrefBox(const PrefItem _item, const String& content, const RectF& _entity);
@@ -33,15 +33,14 @@ namespace ui{
         void draw(const Vec2& moveWidth, bool isSelected, score::Difficulty currentDiff) const;
         PrefItem getEntry() const;
     };
-
+    
     class Preference : public MyApp::Scene {
     private:
-        const Point boxSize;
+        const Vec2 boxSize;
         const RectF defaultEntity;
         size_t currentItem;
         Array<PrefBox> prefItem;
         bool adjustment;
-        
     public:
         Preference(const InitData& init);
         void update() override;

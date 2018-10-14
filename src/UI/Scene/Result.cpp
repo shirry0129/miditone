@@ -17,7 +17,7 @@ namespace ui{
             if (getData().trackCount < gameinfo::totalTrack) {
                 changeScene(SceneName::MUSICSELECT, 2000);
             }else{
-                changeScene(SceneName::GAMEOVER, 2000);
+                changeScene(SceneName::TOTALRESULT, 2000);
             }
         };
     }
