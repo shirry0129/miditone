@@ -84,7 +84,8 @@ namespace musicgame {
 				}
 			} else {
 				// when judge the hit note / the hold begin note
-				if (currentSec >= enumBegNote.at(i)->t_beg.sec)
+				if (enumBegNote.at(i) != notes.at(i).cend() &&
+					currentSec >= enumBegNote.at(i)->t_beg.sec)
 					controller.key(i).update(true);
 				else
 					controller.key(i).update(false);
