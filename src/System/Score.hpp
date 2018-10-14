@@ -86,7 +86,7 @@ namespace score {
 	};
 
 
-	class ScoreManager {
+	class Score {
 	public:
 		
 		enum class State {
@@ -115,9 +115,9 @@ namespace score {
 		};
 
 	
-		ScoreManager() noexcept;
-		ScoreManager(const std::string &file, Difficulty difficulty);
-		~ScoreManager();
+		Score() noexcept;
+		Score(const std::string &file, Difficulty difficulty);
+		~Score();
 
 		Error<State> create(const std::string &file, Difficulty difficulty);
 		Error<State> recreate();
@@ -139,13 +139,13 @@ namespace score {
 		const std::vector<Bar>& getBar() const noexcept;
 		int getBar(double sec) const noexcept;
 
-		const ScoreManager::Header& getHeader() const noexcept;
+		const Score::Header& getHeader() const noexcept;
 
 		const std::vector<Note> &getNotes() const noexcept;
 
 		const score::ScoreTimeConverter &getConverter() const noexcept;
 		
-		const Error<ScoreManager::State> &getLastError() const noexcept;
+		const Error<Score::State> &getLastError() const noexcept;
 		
 		const ScoreReader &getReader() const noexcept;
 		
@@ -167,19 +167,19 @@ namespace score {
 		std::array<int, numofLanes> numofNotesInLane;
 		
 
-		ScoreManager::Header header;
+		Score::Header header;
 
 		std::vector<Tempo> tempo;
 		std::vector<Beat> beat;
 		std::vector<Bar> bar;
 		
-		Error<ScoreManager::State> prevError;
+		Error<Score::State> prevError;
 		
 		void init();
 
 	};
 
-	using score_err_t = Error<ScoreManager::State>;
+	using score_err_t = Error<Score::State>;
 
 }
 

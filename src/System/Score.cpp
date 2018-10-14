@@ -1,20 +1,20 @@
-#include "ScoreManager.hpp"
+#include "Score.hpp"
 
 #include <list>
 
 namespace score {
 
-	ScoreManager::ScoreManager() noexcept
+	Score::Score() noexcept
 		: prevError(State::S_OK, createErrMessage) {}
 
-	ScoreManager::ScoreManager(const std::string &file, Difficulty difficulty)
+	Score::Score(const std::string &file, Difficulty difficulty)
 		: prevError(State::S_OK, createErrMessage) {
 		create(file, difficulty);
 	}
 
-	ScoreManager::~ScoreManager() {}
+	Score::~Score() {}
 
-	score_err_t ScoreManager::create(const std::string &file, Difficulty difficulty) {
+	score_err_t Score::create(const std::string &file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
@@ -183,42 +183,42 @@ namespace score {
 		return prevError = State::S_OK;
 	}
 
-	score_err_t ScoreManager::recreate() {
+	score_err_t Score::recreate() {
 		return create(path.c_str(), header.difficulty);
 	}
 
-	void ScoreManager::clear() {
+	void Score::clear() {
 		init();
 	}
 
-	int ScoreManager::getNumofBars() const noexcept {
+	int Score::getNumofBars() const noexcept {
 		return numofBars;
 	}
 
-	int ScoreManager::getNumofHolds() const noexcept {
+	int Score::getNumofHolds() const noexcept {
 		return numofHolds;
 	}
 
-	int ScoreManager::getNumofHits() const noexcept {
+	int Score::getNumofHits() const noexcept {
 		return numofHits;
 	}
 	
-	int ScoreManager::getNumofNotes() const noexcept {
+	int Score::getNumofNotes() const noexcept {
 		return numofHits + numofHolds;
 	}
 	
-	int ScoreManager::getNumofLaneNotes(int laneNum) const noexcept {
+	int Score::getNumofLaneNotes(int laneNum) const noexcept {
 		if (laneNum < 0 || laneNum >= numofLanes)
 			return 0;
 		
 		return numofNotesInLane.at(laneNum);
 	}
 	
-	const std::vector<Tempo>& ScoreManager::getTempo() const noexcept {
+	const std::vector<Tempo>& Score::getTempo() const noexcept {
 		return tempo;
 	}
 
-	float ScoreManager::getTempo(double sec) const noexcept {
+	float Score::getTempo(double sec) const noexcept {
 		for (auto it = tempo.crbegin(); it != tempo.crend(); it++) {
 			if (it->time.sec <= sec)
 				return it->tempo;
@@ -227,11 +227,11 @@ namespace score {
 		return 0.0f;
 	}
 
-	const std::vector<Beat>& ScoreManager::getBeat() const noexcept {
+	const std::vector<Beat>& Score::getBeat() const noexcept {
 		return beat;
 	}
 
-	math::Fraction ScoreManager::getBeat(double sec) const noexcept {
+	math::Fraction Score::getBeat(double sec) const noexcept {
 		for (auto it = beat.crbegin(); it != beat.crend(); it++) {
 			if (it->time.sec <= sec)
 				return it->beat;
@@ -240,11 +240,11 @@ namespace score {
 		return math::Fraction(0);
 	}
 
-	const std::vector<Bar>& ScoreManager::getBar() const noexcept {
+	const std::vector<Bar>& Score::getBar() const noexcept {
 		return bar;
 	}
 
-	int ScoreManager::getBar(double sec) const noexcept {
+	int Score::getBar(double sec) const noexcept {
 		for (auto it = bar.crbegin(); it != bar.crend(); it++) {
 			if (it->time.sec <= sec)
 				return it->barCnt;
@@ -253,28 +253,28 @@ namespace score {
 		return 0;
 	}
 
-	const ScoreManager::Header & ScoreManager::getHeader() const noexcept {
+	const Score::Header & Score::getHeader() const noexcept {
 		return header;
 	}
 
-	const std::vector<Note> & ScoreManager::getNotes() const noexcept {
+	const std::vector<Note> & Score::getNotes() const noexcept {
 		return notes;
 	} 
 
-	const score::ScoreTimeConverter &ScoreManager::getConverter() const noexcept {
+	const score::ScoreTimeConverter &Score::getConverter() const noexcept {
 		return timeConv;
 	}
 	
-	const Error<ScoreManager::State> &ScoreManager::getLastError() const noexcept {
+	const Error<Score::State> &Score::getLastError() const noexcept {
 		return prevError;
 	}
 	
-	const ScoreReader &ScoreManager::getReader() const noexcept {
+	const ScoreReader &Score::getReader() const noexcept {
 		return reader;
 	}
 	
 
-	void ScoreManager::init() {
+	void Score::init() {
 		notes.clear();
 		path.clear();
 		timeConv.clear();
@@ -291,7 +291,7 @@ namespace score {
 	}
 
 
-	std::string ScoreManager::createErrMessage(State state) {
+	std::string Score::createErrMessage(State state) {
 		std::string msg;
 	
 		switch (state) {

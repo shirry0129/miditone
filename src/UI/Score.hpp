@@ -10,7 +10,7 @@
 
 #include <Siv3D.hpp>
 #include "Note.hpp"
-#include "../System/ScoreManager.hpp"
+#include "../System/Score.hpp"
 
 namespace ui {
     

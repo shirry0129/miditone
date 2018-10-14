@@ -10,7 +10,7 @@
 
 #include "Common.hpp"
 #include "../../GameInfo.hpp"
-#include "../../System/ScoreManager.hpp"
+#include "../../System/Score.hpp"
 
 namespace ui{
     

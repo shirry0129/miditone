@@ -10,7 +10,7 @@
 
 #include <Siv3D.hpp>
 #include <HamFramework.hpp>
-#include "../../System/ScoreManager.hpp"
+#include "../../System/Score.hpp"
 #include "../../GameInfo.hpp"
 
 namespace ui{
@@ -43,7 +43,7 @@ namespace ui{
         double speed;
         size_t currentDiff;
         Array<DecisionInfo> decisionCount;
-        Array<score::ScoreManager::Header> resultSongInfo;
+        Array<score::Score::Header> resultSongInfo;
         Array<score::Difficulty> resultDiff;
         Array<size_t> resultScore;
     };
