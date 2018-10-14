@@ -21,14 +21,29 @@ namespace ui{
         IBox(const RectF& _entity):entity(_entity){};
     };
     
+    struct DecisionInfo{
+        size_t combo;
+        size_t criticalCount;
+        size_t correctCount;
+        size_t niceCount;
+        size_t missCount;
+        DecisionInfo():
+        combo(0),
+        criticalCount(0),
+        correctCount(0),
+        niceCount(0),
+        missCount(0){};
+    };
+    
     struct PlayData {
         size_t trackCount;
         FilePath scoreFile;
         FilePath musicFile;
         double decisionVolume;
         double speed;
-        Array<score::ScoreManager::Header> songInfo;
         size_t currentDiff;
+        Array<DecisionInfo> decisionCount;
+        Array<score::ScoreManager::Header> resultSongInfo;
         Array<score::Difficulty> resultDiff;
         Array<size_t> resultScore;
     };

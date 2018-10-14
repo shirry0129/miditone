@@ -143,6 +143,8 @@ namespace ui {
 			.resized(shineRadius*0.6, shineRadius*0.6).rotated(-40)
 			.drawAt(-1, -1, Color(color, alpha));
 		}
+        
+        Graphics2D::SetBlendState(BlendState::NonPremultiplied);
 		
 		
 		return true;

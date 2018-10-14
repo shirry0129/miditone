@@ -15,6 +15,7 @@
 #include "../../System/ScoreManager.hpp"
 #include "../../System/EventTimer.hpp"
 #include "../../System/TimingJudge.hpp"
+#include "../JudgeEffect.hpp"
 
 namespace ui{
 
@@ -28,9 +29,13 @@ namespace ui{
         Audio hitSound;
         Audio holdSound;
         EventTimer time;
-        size_t combo;
-        const Font comboCount;
+        DecisionInfo decision;
+        float pointEachNote;
+        float point;
         musicgame::judge_results_t results;
+        Effect decisionEffect;
+        Texture shine;
+        size_t combo;
         
     public:
         Play(const InitData& init);

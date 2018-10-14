@@ -17,6 +17,7 @@ void Main() {
     
     FontAsset::Register(U"BoxFont", 50, Typeface::Bold);
     FontAsset::Register(U"infoFont", 50);
+    FontAsset::Register(U"comboFont", 100);
     
     ui::MyApp sceneManager;
     sceneManager.setFadeColor(gameinfo::fadeColor);

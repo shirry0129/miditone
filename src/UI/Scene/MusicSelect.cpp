@@ -42,7 +42,7 @@ namespace ui{
     currentItem(0),
     defaultEntity(Arg::center(Window::Center()), boxSize) {
         getData().trackCount++;
-        for (auto file : FileSystem::DirectoryContents(U"../resource/score")) {
+        for (auto file : FileSystem::DirectoryContents(U"../Score/score")) {
             if (FileSystem::Extension(file) == U"txt") {
                 music.emplace_back(file, defaultEntity);
             }
@@ -62,7 +62,7 @@ namespace ui{
         }
         if (gameinfo::decide.down()) {
             getData().scoreFile = music.at(currentItem).getScoreFile();
-            getData().musicFile = U"../resource/music/{}.mp3"_fmt(music.at(currentItem).getMusicInfo().id());
+            getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(currentItem).getMusicInfo().id());
             changeScene(SceneName::PREFERENCE, 2000);
         };
     }

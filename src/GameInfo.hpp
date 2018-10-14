@@ -30,7 +30,9 @@ namespace gameinfo {
     const auto decide = KeyJ;
     const auto back = KeyK;
     
-    const size_t maxSpeed = 10;
+    const size_t maxSpeed = 15;
+    
+    const size_t maxPoint = 1000000;
 }
 
 #endif /* GameInfo_h */
