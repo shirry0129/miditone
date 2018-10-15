@@ -19,12 +19,15 @@ namespace ui {
         Array<Array<HitNote>> hit;
         Array<Array<HoldNote>> hold;
         Array<Array<Note*>> score;
+        float wakeUpTime;
+        float acceleration;
         
     public:
         Score();
         Score(const std::vector<score::Note>& _fromFile, float _speed);
         ~Score() = default;
         void setFromFile(const std::vector<score::Note>& _fromFile, float _speed);
+        float getWakeUpTime() const;
         void deleteJudgedNote(size_t _lane, int spot);
         
         void update(double currentTime);

@@ -36,6 +36,7 @@ namespace ui{
         Effect decisionEffect;
         Texture shine;
         size_t combo;
+        bool isDrawable;
         
     public:
         Play(const InitData& init);

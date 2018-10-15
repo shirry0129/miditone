@@ -13,7 +13,7 @@ namespace ui{
     
     void GameOver::update() {
         if (button.pressed()) {
-            System::Exit();
+            changeScene(SceneName::TITLE, 2000);
         };
     }
     

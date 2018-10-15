@@ -21,7 +21,7 @@ void TotalResult::draw() const {
     ClearPrint();
     Print << U"TotalResult";
     for (auto r : step(3)) {
-        Print << U"Track {}:"_fmt(r + 1) << Unicode::Widen(getData().resultSongInfo.at(r).title);
+        Print << U"Track {}:"_fmt(r + 1) << getData().resultSongInfo.at(r).title;
         Print << U"Critical:" << getData().decisionCount.at(r).criticalCount <<
         U"  " << U"Correct:" << getData().decisionCount.at(r).correctCount <<
         U"  " << U"Nice:" << getData().decisionCount.at(r).niceCount <<

@@ -15,7 +15,8 @@ namespace ui{
     m_song(getData().musicFile),
     hitSound(Resource(U"resource/forSystem/hitSound.wav")),
     combo(0),
-    point(0){
+    point(0),
+    isDrawable(false){
         ClearPrint();
         LaneBG::create();
         
@@ -29,7 +30,8 @@ namespace ui{
             m_score.setFromFile(m_file.getNotes(), getData().speed / 10);
             pointEachNote = static_cast<double>(gameinfo::maxPoint) / static_cast<double>(m_file.getNumofNotes() + m_file.getNumofHolds());
             judger.create(score::numofLanes, m_file.getNotes());
-            measureLength = m_file.getBar().at(1).time.sec;
+            measureLength = m_file.getBar().at(1).time.sec + m_score.getWakeUpTime();;
+            time.addEvent(U"Draw", SecondsF(measureLength - m_score.getWakeUpTime()));
             time.addEvent(U"Start", SecondsF(measureLength));
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + measureLength));
         }
@@ -43,16 +45,20 @@ namespace ui{
     
     void Play::update() {
         time.update();
+        
+        if (time.onTriggered(U"Draw")) {
+            isDrawable = true;
+        }
+        
         if (time.onTriggered(U"Start")) {
             m_song.play();
         }
         
         results =
-        judger//.input(0, KeyD.pressed())
-//        .input(1, KeyF.pressed())
-//        .input(2, KeyJ.pressed())
-//        .input(3, KeyK.pressed())
-        .inputAuto(time.sF() - measureLength)
+        judger.input(0, KeyD.pressed())
+        .input(1, KeyF.pressed())
+        .input(2, KeyJ.pressed())
+        .input(3, KeyK.pressed())
         .judge(time.sF() - measureLength);
         
         for (const auto &r : results) {
@@ -89,8 +95,12 @@ namespace ui{
                 if (combo >= decision.combo) {
                     decision.combo++;
                 }
+            }
+            
+            if(r->result.getHoldState() != musicgame::JudgeState::HOLDCONTINUE) {
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
             }
+            
         }
         
         m_score.update(time.sF() - measureLength);
@@ -120,7 +130,7 @@ namespace ui{
             }
         }
         
-        if(m_song.isPlaying()){
+        if(isDrawable){
             m_score.draw();
         }
         

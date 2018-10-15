@@ -9,11 +9,11 @@
 
 namespace ui {
 	
-	Note::Note(size_t _laneNum, float _speed):
+	Note::Note(size_t _laneNum, float _wakeUpTime, float _acceleration):
 //	looks(U"example/windmill.png"),
 	laneNum(_laneNum),
-	wakeUpTime(2 * xMax / (_speed * xMax)),
-	acceleration((_speed * xMax * _speed * xMax) / (2 * xMax)),
+	wakeUpTime(_wakeUpTime),
+	acceleration(_acceleration),
 	isJudged(false),
 	inst(ui::LaneBG::getInstance()){}
 	
@@ -28,15 +28,14 @@ namespace ui {
 	
 	void Note::makeJudged() {
 		isJudged = true;
-	}
+	}	
 	
 	
 	
 	
-	
-	HitNote::HitNote(size_t _laneNum, float _judgeTime, float _speed):
-		Note(_laneNum, _speed),
-		judgeTime(_judgeTime){}
+	HitNote::HitNote(size_t _laneNum, float _judgeTime, float _wakeUpTime, float _acceleration):
+	Note(_laneNum, _wakeUpTime, _acceleration),
+	judgeTime(_judgeTime){}
 	
 	void HitNote::update(double currentTime) {
 		
@@ -59,8 +58,8 @@ namespace ui {
 	
 	
 	
-	HoldNote::HoldNote(size_t _laneNum, float _startTime, float _endTime, float _speed):
-		Note(_laneNum, _speed),
+	HoldNote::HoldNote(size_t _laneNum, float _startTime, float _endTime, float _wakeUpTime, float _acceleration):
+		Note(_laneNum, _wakeUpTime, _acceleration),
 		startTime(_startTime),
 		endTime(_endTime){}
 	

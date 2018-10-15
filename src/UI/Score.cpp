@@ -23,14 +23,17 @@ namespace ui {
     }
     
     void Score::setFromFile(const std::vector<score::Note>& _fromFile, float _speed) {
+        wakeUpTime = 2 * xMax / (_speed * xMax);
+        acceleration = (_speed * xMax * _speed * xMax) / (2 * xMax);
+        
         for(auto n:_fromFile){
             switch (n.type) {
                 case score::NoteType::HIT:
-                    hit.at(n.lane).emplace_back(n.lane, n.t_beg.sec, _speed);
+                    hit.at(n.lane).emplace_back(n.lane, n.t_beg.sec, wakeUpTime, acceleration);
                     break;
                     
                 case score::NoteType::HOLD:
-                    hold.at(n.lane).emplace_back(n.lane, n.t_beg.sec, n.t_end.sec, _speed);
+                    hold.at(n.lane).emplace_back(n.lane, n.t_beg.sec, n.t_end.sec, wakeUpTime, acceleration);
                     break;
             }
         }
@@ -86,5 +89,10 @@ namespace ui {
     void Score::deleteJudgedNote(size_t _lane, int spot) {
         score.at(_lane).at(spot)->makeJudged();
     }
+    
+    float Score::getWakeUpTime() const {
+        return wakeUpTime;
+    }
+    
     
 }

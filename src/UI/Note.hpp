@@ -27,7 +27,7 @@ namespace ui{
         bool isJudged;
         
     public:
-        Note(size_t _laneNum, float _speed);
+        Note(size_t _laneNum, float _wakeUpTime, float _acceleration);
         ~Note() = default;
         virtual void makeJudged() final;
         
@@ -41,7 +41,7 @@ namespace ui{
         
     public:
         const float judgeTime;
-        HitNote(size_t _laneNum, float _judgeTime, float _speed);
+        HitNote(size_t _laneNum, float _judgeTime, float _wakeUpTime, float _acceleration);
         
         virtual void update(double currentTime) override;
     };
@@ -51,7 +51,7 @@ namespace ui{
         const float startTime;
         const float endTime;
         
-        HoldNote(size_t _laneNum, float _startTime, float _endTime, float _speed);
+        HoldNote(size_t _laneNum, float _startTime, float _endTime, float _wakeUpTime, float _acceleration);
         virtual void update(double currentTime) override;
     };
 }
