@@ -42,9 +42,9 @@ namespace ui{
         double decisionVolume;
         double speed;
         size_t currentDiff;
+        Array<FilePath> scoreList;
         Array<DecisionInfo> decisionCount;
         Array<score::Score::Header> resultSongInfo;
-        Array<score::Difficulty> resultDiff;
         Array<size_t> resultScore;
     };
     

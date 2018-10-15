@@ -30,8 +30,8 @@ namespace ui{
         Audio holdSound;
         EventTimer time;
         DecisionInfo decision;
-        float pointEachNote;
-        float point;
+        double pointEachNote;
+        double point;
         musicgame::judge_results_t results;
         Effect decisionEffect;
         Texture shine;

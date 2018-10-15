@@ -127,7 +127,6 @@ namespace ui{
         
         if (gameinfo::decide.down()) {
             if (prefItem.at(currentItem).getEntry() == PrefItem::GAMESTART) {
-                getData().resultDiff.push_back(static_cast<score::Difficulty>(getData().currentDiff));
                 changeScene(SceneName::PLAY, 2000);
             }else{
                 adjustment = true;

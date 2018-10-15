@@ -27,14 +27,12 @@ namespace ui{
         }else{
             getData().resultSongInfo.push_back(m_file.getHeader());
             m_score.setFromFile(m_file.getNotes(), getData().speed / 10);
-            pointEachNote = gameinfo::maxPoint / (m_file.getNumofNotes() + m_file.getNumofHolds());
+            pointEachNote = static_cast<double>(gameinfo::maxPoint) / static_cast<double>(m_file.getNumofNotes() + m_file.getNumofHolds());
             judger.create(score::numofLanes, m_file.getNotes());
             measureLength = m_file.getBar().at(1).time.sec;
             time.addEvent(U"Start", SecondsF(measureLength));
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + measureLength));
         }
-        
-        hitSound.setVolume(getData().decisionVolume / 10);
         
         Image buf;
         writeShineImage(buf);
@@ -50,33 +48,33 @@ namespace ui{
         }
         
         results =
-//        judger.input(0, KeyD.pressed())
+        judger//.input(0, KeyD.pressed())
 //        .input(1, KeyF.pressed())
 //        .input(2, KeyJ.pressed())
 //        .input(3, KeyK.pressed())
-		judger
-		.inputAuto(time.sF() - measureLength)
+        .inputAuto(time.sF() - measureLength)
         .judge(time.sF() - measureLength);
         
         for (const auto &r : results) {
             Point effectPos(leftEnd + (interval * r->lane) + (interval / 2), laneEnd);
+            float remainSec = 60 / m_file.getTempo(time.sF() - measureLength);
             
             switch (r->result.getJudge()) {
                 case musicgame::JudgeState::BEST:
                     decision.criticalCount++;
                     point += pointEachNote;
-                    decisionEffect.add<CriticalHitEffect>(shine, effectPos, 1);
+                    decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec);
                     break;
                 case musicgame::JudgeState::BETTER:
                     decision.correctCount++;
                     point += pointEachNote * 0.8;
-                    decisionEffect.add<CorrectHitEffect>(shine, effectPos, 1);
+                    decisionEffect.add<CorrectHitEffect>(shine, effectPos, remainSec);
                     break;
                 case musicgame::JudgeState::GOOD:
                 case musicgame::JudgeState::NOTBAD:
                     decision.niceCount++;
                     point += pointEachNote * 0.6;
-                    decisionEffect.add<NiceHitEffect>(shine, effectPos, 1);
+                    decisionEffect.add<NiceHitEffect>(shine, effectPos, remainSec);
                     break;
                 default:
                     break;
@@ -86,7 +84,7 @@ namespace ui{
                 combo = 0;
                 decision.missCount++;
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
-            }else if (r->result.getHoldState() != musicgame::JudgeState::HOLDCONTINUE){
+            }else{
                 combo++;
                 if (combo >= decision.combo) {
                     decision.combo++;
@@ -118,15 +116,15 @@ namespace ui{
             << U"   " << r->result.getJudgeMsg();
             
             if (!r->result.isMiss()) {
-                hitSound.playOneShot();
+                hitSound.playOneShot(getData().decisionVolume / 10);
             }
         }
-        
-        decisionEffect.update();
         
         if(m_song.isPlaying()){
             m_score.draw();
         }
+        
+        decisionEffect.update();
     }
 
 }

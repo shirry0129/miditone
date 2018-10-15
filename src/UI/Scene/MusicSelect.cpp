@@ -42,10 +42,8 @@ namespace ui{
     currentItem(0),
     defaultEntity(Arg::center(Window::Center()), boxSize) {
         getData().trackCount++;
-        for (auto file : FileSystem::DirectoryContents(U"../Score/score")) {
-            if (FileSystem::Extension(file) == U"txt") {
-                music.emplace_back(file, defaultEntity);
-            }
+        for (auto file : getData().scoreList) {
+            music.emplace_back(file, defaultEntity);
         }
     }
     

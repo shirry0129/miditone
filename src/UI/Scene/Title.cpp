@@ -12,8 +12,15 @@ namespace ui{
     Title::Title(const InitData& init):IScene(init) {
         getData().trackCount = 0;
         getData().decisionVolume = 8;
-        getData().speed = 5;
+        getData().speed = 7.5;
         getData().currentDiff = 1;
+        
+        if (getData().scoreList.isEmpty()) {
+            getData().scoreList = FileSystem::DirectoryContents(U"../Score/score")
+            .keep_if([](FilePath t){
+                return FileSystem::Extension(t) == U"txt";
+            });
+        }
     }
     
     void Title::update() {
