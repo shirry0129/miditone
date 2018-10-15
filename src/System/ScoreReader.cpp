@@ -31,13 +31,7 @@ namespace score {
 		init();
 	}
 
-	ScoreReader::ScoreReader(const wchar_t *file, char_type delim)
-		: prevState(State::E_SET_NOFILE, createErrMessage) {
-		prevState = open(file);
-		this->delim = delim;
-	}
-
-	ScoreReader::ScoreReader(const char *file, char_type delim)
+	ScoreReader::ScoreReader(const char *file, rch_type delim)
 		: prevState(State::E_SET_NOFILE, createErrMessage)  {
 		prevState = open(file);
 		this->delim = delim;
@@ -45,15 +39,9 @@ namespace score {
 
 	ScoreReader::~ScoreReader() {}
 
-	Error<ScoreReader::State> ScoreReader::open(const wchar_t * file) {
-		char path[256];
-		wcstombs(path, file, 256);
-		return open(path);
-	}
-
 	Error<ScoreReader::State> ScoreReader::open(const char *file) {
 		// init
-		char_type d = delim;
+		rch_type d = delim;
 		init();
 		delim = d;
 
@@ -67,7 +55,7 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::moveChunk(const std::basic_string<char_type> &chunkName) {
+	Error<ScoreReader::State> ScoreReader::moveChunk(const std::basic_string<rch_type> &chunkName) {
 		if (!readable(prevState.get()))
 			return prevState = State::E_SET_NOFILE;
 
@@ -92,7 +80,7 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::readHeader(Header &_header, const std::basic_string<char_type> &chunkName) {
+	Error<ScoreReader::State> ScoreReader::readHeader(Header &_header, const std::basic_string<rch_type> &chunkName) {
 		if (!readable(prevState))
 			return prevState;
 
@@ -124,7 +112,7 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::readNote(std::vector<NoteEvent> &_notes, const std::basic_string<char_type> &chunkName) {
+	Error<ScoreReader::State> ScoreReader::readNote(std::vector<NoteEvent> &_notes, const std::basic_string<rch_type> &chunkName) {
 		if (!readable(prevState))
 			return prevState;
 
@@ -155,7 +143,7 @@ namespace score {
 		return currentLine;
 	}
 	
-	std::basic_string<char_type> ScoreReader::getCurrentChunk() const noexcept {
+	std::basic_string<ScoreReader::rch_type> ScoreReader::getCurrentChunk() const noexcept {
 		return currentChunk;
 	}
 	
@@ -163,7 +151,7 @@ namespace score {
 		return prevState;
 	}
 	
-	const std::array<char_type, ScoreReader::buffer_size> &ScoreReader::getBuffer() const noexcept {
+	const std::array<ScoreReader::rch_type, ScoreReader::buffer_size> &ScoreReader::getBuffer() const noexcept {
 		return buffer;
 	}
 
@@ -220,7 +208,7 @@ namespace score {
 		return prevState;
 	}
 
-	void score::ScoreReader::setDelim(char_type _delim) noexcept {
+	void score::ScoreReader::setDelim(rch_type _delim) noexcept {
 		delim = _delim;
 	}
 
@@ -240,43 +228,43 @@ namespace score {
 		return prevState = State::S_OK;
 	}
 	
-	std::string ScoreReader::createErrMessage(State state) {
-		std::basic_string<char_type> msg;
+	std::basic_string<char32_t> ScoreReader::createErrMessage(State state) {
+		std::basic_string<char32_t> msg;
 	
 		switch (state) {
 		  case State::S_REACH_CHUNK_END:
-			msg += "チャンクの終端に達しました";
+			msg += U"チャンクの終端に達しました";
 			return msg;
 		  case State::S_OK:
-		  	msg += "成功";
+		  	msg += U"成功";
 		  	return msg;
 		  case State::E_CANNOT_OPEN_FILE:
-		  	msg += "ファイルを開けません";
+		  	msg += U"ファイルを開けません";
 		  	return msg;
 		  case State::E_CANNOT_READ_WHOLELINE:
-		  	msg += "1行が長すぎます";
+		  	msg += U"1行が長すぎます";
 		  	return msg;
 		  case State::E_CANNOT_FIND_COMMAND:
-		  	msg += "コマンドが見つかりませんでした";
+		  	msg += U"コマンドが見つかりませんでした";
 		  	return msg;
 		  case State::E_UNEXPECTED_STRING:
-		  	msg += "予期せぬ文字列が見つかりました";
+		  	msg += U"予期せぬ文字列が見つかりました";
 		  	return msg;
 		  case State::E_SET_NOFILE:
-		  	msg += "ファイルが設定されていません";
+		  	msg += U"ファイルが設定されていません";
 		  	return msg;
 		  case State::E_EMBED_NO_BEAT_OR_TEMPO:
-		  	msg += "拍子またはテンポ情報が埋め込まれていません";
+		  	msg += U"拍子またはテンポ情報が埋め込まれていません";
 			return msg;
 		  case State::E_CANNOT_FIND_CHUNK:
-		    msg += "難易度またはヘッダが見つかりませんでした";
+		    msg += U"難易度またはヘッダが見つかりませんでした";
 		    return msg;
 		  default:
 			return msg;
 		}
 	}
 	
-	bool ScoreReader::isFailReadLine(const std::basic_ifstream<char_type> &ifs) {
+	bool ScoreReader::isFailReadLine(const std::basic_ifstream<rch_type> &ifs) {
 		if (!ifs.bad() && !ifs.eof() && ifs.fail())
 			return true;
 		else
@@ -284,7 +272,7 @@ namespace score {
 	}
 	
 	void ScoreReader::skipBOM() {
-		char_type s[4];
+		rch_type s[4];
 		
 		score.seekg(0, std::ios_base::beg);
 		score.getline(s, 4);
@@ -293,7 +281,7 @@ namespace score {
 			score.clear(score.rdstate() & ~std::ios_base::failbit); // unset flag of fail
 		}
 		
-		std::basic_string<char_type> bom(s);
+		std::basic_string<rch_type> bom(s);
 	
 		if (bom == "\xef\xbb\xbf") {
 			// UTF-8 with BOM
@@ -309,21 +297,21 @@ namespace score {
 		}
 	}
 
-	Error<ScoreReader::State> ScoreReader::BeginCmd::execute(ScoreReader &sr, const char_type *line) {
+	Error<ScoreReader::State> ScoreReader::BeginCmd::execute(ScoreReader &sr, const rch_type *line) {
 		if (sr.currentChunk != "")
 			return State::E_UNEXPECTED_STRING;
 
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
-		std::array<char_type, 32> section;
+		std::array<rch_type, 32> section;
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get first argument string
 		sstream.getline(section.data(), section.size(), sr.delim);
-		std::basic_string<char_type> firstArg(section.data());
+		std::basic_string<rch_type> firstArg(section.data());
 		if (firstArg == "")
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
@@ -334,7 +322,7 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::EndCmd::execute(ScoreReader &sr, const char_type *line) {
+	Error<ScoreReader::State> ScoreReader::EndCmd::execute(ScoreReader &sr, const rch_type *line) {
 		if (sr.prevState == State::S_REACH_CHUNK_END)
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 		
@@ -344,14 +332,14 @@ namespace score {
 		return sr.prevState = State::S_REACH_CHUNK_END;
 	}
 
-	Error<ScoreReader::State> ScoreReader::IdCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::IdCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
@@ -365,20 +353,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::TitleCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::TitleCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get first argument string
-		char_type tmp[128];
+		rch_type tmp[128];
 		sstream.getline(tmp, 128);
 		sr.header.title.assign(tmp);
 
@@ -388,20 +376,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::ArtistCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::ArtistCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get first argument string
-		char_type tmp[128];
+		rch_type tmp[128];
 		sstream.getline(tmp, 128);
 		sr.header.artist.assign(tmp);
 
@@ -411,20 +399,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::GenreCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::GenreCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get first argument string
-		char_type tmp[128];
+		rch_type tmp[128];
 		sstream.getline(tmp, 128);
 		sr.header.genre.assign(tmp);
 
@@ -434,20 +422,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::LevelCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::LevelCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get argument strings
-		std::array<char_type, 4> tmp;
+		std::array<rch_type, 4> tmp;
 		for (auto it = sr.header.level.begin(); sstream.good() && it != sr.header.level.end(); it++) {
 			sstream.getline(tmp.data(), tmp.size(), sr.delim);
 			it->assign(tmp.data());
@@ -460,20 +448,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::TempoCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::TempoCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get argument string
-		char_type tmp;
+		rch_type tmp;
 		math::Fraction posInBar;
 		float tempo = 0.0f;
 		int bar = 0;
@@ -502,20 +490,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::BeatCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::BeatCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// ignore command string 
 		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
 
 		// get argument string
-		char_type tmp;
+		rch_type tmp;
 		int bar = 0;
 		int n = 0, d = 1;
 
@@ -539,20 +527,20 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::NoteCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::NoteCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
 			return State::S_OK;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
 		// get argument string as int
-		char_type tmp;
+		rch_type tmp;
 		int lane = 0;
 		int bar = 0;
-		std::basic_string<char_type> timing;
+		std::basic_string<rch_type> timing;
 
 		for (int i = 0; i < 3; i++) {
 			switch (i) {
@@ -584,19 +572,19 @@ namespace score {
 		return sr.prevState = State::S_OK;
 	}
 
-	Error<ScoreReader::State> ScoreReader::NullCmd::execute(ScoreReader & sr, const char_type * line) {
+	Error<ScoreReader::State> ScoreReader::NullCmd::execute(ScoreReader & sr, const rch_type * line) {
 		return sr.prevState = State::S_OK;
 	}
 
-	ScoreReader::Command * ScoreReader::CommandManager::inputHandler(const char_type * line, char_type delim) {
+	ScoreReader::Command * ScoreReader::CommandManager::inputHandler(const rch_type * line, rch_type delim) {
 
-		std::basic_stringstream<char_type> sstream(line);
+		std::basic_stringstream<rch_type> sstream(line);
 
-		std::array<char_type, 32> section;
+		std::array<rch_type, 32> section;
 
 		// get command string 
 		sstream.getline(section.data(), section.size(), delim);
-		std::basic_string<char_type> cmdStr(section.data());
+		std::basic_string<rch_type> cmdStr(section.data());
 
 		if (cmdStr == "begin")
 			return &cmd_begin;
@@ -625,7 +613,7 @@ namespace score {
 	}
 
 
-	bool ScoreReader::CommandManager::isNumber(const std::basic_string<char_type> &str) {
+	bool ScoreReader::CommandManager::isNumber(const std::basic_string<rch_type> &str) {
 		if (str.empty())
 			return false;
 

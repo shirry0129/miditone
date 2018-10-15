@@ -103,7 +103,7 @@ T operator&(const int& L, const Enum<T>& R) {
 template <class T>
 class Enum {
 public:
-	using char_type = char;
+	using char_type = char32_t;
 	using create_errmsg_func_t = std::function<std::basic_string<char_type>(T)>;
 
 	Enum(T value, const create_errmsg_func_t& _msgFunc = defaultMsgFunc) noexcept
@@ -133,7 +133,7 @@ public:
 		return static_cast<int>(enumVal);
 	}
 	
-	virtual std::string getMessage() const noexcept {
+	virtual std::basic_string<char_type> getMessage() const noexcept {
 		return msgFunc(enumVal);
 	}
 

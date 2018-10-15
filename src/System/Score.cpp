@@ -1,20 +1,21 @@
 #include "Score.hpp"
 
 #include <list>
+#include "ChEncoder.hpp"
 
 namespace score {
 
 	Score::Score() noexcept
 		: prevError(State::S_OK, createErrMessage) {}
 
-	Score::Score(const std::string &file, Difficulty difficulty)
+	Score::Score(const std::basic_string<char_type> &file, Difficulty difficulty)
 		: prevError(State::S_OK, createErrMessage) {
 		create(file, difficulty);
 	}
 
 	Score::~Score() {}
 
-	score_err_t Score::create(const std::string &file, Difficulty difficulty) {
+	score_err_t Score::create(const std::basic_string<char_type> &file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
@@ -22,15 +23,15 @@ namespace score {
 
 		// read header
 		score::Header h;
-		if (h.read(file.c_str()).isError())
+		if (h.read(file).isError())
 			return prevError = State::E_READER_FAILED;
 		
 		
-		reader.open(file.c_str());
+		reader.open(ch_encoder::toUTF8(file).c_str());
 
 
 		// create chunk name of difficulty
-		std::basic_string<char_type> chunkName;
+		std::basic_string<ScoreReader::rch_type> chunkName;
 
 		switch (difficulty) {
 		case score::Difficulty::EASY:
@@ -291,27 +292,27 @@ namespace score {
 	}
 
 
-	std::string Score::createErrMessage(State state) {
-		std::string msg;
+	std::basic_string<char_type> Score::createErrMessage(State state) {
+		std::basic_string<char_type> msg;
 	
 		switch (state) {
 		  case State::S_OK:
-			msg += "成功";
+			msg += U"成功";
 			return msg;
 		  case State::E_INVALID_ARGUMENT:
-		  	msg += "無効な引数です";
+		  	msg += U"無効な引数です";
 		  	return msg;
 		  case State::E_INVALID_NOTE:
-		  	msg += "無効なノーツが存在します";
+		  	msg += U"無効なノーツが存在します";
 		  	return msg;
 		  case State::E_READER_FAILED:
-		  	msg += "譜面の読み取りに失敗しました";
+		  	msg += U"譜面の読み取りに失敗しました";
 		  	return msg;
 		  case State::E_INVALID_TEMPO_BEAT:
-		  	msg += "テンポまたは拍子が無効です";
+		  	msg += U"テンポまたは拍子が無効です";
 		  	return msg;
 		  case State::E_INVALID_LANE:
-		    msg += "無効なレーンが存在します";
+		    msg += U"無効なレーンが存在します";
 		    return msg;
 		  default:
 		  	return msg;

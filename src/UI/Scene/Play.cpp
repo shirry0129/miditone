@@ -19,11 +19,11 @@ namespace ui{
         ClearPrint();
         LaneBG::create();
         
-        m_file.create(getData().scoreFile.narrow().c_str(), static_cast<score::Difficulty>(getData().currentDiff));
+        m_file.create(getData().scoreFile.toUTF32(), static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
-            Print << U"譜面読み込み失敗:" << Unicode::Widen(m_file.getLastError().getMessage());
-            Print << U"エラー箇所:" << Unicode::Widen(m_file.getReader().getLastError().getMessage()) <<  U" 行数:" << m_file.getReader().getCurrentLine();
+            Print << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
+            Print << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
         }else{
             getData().resultSongInfo.push_back(m_file.getHeader());
             m_score.setFromFile(m_file.getNotes(), getData().speed / 10);
@@ -50,10 +50,12 @@ namespace ui{
         }
         
         results =
-        judger.input(0, KeyD.pressed())
-        .input(1, KeyF.pressed())
-        .input(2, KeyJ.pressed())
-        .input(3, KeyK.pressed())
+//        judger.input(0, KeyD.pressed())
+//        .input(1, KeyF.pressed())
+//        .input(2, KeyJ.pressed())
+//        .input(3, KeyK.pressed())
+		judger
+		.inputAuto(time.sF() - measureLength)
         .judge(time.sF() - measureLength);
         
         for (const auto &r : results) {
@@ -109,11 +111,11 @@ namespace ui{
         
         for (const auto &r : results) {
             Logger << U"lane: " << r->lane
-            << U"   " << Unicode::Widen(r->result.getMessage())
+            << U"   " << r->result.getMessage()
             << U"   error: " << r->error << U"s";
             
             Print << U"Lane: " << r->lane
-            << U"   " << Unicode::Widen(r->result.getJudgeMsg());
+            << U"   " << r->result.getJudgeMsg();
             
             if (!r->result.isMiss()) {
                 hitSound.playOneShot();

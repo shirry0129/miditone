@@ -78,7 +78,7 @@ namespace musicgame {
 		str += createJudgeMsg(val);
 		
 		if (static_cast<int>(val & 0xf0) > 0)
-			str += " ";
+			str += U" ";
 		
 		str += createHoldMsg(val);
 		
@@ -88,21 +88,33 @@ namespace musicgame {
 	std::basic_string<Judgement::char_type> Judgement::createJudgeMsg(JudgeState val) {
 		using namespace musicgame;
 		std::basic_string<char_type> str;
-		#define str(var) #var
-		#define enum_case(val) case val: str += str(val); break;
+		
 		JudgeState v = val & 0x0f;
 		switch (v) {
-			enum_case(JudgeState::BEST)
-			enum_case(JudgeState::BETTER)
-			enum_case(JudgeState::GOOD)
-			enum_case(JudgeState::NOTBAD)
-			enum_case(JudgeState::BAD)
-			enum_case(JudgeState::MISS)
-			enum_case(JudgeState::NONE)
-			default: break;
+			case JudgeState::NONE:
+				str += U"JudgeState::NONE";
+				break;
+			case JudgeState::BEST:
+				str += U"JudgeState::BEST";
+				break;
+			case JudgeState::BETTER:
+				str += U"JudgeState::BETTER";
+				break;
+			case JudgeState::GOOD:
+				str += U"JudgeState::GOOD";
+				break;
+			case JudgeState::NOTBAD:
+				str += U"JudgeState::NOTBAD";
+				break;
+			case JudgeState::BAD:
+				str += U"JudgeState::BAD";
+				break;
+			case JudgeState::MISS:
+				str += U"JudgeState::MISS";
+				break;
+			default:
+				break;
 		}
-		#undef enum_case
-		#undef str
 		
 		return str;
 	}
@@ -110,17 +122,21 @@ namespace musicgame {
 	std::basic_string<Judgement::char_type> Judgement::createHoldMsg(JudgeState val) {
 		using namespace musicgame;
 		std::basic_string<char_type> str;
-		#define str(var) #var
-		#define enum_case(val) case val: str += str(val); break;
+		
 		JudgeState v = val & 0xf0;
 		switch (v) {
-		  enum_case(JudgeState::HOLDBREAK)
-		  enum_case(JudgeState::HOLDCONTINUE)
-		  enum_case(JudgeState::HOLDFINISHED)
-		  default: break;
+		  case JudgeState::HOLDBREAK:
+		  	str += U"JudgeState::HOLDBREAK";
+		  	break;
+		  case JudgeState::HOLDCONTINUE:
+		  	str += U"JudgeState::HOLDCONTINUE";
+		  	break;
+		  case JudgeState::HOLDFINISHED:
+		  	str += U"JudgeState::HOLDFINISHED";
+		  	break;
+		  default:
+		  	break;
 		}
-		#undef enum_case
-		#undef str
 		
 		return str;
 	}

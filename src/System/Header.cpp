@@ -6,7 +6,7 @@
 //
 
 #include "Header.hpp"
-
+#include "ChEncoder.hpp"
 
 namespace score {
 
@@ -21,7 +21,7 @@ namespace score {
 	scorereader_err_t Header::read(const std::basic_string<char_type> filePath) {
 		ScoreReader reader;
 		
-		if (reader.open(filePath.c_str()).isError())
+		if (reader.open(ch_encoder::toUTF8(filePath).c_str()).isError())
 			return prevError = reader.getLastError();
 		
 		ScoreReader::Header h;
@@ -31,9 +31,10 @@ namespace score {
 		
 		// update member
 		m_id 		= h.id;
-		m_title 	= h.title;
-		m_artist	= h.artist;
-		m_level		= h.level;
+		m_title 	= ch_encoder::toUTF32(h.title);
+		m_artist	= ch_encoder::toUTF32(h.artist);
+		for (size_t i = 0; i < numofDifficulty; i++)
+			m_level[i] = ch_encoder::toUTF32(h.level[i]);
 		
 		if (h.genre == "0")
 			m_genre	= Genre::JPOP_ANIME;
@@ -70,7 +71,7 @@ namespace score {
 		return m_artist;
 	}
 	
-	const std::array<std::basic_string<char_type>, 3>& Header::level() const noexcept {
+	const std::array<std::basic_string<char_type>, numofDifficulty>& Header::level() const noexcept {
 		return m_level;
 	}
 	
