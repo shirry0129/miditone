@@ -12,7 +12,7 @@ namespace ui{
     MusicBox::MusicBox(const FilePath& _info, const s3d::RectF &_entity):
     IBox(_entity),
     scoreFile(_info),
-    musicInfo(_info.narrow().c_str()){}
+    musicInfo(_info.toUTF32()){}
     
     void MusicBox::draw(const s3d::Vec2 &moveWidth) const{
         if (moveWidth.x == 0) {
@@ -20,7 +20,7 @@ namespace ui{
         }else{
             entity.movedBy(moveWidth).scaled(0.8).draw(Palette::Green).drawFrame(4, Palette::Darkgreen);
         }
-        FontAsset(U"BoxFont")(Unicode::Widen(musicInfo.title())).drawAt(entity.center() + moveWidth + Vec2(0, -150));
+        FontAsset(U"BoxFont")(musicInfo.title()).drawAt(entity.center() + moveWidth + Vec2(0, -150));
     }
     
     score::Header MusicBox::getMusicInfo() const {

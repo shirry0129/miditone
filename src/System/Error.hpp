@@ -18,7 +18,7 @@ namespace score {
 	template <class T>
 	class Error : public Enum<T> {
 
-		using char_type = char;
+		using char_type = char32_t;
 		using create_errmsg_func_t = std::function<std::basic_string<char_type>(T)>;
 
 	public:

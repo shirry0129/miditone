@@ -19,8 +19,8 @@ date	: 2018/9/20
 namespace score {
 
 	constexpr size_t numofLanes = 4;
-
-
+	
+	
 	enum class Difficulty {
 		EASY = 0,
 		NORMAL,
@@ -116,10 +116,10 @@ namespace score {
 
 	
 		Score() noexcept;
-		Score(const std::string &file, Difficulty difficulty);
+		Score(const std::basic_string<char_type> &file, Difficulty difficulty);
 		~Score();
 
-		Error<State> create(const std::string &file, Difficulty difficulty);
+		Error<State> create(const std::basic_string<char_type> &file, Difficulty difficulty);
 		Error<State> recreate();
 
 		void clear();
@@ -159,7 +159,7 @@ namespace score {
 
 		score::ScoreTimeConverter timeConv;
 		
-		static std::string createErrMessage(State state);
+		static std::basic_string<char_type> createErrMessage(State state);
 
 		int numofBars;
 		int numofHolds;

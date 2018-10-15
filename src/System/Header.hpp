@@ -14,6 +14,8 @@
 
 namespace score {
 
+	using char_type = char32_t;
+	constexpr size_t numofDifficulty = 3;
 
 	enum class Genre {
 		JPOP_ANIME = 0,
@@ -40,7 +42,7 @@ namespace score {
 		const std::basic_string<char_type>&		title()		const noexcept;
 		const std::basic_string<char_type>&		artist()	const noexcept;
 		const std::array<
-		 	std::basic_string<char_type>, 3
+		 	std::basic_string<char_type>, numofDifficulty
 		>&										level()		const noexcept;
 		const Genre&							genre()		const noexcept;
 		const std::vector<TempoEvent>&			tempo()		const noexcept;
@@ -54,7 +56,7 @@ namespace score {
 		std::basic_string<char_type>	m_artist;
 		std::array<
 			std::basic_string<char_type>,
-			3
+			numofDifficulty
 		>								m_level;
 		Genre							m_genre;
 		std::vector<TempoEvent>			m_tempo;
