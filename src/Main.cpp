@@ -18,6 +18,8 @@ void Main() {
     FontAsset::Register(U"BoxFont", 50, Typeface::Bold);
     FontAsset::Register(U"infoFont", 50);
     FontAsset::Register(U"comboFont", 100);
+    TextureAsset::Register(U"gameStart", Resource(U"resource/gamestart.png"));
+    TextureAsset::Register(U"boxTemplate", Resource(U"resource/box.png"));
     
     ui::MyApp sceneManager;
     sceneManager.setFadeColor(gameinfo::fadeColor);

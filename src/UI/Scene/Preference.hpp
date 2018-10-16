@@ -27,7 +27,7 @@ namespace ui{
         String m_content;
     public:
         PrefBox() = default;
-        PrefBox(const PrefItem _item, const String& content, const RectF& _entity);
+        PrefBox(const PrefItem _item, const String& content, const RectF& _entity, const Texture& _boxTex);
         void draw(const Vec2& moveWidth, bool isSelected) const;
         void draw(const Vec2& moveWidth, bool isSelected, double currentValue) const;
         void draw(const Vec2& moveWidth, bool isSelected, score::Difficulty currentDiff) const;

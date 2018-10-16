@@ -9,22 +9,22 @@
 
 namespace ui{
     
-    PrefBox::PrefBox(const PrefItem _item, const String& content, const RectF& _entity):
-    IBox(_entity),
+    PrefBox::PrefBox(const PrefItem _item, const String& content, const RectF& _entity, const Texture& _boxTex):
+    IBox(_entity, _boxTex),
     m_content(content),
     m_item(_item){}
     
     void PrefBox::draw(const Vec2& moveWidth, bool isSelected) const {
         if (moveWidth.x == 0) {
-            entity.movedBy(moveWidth).draw(Palette::Green).drawFrame(4, isSelected ? Palette::Red : Palette::Darkgreen);
+            entity.movedBy(moveWidth)(design).draw();
         }else{
-            entity.movedBy(moveWidth).scaled(0.8).draw(Palette::Green).drawFrame(4, Palette::Darkgreen);
+            entity.movedBy(moveWidth).scaled(0.8)(design).draw();
         }
-        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
     }
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, double currentValue) const {
         draw(moveWidth, isSelected);
+        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
         FontAsset(U"infoFont")(currentValue).drawAt(entity.center() + moveWidth + Vec2(0, -100));
     }
     
@@ -44,6 +44,7 @@ namespace ui{
         }
         
         draw(moveWidth, isSelected);
+        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
         FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100));
     }
     
@@ -62,10 +63,10 @@ namespace ui{
     adjustment(false),
     defaultEntity(Arg::center(Window::Center()), boxSize){
         ClearPrint();
-        prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity);
-        prefItem.emplace_back(PrefItem::DIFFICULTY, U"Difficulty", defaultEntity);
-        prefItem.emplace_back(PrefItem::SPEED, U"Speed", defaultEntity);
-        prefItem.emplace_back(PrefItem::DECISIONVOL, U"SE Volume", defaultEntity);
+        prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity, TextureAsset(U"gameStart"));
+        prefItem.emplace_back(PrefItem::DIFFICULTY, U"Difficulty", defaultEntity, TextureAsset(U"boxTemplate"));
+        prefItem.emplace_back(PrefItem::SPEED, U"Speed", defaultEntity, TextureAsset(U"boxTemplate"));
+        prefItem.emplace_back(PrefItem::DECISIONVOL, U"SE Volume", defaultEntity, TextureAsset(U"boxTemplate"));
     }
     
     void Preference::update() {

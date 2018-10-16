@@ -18,7 +18,9 @@ namespace ui{
     struct IBox{
         Texture design;
         RectF entity;
-        IBox(const RectF& _entity):entity(_entity){};
+        IBox(const RectF& _entity, const Texture& _design):
+        entity(_entity),
+        design(_design){};
     };
     
     struct DecisionInfo{

@@ -10,7 +10,7 @@
 namespace ui{
     
     MusicBox::MusicBox(const FilePath& _info, const s3d::RectF &_entity):
-    IBox(_entity),
+    IBox(_entity, TextureAsset(U"boxTemplate")),
     scoreFile(_info),
     musicInfo(_info.toUTF32()){}
     
