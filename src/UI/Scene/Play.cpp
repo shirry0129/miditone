@@ -27,10 +27,10 @@ namespace ui{
             Print << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
         }else{
             getData().resultSongInfo.push_back(m_file.getHeader());
-            m_score.setFromFile(m_file.getNotes(), getData().speed / 10);
+            m_score.setFromFile(m_file, getData().speed / 10);
             pointEachNote = static_cast<double>(gameinfo::maxPoint) / static_cast<double>(m_file.getNumofNotes() + m_file.getNumofHolds());
             judger.create(score::numofLanes, m_file.getNotes());
-            measureLength = m_file.getBar().at(1).time.sec + m_score.getWakeUpTime();;
+            measureLength = m_file.getBar().at(1).time.sec + m_score.getWakeUpTime();
             time.addEvent(U"Draw", SecondsF(measureLength - m_score.getWakeUpTime()));
             time.addEvent(U"Start", SecondsF(measureLength));
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + measureLength));
@@ -59,6 +59,7 @@ namespace ui{
         .input(1, KeyF.pressed())
         .input(2, KeyJ.pressed())
         .input(3, KeyK.pressed())
+//        .inputAuto(time.sF() - measureLength)
         .judge(time.sF() - measureLength);
         
         for (const auto &r : results) {
@@ -115,8 +116,6 @@ namespace ui{
     void Play::draw() const {
         LaneBG::getInstance().draw();
         
-        FontAsset(U"comboFont")(combo).drawAt(Window::Width()/2, 800);
-        
         for (const auto &r : results) {
             Logger << U"lane: " << r->lane
             << U"   " << r->result.getMessage()
@@ -133,6 +132,8 @@ namespace ui{
         if(isDrawable){
             m_score.draw();
         }
+        
+        FontAsset(U"comboFont")(combo).drawAt(Window::Width()/2, 800);
         
         decisionEffect.update();
     }

@@ -14,19 +14,33 @@
 
 namespace ui {
     
+    class Bar{
+    private:
+        const LaneBG& inst;
+        const float wakeUpTime;
+        const float acceleration;
+        const float timeOnLine;
+        Line bar;
+    public:
+        Bar(float _timeOnLine, float _wakeUpTime, float _acceleration);
+        void update(double currentTime);
+        void draw() const;
+    };
+    
     class Score {
     private:
         Array<Array<HitNote>> hit;
         Array<Array<HoldNote>> hold;
         Array<Array<Note*>> score;
+        Array<Bar> bar;
         float wakeUpTime;
         float acceleration;
         
     public:
         Score();
-        Score(const std::vector<score::Note>& _fromFile, float _speed);
+        Score(const score::Score& _fromFile, float _speed);
         ~Score() = default;
-        void setFromFile(const std::vector<score::Note>& _fromFile, float _speed);
+        void setFromFile(const score::Score& _fromFile, float _speed);
         float getWakeUpTime() const;
         void deleteJudgedNote(size_t _lane, int spot);
         

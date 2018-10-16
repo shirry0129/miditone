@@ -10,23 +10,52 @@
 
 namespace ui {
     
+    Bar::Bar(float _timeOnLine, float _wakeUpTime, float _acceleration):
+    wakeUpTime(_wakeUpTime),
+    acceleration(_acceleration),
+    timeOnLine(_timeOnLine),
+    inst(LaneBG::getInstance()){}
+    
+    void Bar::update(double currentTime) {
+        if(wakeUpTime - (timeOnLine - currentTime) < 0){
+            bar.set(0, 0, 0, 0);
+            return;
+        }
+        
+        float nextY = 0.5 * acceleration * pow(wakeUpTime - (timeOnLine - currentTime), 2) - 500;
+        
+        Vec2 l(inst.getFactor(0).slope * (nextY) + inst.getFactor(0).intercept + 1, nextY);
+        Vec2 r(inst.getFactor(4).slope * (nextY) + inst.getFactor(4).intercept - 1, nextY);
+        
+        bar.set(l, r);
+    }
+    
+    void Bar::draw() const {
+        if (bar.begin.y > 0 && bar.begin.y < Window::Height()) {
+            bar.draw(LineStyle::RoundCap, 2, Color(Palette::White, 200));
+        }
+    }
+
+    
+    
+    
     Score::Score():
     hit(numObLane),
     hold(numObLane),
     score(numObLane){}
     
-    Score::Score(const std::vector<score::Note>& _fromFile, float _speed):
+    Score::Score(const score::Score& _fromFile, float _speed):
     hit(numObLane),
     hold(numObLane),
     score(numObLane){
         setFromFile(_fromFile, _speed);
     }
     
-    void Score::setFromFile(const std::vector<score::Note>& _fromFile, float _speed) {
+    void Score::setFromFile(const score::Score& _fromFile, float _speed) {
         wakeUpTime = 2 * xMax / (_speed * xMax);
         acceleration = (_speed * xMax * _speed * xMax) / (2 * xMax);
         
-        for(auto n:_fromFile){
+        for(auto n:_fromFile.getNotes()){
             switch (n.type) {
                 case score::NoteType::HIT:
                     hit.at(n.lane).emplace_back(n.lane, n.t_beg.sec, wakeUpTime, acceleration);
@@ -38,6 +67,9 @@ namespace ui {
             }
         }
         
+        for (auto b : _fromFile.getBar()) {
+            bar.emplace_back(b.time.sec, wakeUpTime, acceleration);
+        }
         
         for(auto i:step(numObLane)){
             auto hitCount = hit.at(i).begin();
@@ -71,6 +103,10 @@ namespace ui {
     }
     
     void Score::update(double currentTime) {
+        for (auto &b : bar) {
+            b.update(currentTime);
+        }
+        
         for(auto &l:score){
             for(auto &n:l){
                 n->update(currentTime);
@@ -79,6 +115,10 @@ namespace ui {
     }
     
     void Score::draw() const{
+        for (auto b : bar) {
+            b.draw();
+        }
+        
         for (auto l:score) {
             for(auto n:l){
                 n->draw();
