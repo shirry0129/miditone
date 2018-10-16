@@ -58,7 +58,7 @@ namespace ui {
 	
 	struct _1stJudgeEffect : JudgeEffect {
 	public:
-		static constexpr int radius = 250;
+		static constexpr int radius = 300;
 		
 		_1stJudgeEffect(
 			const Texture &shineTexture, double _x, double _y,
@@ -77,7 +77,7 @@ namespace ui {
 	
 	struct _2ndJudgeEffect : JudgeEffect {
 	public:
-		static constexpr int radius = 200;
+		static constexpr int radius = 250;
 
 		_2ndJudgeEffect(
 			const Texture &shineTexture, double _x, double _y,
@@ -96,7 +96,7 @@ namespace ui {
 	
 	struct _3rdJudgeEffect : JudgeEffect {
 	public:
-		static constexpr int radius = 150;
+		static constexpr int radius = 200;
 
 		_3rdJudgeEffect(
 			const Texture &shineTexture, double _x, double _y,

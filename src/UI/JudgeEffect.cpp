@@ -96,10 +96,10 @@ namespace ui {
 	
 		// draw orbit
 		for (int i = 0; i < 2; i++) {
-			Circle(centerOrbitRadius).drawFrame(1, 0, Color(color, convexAlpha));
+			Circle(centerOrbitRadius).drawFrame(1.5, 1.5, Color(color, convexAlpha));
 			const Transformer2D rotate(Mat3x2::Rotate(orbitRad));
 			Ellipse(ellipseOrbitSize.x, ellipseOrbitSize.y).
-			drawFrame(1, 0, Color(color, convexAlpha));
+			drawFrame(1, 1, Color(color, convexAlpha));
 		}
 		
 	

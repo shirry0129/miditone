@@ -117,6 +117,15 @@ namespace ui{
             
         }
         
+        for (auto l : step(4)) {
+            Point effectPos(leftEnd + (interval * l) + (interval / 2), laneEnd);
+            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
+            
+            if (judger.getJudgingHoldNote(l)) {
+                decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
+            }
+        }
+        
         m_score.update(time.sF() - delay);
         
         if (time.onTriggered(U"End")) {
