@@ -39,7 +39,6 @@ namespace ui{
     MusicSelect::MusicSelect(const InitData& init):
     IScene(init),
     boxSize(400, 600),
-    currentItem(0),
     defaultEntity(Arg::center(Window::Center()), boxSize) {
         getData().trackCount++;
         for (auto file : getData().scoreList) {
@@ -49,18 +48,18 @@ namespace ui{
     
     void MusicSelect::update() {
         if (gameinfo::backArrow.down()) {
-            if (currentItem > 0) {
-                currentItem--;
+            if (getData().currentMusic > 0) {
+                getData().currentMusic--;
             }
         }
         if (gameinfo::goArrow.down()) {
-            if (currentItem < music.size() - 1) {
-                currentItem++;
+            if (getData().currentMusic < music.size() - 1) {
+                getData().currentMusic++;
             }
         }
         if (gameinfo::decide.down()) {
-            getData().scoreFile = music.at(currentItem).getScoreFile();
-            getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(currentItem).getMusicInfo().id());
+            getData().scoreFile = music.at(getData().currentMusic).getScoreFile();
+            getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id());
             changeScene(SceneName::PREFERENCE, 2000);
         };
     }
@@ -71,7 +70,7 @@ namespace ui{
         Print << U"MusicSelect";
         
         for (auto i : step(music.size())) {
-            music.at(i).draw(Vec2(((int)i - (int)currentItem) * defaultEntity.w, 0));
+            music.at(i).draw(Vec2(((int)i - (int)getData().currentMusic) * defaultEntity.w, 0));
         }
     }
 

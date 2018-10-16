@@ -44,6 +44,7 @@ namespace ui{
         double decisionVolume;
         double speed;
         size_t currentDiff;
+        size_t currentMusic;
         Array<FilePath> scoreList;
         Array<DecisionInfo> decisionCount;
         Array<score::Score::Header> resultSongInfo;

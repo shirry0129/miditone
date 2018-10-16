@@ -25,7 +25,10 @@ namespace ui{
         ui::Score m_score;
         musicgame::TimingJudge judger;
         double measureLength;
+        double delay;
+        double beatLength;
         Audio m_song;
+        Audio beatSound;
         Audio hitSound;
         Audio holdSound;
         EventTimer time;

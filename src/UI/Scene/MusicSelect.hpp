@@ -30,7 +30,6 @@ namespace ui{
     private:
         const Vec2 boxSize;
         const RectF defaultEntity;
-        size_t currentItem;
         Array<MusicBox> music;
     public:
         MusicSelect(const InitData& init);
