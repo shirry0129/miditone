@@ -24,20 +24,26 @@ namespace ui{
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, double currentValue) const {
         double scale = 0.8;
+        Color fontColor = Palette::Paleturquoise;
+        
         draw(moveWidth, isSelected);
         
         if (moveWidth.x == 0) {
             scale = 1;
+            if (isSelected) {
+                fontColor = Palette::Dodgerblue;
+            }
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
-        FontAsset(U"infoFont")(currentValue).drawAt(entity.center() + moveWidth + Vec2(0, -100));
+        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), fontColor);
+        FontAsset(U"infoFont")(currentValue).drawAt(entity.center() + moveWidth + Vec2(0, -100), fontColor);
     }
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, score::Difficulty currentDiff) const {
         String diff;
         double scale = 0.8;
+        Color fontColor = Palette::Paleturquoise;
         
         switch (currentDiff) {
             case score::Difficulty::EASY:
@@ -55,11 +61,14 @@ namespace ui{
         
         if (moveWidth.x == 0) {
             scale = 1;
+            if (isSelected) {
+                fontColor = Palette::Dodgerblue;
+            }
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
-        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100));
+        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), fontColor);
+        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), fontColor);
     }
     
     ui::PrefItem PrefBox::getEntry() const {
@@ -142,7 +151,7 @@ namespace ui{
         
         if (gameinfo::decide.down()) {
             if (prefItem.at(currentItem).getEntry() == PrefItem::GAMESTART) {
-                changeScene(SceneName::PLAY, 2000);
+                changeScene(SceneName::PLAY, gameinfo::fadeTime);
             }else{
                 adjustment = true;
             }
@@ -151,6 +160,8 @@ namespace ui{
         if (gameinfo::back.down()) {
             if (adjustment) {
                 adjustment = false;
+            }else{
+                changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
             }
         }
     }

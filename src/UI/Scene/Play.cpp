@@ -131,7 +131,7 @@ namespace ui{
         if (time.onTriggered(U"End")) {
             getData().decisionCount.push_back(decision);
             getData().resultScore.push_back(point);
-            changeScene(SceneName::RESULT, 2000);
+            changeScene(SceneName::RESULT, gameinfo::fadeTime);
         };
     }
     

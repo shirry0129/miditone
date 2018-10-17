@@ -15,9 +15,9 @@ namespace ui{
     void Result::update() {
         if (button.pressed()) {
             if (getData().trackCount < gameinfo::totalTrack) {
-                changeScene(SceneName::MUSICSELECT, 2000);
+                changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
             }else{
-                changeScene(SceneName::TOTALRESULT, 2000);
+                changeScene(SceneName::TOTALRESULT, gameinfo::fadeTime);
             }
         };
     }

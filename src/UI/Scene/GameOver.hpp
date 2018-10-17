@@ -9,11 +9,13 @@
 #define GameOver_hpp
 
 #include "Common.hpp"
+#include "../../System/EventTimer.hpp"
 
 namespace ui{
 
     class GameOver : public MyApp::Scene {
     private:
+        EventTimer changeTime;
     public:
         GameOver(const InitData& init);
         void update() override;

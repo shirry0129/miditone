@@ -63,7 +63,7 @@ namespace ui{
         if (gameinfo::decide.down()) {
             getData().scoreFile = music.at(getData().currentMusic).getScoreFile();
             getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id());
-            changeScene(SceneName::PREFERENCE, 2000);
+            changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
         };
     }
     

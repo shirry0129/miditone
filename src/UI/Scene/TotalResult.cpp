@@ -13,7 +13,7 @@ TotalResult::TotalResult(const InitData &init):IScene(init) {}
 
 void TotalResult::update() {
     if (button.down()) {
-        changeScene(SceneName::GAMEOVER, 2000);
+        changeScene(SceneName::GAMEOVER, gameinfo::fadeTime);
     };
 }
 

@@ -29,7 +29,7 @@ namespace ui{
     
     void Title::update() {
         if (button.down()) {
-            changeScene(SceneName::MUSICSELECT, 2000);
+            changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
         };
     }
     
