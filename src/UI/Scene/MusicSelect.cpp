@@ -15,12 +15,15 @@ namespace ui{
     musicInfo(_info.toUTF32()){}
     
     void MusicBox::draw(const s3d::Vec2 &moveWidth) const{
+        double scale = 0.8;
+        
         if (moveWidth.x == 0) {
-            entity.movedBy(moveWidth).draw(Palette::Green).drawFrame(4, Palette::Darkgreen);
-        }else{
-            entity.movedBy(moveWidth).scaled(0.8).draw(Palette::Green).drawFrame(4, Palette::Darkgreen);
+            scale = 1;
         }
-        FontAsset(U"BoxFont")(musicInfo.title()).drawAt(entity.center() + moveWidth + Vec2(0, -150));
+        
+        entity.movedBy(moveWidth).scaled(scale)(TextureAsset(U"boxTemplate")).draw();
+        Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth + Vec2(0, -150 * scale)));
+        FontAsset(U"BoxFont")(musicInfo.title()).drawAt(entity.center() + moveWidth + Vec2(0, -150 * scale));
     }
     
     score::Header MusicBox::getMusicInfo() const {

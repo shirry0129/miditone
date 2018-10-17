@@ -155,7 +155,7 @@ namespace ui{
             m_score.draw();
         }
         
-        FontAsset(U"comboFont")(combo).drawAt(Window::Width()/2, 800);
+        FontAsset(U"comboFont")(combo).drawAt(Window::Width()/2, 700);
         
         decisionEffect.update();
     }
