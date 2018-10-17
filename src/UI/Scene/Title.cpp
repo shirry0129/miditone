@@ -17,6 +17,7 @@ namespace ui{
         getData().currentMusic = 0;
         getData().resultSongInfo.clear();
         getData().resultScore.clear();
+        getData().decisionCount.clear();
         
         if (getData().scoreList.isEmpty()) {
             getData().scoreList = FileSystem::DirectoryContents(U"../Score/score")
