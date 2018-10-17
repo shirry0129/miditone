@@ -34,7 +34,7 @@ namespace ui{
             pointEachNote = static_cast<double>(gameinfo::maxPoint) / static_cast<double>(m_file.getNumofNotes() + m_file.getNumofHolds());
             judger.create(score::numofLanes, m_file.getNotes());
             measureLength = m_file.getBar().at(1).time.sec;
-            delay = measureLength * 2 + m_score.getWakeUpTime();
+            delay = measureLength * 1.5 + m_score.getWakeUpTime();
             beatLength = 60 / m_file.getTempo(0);
             time.addEvent(U"Beat1", SecondsF(beatLength + measureLength));
             time.addEvent(U"Beat2", SecondsF(beatLength * 2 + measureLength));
@@ -129,6 +129,9 @@ namespace ui{
             
             if (judger.getJudgingHoldNote(l)) {
                 decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
+                if (System::FrameCount() % 8 == 0) {
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                }
             }
         }
         

@@ -17,7 +17,7 @@ namespace ui {
 	
 	struct JudgeStrEffect : IEffect {
 	
-		static constexpr double floatingHeight = 50;
+		static constexpr double floatingHeight = 100;
 
 		JudgeStrEffect(
 			const Font& _font, const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color
