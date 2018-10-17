@@ -21,9 +21,21 @@ namespace ui{
             scale = 1;
         }
         
+        Vec2 titleCenter(entity.center() + moveWidth + Vec2(0, -150 * scale));
+        Rect titleRegion(FontAsset(U"songTitle")(musicInfo.title()).region());
+        
         entity.movedBy(moveWidth).scaled(scale)(TextureAsset(U"boxTemplate")).draw();
-        Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth + Vec2(0, -150 * scale)));
-        FontAsset(U"BoxFont")(musicInfo.title()).drawAt(entity.center() + moveWidth + Vec2(0, -150 * scale));
+        Transformer2D t(Mat3x2::Scale(scale, titleCenter));
+        if (titleRegion.w > 340) {
+            Vec2 penPos(titleCenter - Vec2(170, titleRegion.h / 2));
+            const double charWidthLate = 340. / titleRegion.w;
+            for (const auto &c : FontAsset(U"songTitle")(musicInfo.title())) {
+                c.texture.scaled(charWidthLate, 1).draw(penPos + c.offset);
+                penPos.x += c.xAdvance * charWidthLate;
+            }
+        }else{
+            FontAsset(U"songTitle")(musicInfo.title()).drawAt(titleCenter);
+        }
     }
     
     score::Header MusicBox::getMusicInfo() const {

@@ -15,11 +15,13 @@ void Main() {
     Window::SetTitle(gameinfo::title);
     Graphics::SetBackground(gameinfo::backGroundColor);
     
-    FontAsset::Register(U"BoxFont", 50, Typeface::Bold);
+    FontAsset::Register(U"songTitle", 30, Typeface::Bold);
+    FontAsset::Register(U"prefFont", 50, Typeface::Bold);
     FontAsset::Register(U"infoFont", 50);
     FontAsset::Register(U"comboFont", 200);
     TextureAsset::Register(U"gameStart", Resource(U"resource/gamestart.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"boxTemplate", Resource(U"resource/box.png"), TextureDesc::Mipped);
+//    TextureAsset::Register(U"titleBG", Resource(U"resource/miditonetitle.png"));
     
     ui::MyApp sceneManager;
     sceneManager.setFadeColor(gameinfo::fadeColor);

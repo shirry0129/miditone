@@ -35,8 +35,9 @@ namespace ui{
     
     void Title::draw() const {
         ClearPrint();
-        Print << U"Title";
+        Print << gameinfo::title;
         Print << U"Press any button";
+        //TextureAsset(U"titleBG").drawAt(Window::Center());
     }
 
 }

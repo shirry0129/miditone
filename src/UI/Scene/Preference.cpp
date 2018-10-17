@@ -24,26 +24,26 @@ namespace ui{
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, double currentValue) const {
         double scale = 0.8;
-        Color fontColor = Palette::Paleturquoise;
+        String value = ToString(currentValue);
         
         draw(moveWidth, isSelected);
         
         if (moveWidth.x == 0) {
             scale = 1;
             if (isSelected) {
-                fontColor = Palette::Dodgerblue;
+                value.push_front(U'◀');
+                value.push_back(U'▶');
             }
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), fontColor);
-        FontAsset(U"infoFont")(currentValue).drawAt(entity.center() + moveWidth + Vec2(0, -100), fontColor);
+        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
+        FontAsset(U"infoFont")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100));
     }
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, score::Difficulty currentDiff) const {
         String diff;
         double scale = 0.8;
-        Color fontColor = Palette::Paleturquoise;
         
         switch (currentDiff) {
             case score::Difficulty::EASY:
@@ -62,13 +62,14 @@ namespace ui{
         if (moveWidth.x == 0) {
             scale = 1;
             if (isSelected) {
-                fontColor = Palette::Dodgerblue;
+                diff.push_front(U'◀');
+                diff.push_back(U'▶');
             }
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"BoxFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), fontColor);
-        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), fontColor);
+        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
+        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100));
     }
     
     ui::PrefItem PrefBox::getEntry() const {
