@@ -7,6 +7,8 @@
 
 #include "Play.hpp"
 #include "../../GameInfo.hpp"
+#include "../JudgeEffect.hpp"
+#include "../JudgeStrEffect.hpp"
 
 namespace ui{
 
@@ -84,17 +86,20 @@ namespace ui{
                     decision.criticalCount++;
                     point += pointEachNote;
                     decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, shineEffect);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
                     break;
                 case musicgame::JudgeState::BETTER:
                     decision.correctCount++;
                     point += pointEachNote * 0.8;
                     decisionEffect.add<CorrectHitEffect>(shine, effectPos, remainSec, shineEffect);
+                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
                     break;
                 case musicgame::JudgeState::GOOD:
                 case musicgame::JudgeState::NOTBAD:
                     decision.niceCount++;
                     point += pointEachNote * 0.6;
                     decisionEffect.add<NiceHitEffect>(shine, effectPos, remainSec, shineEffect);
+                    decisionEffect.add<NiceStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
                     break;
                 default:
                     break;
@@ -104,6 +109,7 @@ namespace ui{
                 combo = 0;
                 decision.missCount++;
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
+                decisionEffect.add<MissStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
             }else{
                 combo++;
                 if (combo >= decision.combo) {

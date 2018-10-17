@@ -12,9 +12,10 @@
 namespace ui {
 
 	JudgeStrEffect::JudgeStrEffect(
-		const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color
+		const Font& _font, const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color
 	) noexcept
-	: str(_str)
+	: judgeFont(_font)
+    , str(_str)
 	, fromPos(_fromPos)
 	, remainSec(_remainSec)
 	, color(_color) {}
@@ -30,7 +31,7 @@ namespace ui {
 		const double height = floatingHeight * progress;
 
 
-	    FontAsset(U"JudgeFont")(str).drawAt(fromPos - Vec2(0, height), Color(color, alpha));
+	    judgeFont(str).drawAt(fromPos - Vec2(0, height), Color(color, alpha));
 
 		return true;
 	}
@@ -38,27 +39,27 @@ namespace ui {
 	
 	
 	_1stJudgeStrEffect::_1stJudgeStrEffect(
-		const Vec2& _fromPos, double _remainSec
+		const Font& _font, const Vec2& _fromPos, double _remainSec
 	) noexcept
-	: JudgeStrEffect(U"CRITICAL", _fromPos, _remainSec, HSV(60, 0.7, 1.0)) {};
+	: JudgeStrEffect(_font, U"CRITICAL", _fromPos, _remainSec, HSV(60, 0.7, 1.0)) {};
 	
 	
 	_2ndJudgeStrEffect::_2ndJudgeStrEffect(
-		const Vec2& _fromPos, double _remainSec
+		const Font& _font, const Vec2& _fromPos, double _remainSec
 	) noexcept
-	: JudgeStrEffect(U"CORRECT", _fromPos, _remainSec, Palette::Hotpink) {};
+	: JudgeStrEffect(_font, U"CORRECT", _fromPos, _remainSec, Palette::Hotpink) {};
 	
 	
 	_3rdJudgeStrEffect::_3rdJudgeStrEffect(
-		const Vec2& _fromPos, double _remainSec
+		const Font& _font, const Vec2& _fromPos, double _remainSec
 	) noexcept
-	: JudgeStrEffect(U"NICE", _fromPos, _remainSec, Palette::Skyblue) {};
+	: JudgeStrEffect(_font, U"NICE", _fromPos, _remainSec, Palette::Skyblue) {};
 	
 	
 	MissJudgeStrEffect::MissJudgeStrEffect(
-		const Vec2& _fromPos, double _remainSec
+		const Font& _font, const Vec2& _fromPos, double _remainSec
 	) noexcept
-	: JudgeStrEffect(U"MISS", _fromPos, _remainSec, Palette::Lightgrey) {};
+	: JudgeStrEffect(_font, U"MISS", _fromPos, _remainSec, Palette::Lightgrey) {};
 	
 	
 

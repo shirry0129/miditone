@@ -20,13 +20,14 @@ namespace ui {
 		static constexpr double floatingHeight = 50;
 
 		JudgeStrEffect(
-			const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color
+			const Font& _font, const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color
 		) noexcept;
 
 		virtual bool update(double t) override;
 		
 		
 	private:
+        const Font judgeFont;
 		const String str;
 		const Vec2 fromPos;
 		const double remainSec;
@@ -39,7 +40,7 @@ namespace ui {
 	struct _1stJudgeStrEffect : JudgeStrEffect {
 	
 		_1stJudgeStrEffect(
-			const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec
 		) noexcept;
 
 	};
@@ -48,7 +49,7 @@ namespace ui {
 	struct _2ndJudgeStrEffect : JudgeStrEffect {
 	
 		_2ndJudgeStrEffect(
-			const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec
 		) noexcept;
 
 	};
@@ -57,7 +58,7 @@ namespace ui {
 	struct _3rdJudgeStrEffect : JudgeStrEffect {
 	
 		_3rdJudgeStrEffect(
-			const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec
 		) noexcept;
 
 	};
@@ -65,7 +66,7 @@ namespace ui {
 	struct MissJudgeStrEffect : JudgeStrEffect {
 	
 		MissJudgeStrEffect(
-			const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec
 		) noexcept;
 
 	};

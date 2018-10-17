@@ -15,7 +15,6 @@
 #include "../../System/Score.hpp"
 #include "../../System/EventTimer.hpp"
 #include "../../System/TimingJudge.hpp"
-#include "../JudgeEffect.hpp"
 
 namespace ui{
 
