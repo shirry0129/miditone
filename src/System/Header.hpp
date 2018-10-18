@@ -38,7 +38,7 @@ namespace score {
 		scorereader_err_t getReaderError() const noexcept;
 		
 		
-		const int&								id()		const noexcept;
+		int										id()		const noexcept;
 		const std::basic_string<char_type>&		title()		const noexcept;
 		const std::basic_string<char_type>&		artist()	const noexcept;
 		const std::array<
@@ -47,6 +47,8 @@ namespace score {
 		const Genre&							genre()		const noexcept;
 		const std::vector<TempoEvent>&			tempo()		const noexcept;
 		const std::vector<BeatEvent>&			beat()		const noexcept;
+		int 									chorusBegSec() const noexcept;
+		int 									chorusEndSec() const noexcept;
 		
 		
 	private:
@@ -61,6 +63,8 @@ namespace score {
 		Genre							m_genre;
 		std::vector<TempoEvent>			m_tempo;
 		std::vector<BeatEvent>			m_beat;
+		int 							m_chorusBegSec;
+		int								m_chorusEndSec;
 		
 		scorereader_err_t prevError;
 		
