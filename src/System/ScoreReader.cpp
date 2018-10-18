@@ -571,6 +571,48 @@ namespace score {
 
 		return sr.prevState = State::S_OK;
 	}
+	
+	Error<ScoreReader::State> ScoreReader::ChobegCmd::execute(ScoreReader & sr, const rch_type * line) {
+		if (!sr.argProcessFlag)
+			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
+
+		std::basic_stringstream<rch_type> sstream(line);
+
+		// ignore command string
+		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
+
+		// get first argument string as int
+		sstream >> sr.header.chorusBegSec;
+
+		if (sstream.fail())
+			return sr.prevState = State::E_UNEXPECTED_STRING;
+
+		return sr.prevState = State::S_OK;
+	}
+	
+	Error<ScoreReader::State> ScoreReader::ChoendCmd::execute(ScoreReader & sr, const rch_type * line) {
+		if (!sr.argProcessFlag)
+			return State::S_OK;	// skip
+
+		if (sr.currentChunk == "")
+			return State::E_UNEXPECTED_STRING;
+
+		std::basic_stringstream<rch_type> sstream(line);
+
+		// ignore command string
+		sstream.ignore(std::numeric_limits<std::streamsize>::max(), sr.delim);
+
+		// get first argument string as int
+		sstream >> sr.header.chorusEndSec;
+
+		if (sstream.fail())
+			return sr.prevState = State::E_UNEXPECTED_STRING;
+
+		return sr.prevState = State::S_OK;
+	}
 
 	Error<ScoreReader::State> ScoreReader::NullCmd::execute(ScoreReader & sr, const rch_type * line) {
 		return sr.prevState = State::S_OK;
@@ -606,6 +648,10 @@ namespace score {
 			return &cmd_beat;
 		if (isNumber(cmdStr))
 			return &cmd_note;
+		if (cmdStr == "chobeg")
+			return &cmd_chobeg;
+		if (cmdStr == "choend")
+			return &cmd_choend;
 		if (cmdStr == "")
 			return &cmd_null;
 

@@ -82,6 +82,8 @@ namespace score {
 			std::basic_string<rch_type>		genre;
 			std::vector<TempoEvent>			tempo;
 			std::vector<BeatEvent>			beat;
+			int								chorusBegSec;
+			int								chorusEndSec;
 		};
 		
 
@@ -222,6 +224,14 @@ namespace score {
 		struct NoteCmd : Command {
 			Error<State> execute(ScoreReader &sr, const rch_type *line) override;
 		};
+		
+		struct ChobegCmd : Command {
+			Error<State> execute(ScoreReader &sr, const rch_type *line) override;
+		};
+		
+		struct ChoendCmd : Command {
+			Error<State> execute(ScoreReader &sr, const rch_type *line) override;
+		};
 
 		struct NullCmd : Command {
 			Error<State> execute(ScoreReader &sr, const rch_type *line) override;
@@ -240,6 +250,8 @@ namespace score {
 			TempoCmd		cmd_tempo;
 			BeatCmd			cmd_beat;
 			NoteCmd			cmd_note;
+			ChobegCmd		cmd_chobeg;
+			ChoendCmd		cmd_choend;
 			NullCmd			cmd_null;
 
 			bool isNumber(const std::basic_string<rch_type> &str);

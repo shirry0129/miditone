@@ -51,6 +51,9 @@ namespace score {
 		for (const auto& b : h.beat)
 			m_beat.emplace_back(b);
 		
+		m_chorusBegSec = h.chorusBegSec;
+		m_chorusEndSec = h.chorusEndSec;
+		
 		
 		return prevError = reader.getLastError();
 	}
@@ -59,7 +62,7 @@ namespace score {
 		return prevError;
 	}
 	
-	const int& Header::id() const noexcept {
+	int Header::id() const noexcept {
 		return m_id;
 	}
 	
@@ -86,5 +89,14 @@ namespace score {
 	const std::vector<BeatEvent>& Header::beat() const noexcept {
 		return m_beat;
 	}
-
+	
+	int Header::chorusBegSec() const noexcept {
+		return m_chorusBegSec;
+	}
+	
+	int Header::chorusEndSec() const noexcept {
+		return m_chorusEndSec;
+	}
+	
+	
 }
