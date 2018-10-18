@@ -68,12 +68,12 @@ namespace ui {
         // draw guide
         for(auto i:step(5)){
             if(i == 0 || i == 4){
-                guide[i].draw(8, Palette::Orange);
+                guide[i].draw(8, Palette::Lightskyblue);
             }else{
-                guide[i].draw(1, Color(Palette::Orange, 127));
+                guide[i].draw(1, Color(Palette::Lightskyblue, 127));
             }
         }
-        decisionLine.draw(LineStyle::RoundCap, 8, Palette::Orange);
+        decisionLine.draw(LineStyle::RoundCap, 8, Palette::Lightskyblue);
     }
     
     

@@ -37,8 +37,8 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
-        FontAsset(U"infoFont")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100));
+        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::fontColor);
+        FontAsset(U"infoFont")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::fontColor);
     }
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, score::Difficulty currentDiff) const {
@@ -68,8 +68,8 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150));
-        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100));
+        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::fontColor);
+        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::fontColor);
     }
     
     ui::PrefItem PrefBox::getEntry() const {
@@ -168,6 +168,8 @@ namespace ui{
     }
     
     void Preference::draw() const {
+        TextureAsset(U"preference").drawAt(Window::Center());
+        
         for (auto i : step(prefItem.size())) {
             Vec2 moveWidth(((int)i - (int)currentItem) * defaultEntity.w, 0);
             switch (prefItem.at(i).getEntry()) {

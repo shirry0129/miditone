@@ -32,6 +32,8 @@ namespace ui{
         U"  " << U"Miss:" << getData().decisionCount.at(getData().trackCount - 1).missCount;
         Print << U"Combo:" << getData().decisionCount.at(getData().trackCount - 1).combo;
         Print << U"Score:" << getData().resultScore.at(getData().trackCount - 1);
+        
+        TextureAsset(U"result").drawAt(Window::Center());
     }
 
 }

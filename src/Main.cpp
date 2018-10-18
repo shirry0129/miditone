@@ -22,7 +22,12 @@ void Main() {
     FontAsset::Register(U"comboFont", 200);
     TextureAsset::Register(U"gameStart", Resource(U"resource/gamestart.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"boxTemplate", Resource(U"resource/box.png"), TextureDesc::Mipped);
-//    TextureAsset::Register(U"titleBG", Resource(U"resource/miditonetitle.png"));
+    TextureAsset::Register(U"title", Resource(U"resource/title.jpg"));
+    TextureAsset::Register(U"select", Resource(U"resource/select.jpg"));
+    TextureAsset::Register(U"preference", Resource(U"resource/preference.jpg"));
+    TextureAsset::Register(U"play", Resource(U"resource/play.jpg"));
+    TextureAsset::Register(U"result", Resource(U"resource/result.jpg"));
+    TextureAsset::Register(U"totalResult", Resource(U"resource/totalresult.jpg"));
     
     ui::MyApp sceneManager;
     sceneManager.setFadeColor(gameinfo::fadeColor);

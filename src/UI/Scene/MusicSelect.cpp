@@ -30,11 +30,11 @@ namespace ui{
             Vec2 penPos(titleCenter - Vec2(170, titleRegion.h / 2));
             const double charWidthLate = 340. / titleRegion.w;
             for (const auto &c : FontAsset(U"songTitle")(musicInfo.title())) {
-                c.texture.scaled(charWidthLate, 1).draw(penPos + c.offset);
+                c.texture.scaled(charWidthLate, 1).draw(penPos + c.offset, gameinfo::fontColor);
                 penPos.x += c.xAdvance * charWidthLate;
             }
         }else{
-            FontAsset(U"songTitle")(musicInfo.title()).drawAt(titleCenter);
+            FontAsset(U"songTitle")(musicInfo.title()).drawAt(titleCenter, gameinfo::fontColor);
         }
     }
     
@@ -81,8 +81,10 @@ namespace ui{
     
     void MusicSelect::draw() const {
         ClearPrint();
-        Print << U"Track {}"_fmt(getData().trackCount);
-        Print << U"MusicSelect";
+//        Print << U"Track {}"_fmt(getData().trackCount);
+//        Print << U"MusicSelect";
+        
+        TextureAsset(U"select").drawAt(Window::Center());
         
         for (auto i : step(music.size())) {
             music.at(i).draw(Vec2(((int)i - (int)getData().currentMusic) * defaultEntity.w, 0));

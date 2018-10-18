@@ -147,16 +147,15 @@ namespace ui{
     }
     
     void Play::draw() const {
+        TextureAsset(U"play").drawAt(Window::Center());
+        
         LaneBG::getInstance().draw();
         
         if (time.onTriggered(U"Beat1") || time.onTriggered(U"Beat2") || time.onTriggered(U"Beat3") || time.onTriggered(U"Beat4")) {
-            beatSound.playOneShot(0.8);
+            beatSound.playOneShot();
         }
         
         for (const auto &r : results) {
-            Print << U"Lane: " << r->lane
-            << U"   " << r->result.getJudgeMsg();
-            
             if (!r->result.isMiss()) {
                 hitSound.playOneShot(getData().decisionVolume / 10);
             }

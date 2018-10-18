@@ -29,4 +29,6 @@ void TotalResult::draw() const {
         Print << U"Combo:" << getData().decisionCount.at(r).combo;
         Print << U"Score:" << getData().resultScore.at(r) << U"\n";
     }
+    
+    TextureAsset(U"totalResult").drawAt(Window::Center());
 }

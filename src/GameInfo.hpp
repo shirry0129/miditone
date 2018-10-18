@@ -17,6 +17,8 @@ namespace gameinfo {
     
     const Color fadeColor = Palette::White;
     
+    const Color fontColor = Palette::Paleturquoise;
+    
     const int32 titleFontSize = 120;
     
     const int32 defalutFontSize = 50;
