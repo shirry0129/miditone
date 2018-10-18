@@ -25,7 +25,6 @@ namespace ui {
 			return false;
 		
 		const double progress = t/remainSec;
-//		const double invProgress = 1.0 - progress;
 		
 		const int alpha = static_cast<int>(255 * progress);
 		const double height = floatingHeight * progress;

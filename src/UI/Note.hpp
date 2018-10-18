@@ -25,11 +25,13 @@ namespace ui{
         const float acceleration;
         Quad note;
         bool isJudged;
+        bool isJudging;
         
     public:
         Note(size_t _laneNum, float _wakeUpTime, float _acceleration);
         ~Note() = default;
         virtual void makeJudged() final;
+        virtual void makeJudging() final;
         
         virtual void update(double currentTime) = 0;
         virtual void draw() const final;

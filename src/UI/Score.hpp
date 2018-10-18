@@ -43,6 +43,7 @@ namespace ui {
         void setFromFile(const score::Score& _fromFile, float _speed);
         float getWakeUpTime() const;
         void deleteJudgedNote(size_t _lane, int spot);
+        void adjustJudgingNote(size_t _lane, int spot);
         
         void update(double currentTime);
         void draw() const;

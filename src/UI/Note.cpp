@@ -15,6 +15,7 @@ namespace ui {
 	wakeUpTime(_wakeUpTime),
 	acceleration(_acceleration),
 	isJudged(false),
+	isJudging(false),
 	inst(ui::LaneBG::getInstance()){}
 	
 	void Note::draw() const{
@@ -28,7 +29,12 @@ namespace ui {
 	
 	void Note::makeJudged() {
 		isJudged = true;
-	}	
+	}
+	
+	void Note::makeJudging() {
+		isJudging = true;
+	}
+	
 	
 	
 	
@@ -59,9 +65,9 @@ namespace ui {
 	
 	
 	HoldNote::HoldNote(size_t _laneNum, float _startTime, float _endTime, float _wakeUpTime, float _acceleration):
-		Note(_laneNum, _wakeUpTime, _acceleration),
-		startTime(_startTime),
-		endTime(_endTime){}
+	Note(_laneNum, _wakeUpTime, _acceleration),
+	startTime(_startTime),
+	endTime(_endTime){}
 	
 	void HoldNote::update(double currentTime) {
 		
@@ -76,6 +82,10 @@ namespace ui {
 		
 		if (wakeUpTime - (endTime - currentTime) < 0) {
 			topY = 0;
+		}
+		
+		if (isJudging) {
+			bottomY = laneEnd;
 		}
 		
 		Vec2 tl(inst.getFactor(laneNum).slope * topY + inst.getFactor(laneNum).intercept + 1, topY);

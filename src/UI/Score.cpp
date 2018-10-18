@@ -134,5 +134,10 @@ namespace ui {
         return wakeUpTime;
     }
     
+    void Score::adjustJudgingNote(size_t _lane, int spot) {
+        score.at(_lane).at(spot)->makeJudging();
+    }
+    
+    
     
 }
