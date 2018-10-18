@@ -18,7 +18,10 @@ namespace ui{
     private:
         FilePath scoreFile;
         Texture albumArt;
+        Array<RectF> diffBox;
         score::Header musicInfo;
+        const size_t maxWidth;
+        void compressedDisplay(const Vec2& centerPos, const Rect& _region, const Font& assetInfo, const String& string) const;
     public:
         MusicBox(const FilePath& _info, const RectF& _entity);
         FilePath getScoreFile() const;

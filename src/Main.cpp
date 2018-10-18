@@ -15,7 +15,8 @@ void Main() {
     Window::SetTitle(gameinfo::title);
     Graphics::SetBackground(gameinfo::backGroundColor);
     
-    FontAsset::Register(U"songTitle", 30, Typeface::Bold);
+    FontAsset::Register(U"songTitle", 50, Typeface::Bold);
+    FontAsset::Register(U"musicInfo", 30);
     FontAsset::Register(U"prefFont", 50, Typeface::Bold);
     FontAsset::Register(U"infoFont", 50);
     FontAsset::Register(U"effectFont", 30, Typeface::Bold);

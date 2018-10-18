@@ -11,8 +11,27 @@ namespace ui{
     
     MusicBox::MusicBox(const FilePath& _info, const s3d::RectF &_entity):
     IBox(_entity, TextureAsset(U"boxTemplate")),
+    maxWidth(340),
     scoreFile(_info),
-    musicInfo(_info.toUTF32()){}
+    musicInfo(_info.toUTF32()){
+        albumArt = Texture(U"../Score/albumArt/{}.png"_fmt(musicInfo.id()));
+        for (auto i : step(3)) {
+            diffBox.emplace_back(Arg::center(Window::Center()),90);
+        }
+    }
+    
+    void MusicBox::compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const {
+        if (_region.w > maxWidth) {
+            Vec2 penPos(centerPos - Vec2(maxWidth / 2, _region.h / 2));
+            const double charWidthLate = 340. / _region.w;
+            for (const auto &c : assetInfo(string)) {
+                c.texture.scaled(charWidthLate, 1).draw(penPos + c.offset, gameinfo::fontColor);
+                penPos.x += c.xAdvance * charWidthLate;
+            }
+        }else{
+            assetInfo(string).drawAt(centerPos, gameinfo::fontColor);
+        }
+    }
     
     void MusicBox::draw(const s3d::Vec2 &moveWidth) const{
         double scale = 0.8;
@@ -21,21 +40,40 @@ namespace ui{
             scale = 1;
         }
         
-        Vec2 titleCenter(entity.center() + moveWidth + Vec2(0, -150 * scale));
-        Rect titleRegion(FontAsset(U"songTitle")(musicInfo.title()).region());
+        Vec2 titleCenter(entity.center() + moveWidth + Vec2(0, 100 * scale));
+        Vec2 artistCenter(entity.center() + moveWidth + Vec2(0, 160 * scale));
+        auto titleRegion(FontAsset(U"songTitle")(musicInfo.title()).region());
+        auto artistRegion(FontAsset(U"musicInfo")(musicInfo.artist()).region());
         
         entity.movedBy(moveWidth).scaled(scale)(TextureAsset(U"boxTemplate")).draw();
-        Transformer2D t(Mat3x2::Scale(scale, titleCenter));
-        if (titleRegion.w > 340) {
-            Vec2 penPos(titleCenter - Vec2(170, titleRegion.h / 2));
-            const double charWidthLate = 340. / titleRegion.w;
-            for (const auto &c : FontAsset(U"songTitle")(musicInfo.title())) {
-                c.texture.scaled(charWidthLate, 1).draw(penPos + c.offset, gameinfo::fontColor);
-                penPos.x += c.xAdvance * charWidthLate;
+        albumArt.resized(320, 320).scaled(scale).drawAt(entity.center() + moveWidth + Vec2(0, -100 * scale));
+        for (auto d : step(diffBox.size())) {
+            Color diffColor, diffFrame;
+            
+            switch (d) {
+                case 0:
+                    diffColor = Palette::Limegreen;
+                    diffFrame = Color(U"#259925");
+                    break;
+                case 1:
+                    diffColor = Palette::Darkorange;
+                    diffFrame = Color(U"#b36200");
+                    break;
+                case 2:
+                    diffColor = Palette::Crimson;
+                    diffFrame = Color(U"#b31031");
+                    break;
+                default:
+                    break;
             }
-        }else{
-            FontAsset(U"songTitle")(musicInfo.title()).drawAt(titleCenter, gameinfo::fontColor);
+            
+            diffBox.at(d).movedBy(moveWidth + Vec2((-95 + (int)d * 95), 230) * scale).scaled(scale).draw(diffColor).drawFrame(4, 0, diffFrame);
         }
+        
+        Transformer2D t(Mat3x2::Scale(scale, titleCenter));
+        compressedDisplay(titleCenter, titleRegion, FontAsset(U"songTitle"), musicInfo.title());
+        t = Transformer2D(Mat3x2::Scale(scale, artistCenter));
+        compressedDisplay(artistCenter, artistRegion, FontAsset(U"musicInfo"), musicInfo.artist());
     }
     
     score::Header MusicBox::getMusicInfo() const {
@@ -45,8 +83,6 @@ namespace ui{
     s3d::FilePath MusicBox::getScoreFile() const {
         return scoreFile;
     }
-    
-    
     
     
 
@@ -81,8 +117,6 @@ namespace ui{
     
     void MusicSelect::draw() const {
         ClearPrint();
-//        Print << U"Track {}"_fmt(getData().trackCount);
-//        Print << U"MusicSelect";
         
         TextureAsset(U"select").drawAt(Window::Center());
         
