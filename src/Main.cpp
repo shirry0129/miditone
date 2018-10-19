@@ -16,6 +16,7 @@ void Main() {
     Window::SetTitle(gameinfo::title);
     Graphics::SetBackground(gameinfo::backGroundColor);
     
+    FontAsset::Register(U"countDown", 100, Typeface::Bold);
     FontAsset::Register(U"songTitle", 50, Typeface::Bold);
     FontAsset::Register(U"musicInfo", 30);
     FontAsset::Register(U"trackFont", 80, Typeface::Bold);

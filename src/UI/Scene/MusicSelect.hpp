@@ -35,6 +35,7 @@ namespace ui{
         const RectF defaultEntity;
         Array<MusicBox> music;
         Array<Rect> instructionBox;
+        Timer countDown;
     public:
         MusicSelect(const InitData& init);
         void update() override;

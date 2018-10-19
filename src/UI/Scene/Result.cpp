@@ -13,10 +13,12 @@ namespace ui{
     Result::Result(const InitData& init):
     IScene(init),
     maxWidth(470),
+    countDown(20),
     albumArt(U"../Score/albumArt/{}.png"_fmt(getData().resultSongInfo.at(getData().trackCount - 1).id)){
         for (auto i : step(4)) {
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
+        countDown.start();
     }
     
     void Result::compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Font &assetInfo, const s3d::String &string) const {
@@ -35,7 +37,7 @@ namespace ui{
     }
     
     void Result::update() {
-        if (button.pressed()) {
+        if (gameinfo::decide.pressed() || countDown.reachedZero()) {
             if (getData().trackCount < gameinfo::totalTrack) {
                 changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
             }else{
@@ -49,6 +51,7 @@ namespace ui{
         TextureAsset(U"result").drawAt(Window::Center());
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount).drawAt(273, 66, Palette::Darkslategray);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
         FontAsset(U"resultScore")(Pad(getData().resultScore.at(getData().trackCount - 1), {7, U'0'})).draw(601, 217, gameinfo::fontColor);
         drawDecision({300, 354});
         drawSongInfo({1142, 239});

@@ -15,7 +15,7 @@ namespace ui{
 
     class GameOver : public MyApp::Scene {
     private:
-        EventTimer changeTime;
+        Timer changeTime;
     public:
         GameOver(const InitData& init);
         void update() override;

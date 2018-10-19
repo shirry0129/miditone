@@ -17,6 +17,7 @@ namespace ui {
         Array<Texture> albumArt;
         Array<Rect> instructionBox;
         size_t maxWidth;
+        Timer countDown;
         
         void compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Font &assetInfo, const s3d::String &string) const;
         void drawTrack(const Vec2& pos, size_t track) const;

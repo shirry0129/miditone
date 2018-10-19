@@ -85,6 +85,7 @@ namespace ui{
     boxSize(400, 600),
     currentItem(0),
     adjustment(false),
+    countDown(30),
     defaultEntity(Arg::center(Window::Center()), boxSize){
         prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity, TextureAsset(U"gameStart"));
         prefItem.emplace_back(PrefItem::DIFFICULTY, U"Difficulty", defaultEntity, TextureAsset(U"boxTemplate"));
@@ -94,6 +95,8 @@ namespace ui{
         for (auto i : step(4)) {
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
+        
+        countDown.start();
     }
     
     void Preference::update() {
@@ -168,12 +171,17 @@ namespace ui{
                 changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
             }
         }
+        
+        if (countDown.reachedZero()) {
+            changeScene(SceneName::PLAY, gameinfo::fadeTime);
+        }
     }
     
     void Preference::draw() const {
         TextureAsset(U"preference").drawAt(Window::Center());
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
         
         for (auto [i, rect] : Indexed(instructionBox)) {
             switch (i) {

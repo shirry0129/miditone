@@ -91,13 +91,16 @@ namespace ui{
     MusicSelect::MusicSelect(const InitData& init):
     IScene(init),
     boxSize(400, 600),
-    defaultEntity(Arg::center(Window::Center()), boxSize) {
+    defaultEntity(Arg::center(Window::Center()), boxSize),
+    countDown(60){
         for (auto file : getData().scoreList) {
             music.emplace_back(file, defaultEntity);
         }
         for (auto i : step(4)) {
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
+        
+        countDown.start();
     }
     
     void MusicSelect::update() {
@@ -111,7 +114,7 @@ namespace ui{
                 getData().currentMusic++;
             }
         }
-        if (gameinfo::decide.down()) {
+        if (gameinfo::decide.down() || countDown.reachedZero()) {
             getData().scoreFile = music.at(getData().currentMusic).getScoreFile();
             getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id());
             changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
@@ -124,6 +127,7 @@ namespace ui{
         TextureAsset(U"select").drawAt(Window::Center());
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
         
         for (auto i : step(music.size())) {
             music.at(i).draw(Vec2(((int)i - (int)getData().currentMusic) * defaultEntity.w, 0));

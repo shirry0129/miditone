@@ -9,18 +9,16 @@
 
 namespace ui{
 
-    GameOver::GameOver(const InitData& init):IScene(init){
-        changeTime.addEvent(U"Restart", 10s);
-        
+    GameOver::GameOver(const InitData& init):
+    IScene(init),
+    changeTime(10){
         changeTime.start();
     }
     
-    void GameOver::update() {
-        changeTime.update();
-        
-        if (KeyR.pressed() || changeTime.onTriggered(U"Restart")) {
+    void GameOver::update() {        
+        if (KeyR.pressed() || changeTime.reachedZero()) {
             changeScene(SceneName::TITLE, gameinfo::fadeTime);
-        };
+        }
     }
     
     void GameOver::draw() const {

@@ -11,6 +11,7 @@ using namespace ui;
 
 TotalResult::TotalResult(const InitData &init):
 IScene(init),
+countDown(20),
 maxWidth(340){
     for (auto i : step(gameinfo::totalTrack)) {
         albumArt.emplace_back(U"../Score/albumArt/{}.png"_fmt(getData().resultSongInfo.at(i).id));
@@ -18,16 +19,18 @@ maxWidth(340){
     for (auto i : step(4)) {
         instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
     }
+    countDown.start();
 }
 
 void TotalResult::update() {
-    if (button.down()) {
+    if (gameinfo::decide.down() || countDown.reachedZero()) {
         changeScene(SceneName::GAMEOVER, gameinfo::fadeTime);
     };
 }
 
 void TotalResult::draw() const {
     TextureAsset(U"totalResult").drawAt(Window::Center());
+    FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
     
     for (auto [i, rect] : Indexed(instructionBox)) {
         switch (i) {

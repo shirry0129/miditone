@@ -17,6 +17,7 @@ namespace ui{
         Array<Rect> instructionBox;
         Texture albumArt;
         size_t maxWidth;
+        Timer countDown;
         void drawDecision(const Vec2& pos) const;
         void drawSongInfo(const Vec2& pos) const;
         

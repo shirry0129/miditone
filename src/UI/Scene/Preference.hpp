@@ -41,6 +41,7 @@ namespace ui{
         size_t currentItem;
         Array<PrefBox> prefItem;
         Array<Rect> instructionBox;
+        Timer countDown;
         bool adjustment;
     public:
         Preference(const InitData& init);
