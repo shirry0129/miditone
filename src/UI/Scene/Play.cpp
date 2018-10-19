@@ -9,6 +9,7 @@
 #include "../../GameInfo.hpp"
 #include "../JudgeEffect.hpp"
 #include "../JudgeStrEffect.hpp"
+#include "../../System/JudgeFunc.hpp"
 
 namespace ui{
 
@@ -21,8 +22,30 @@ namespace ui{
     point(0),
     maxWidth(270),
     isDrawable(false){
+        musicgame::TimingJudge::beg_judge_func_t beg;
+        musicgame::TimingJudge::end_judge_func_t end;
+        musicgame::TimingJudge::missed_judge_func_t miss;
         getData().trackCount++;
         LaneBG::create();
+        
+        switch (getData().currentDiff) {
+            case 0:
+                beg = musicgame::judgefunc::begJudgeForEasy;
+                end = musicgame::judgefunc::endJudgeForEasy;
+                miss = musicgame::judgefunc::missedJudgeForEasy;
+                break;
+            case 1:
+                beg = musicgame::judgefunc::begJudgeForNormal;
+                end = musicgame::judgefunc::endJudgeForNormal;
+                miss = musicgame::judgefunc::missedJudgeForNormal;
+                break;
+            case 2:
+                beg = musicgame::judgefunc::begJudgeForHard;
+                end = musicgame::judgefunc::endJudgeForHard;
+                miss = musicgame::judgefunc::missedJudgeForHard;
+            default:
+                break;
+        }
         
         m_file.create(getData().scoreFile.toUTF32(), static_cast<score::Difficulty>(getData().currentDiff));
         
@@ -33,7 +56,7 @@ namespace ui{
             getData().resultSongInfo.push_back(m_file.getHeader());
             m_score.setFromFile(m_file, getData().speed / 10);
             pointEachNote = static_cast<double>(gameinfo::maxPoint) / static_cast<double>(m_file.getNumofNotes() + m_file.getNumofHolds());
-            judger.create(score::numofLanes, m_file.getNotes());
+            judger.create(score::numofLanes, m_file.getNotes(), beg, end, miss);
             measureLength = m_file.getBar().at(1).time.sec;
             delay = measureLength * 2 + m_score.getWakeUpTime();
             beatLength = 60 / m_file.getTempo(0);
