@@ -20,7 +20,7 @@ namespace ui{
         void drawDecision(const Vec2& pos) const;
         void drawSongInfo(const Vec2& pos) const;
         
-        void compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const;
+        void compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Font &assetInfo, const s3d::String &string) const;
     public:
         Result(const InitData& init);
         void update() override;

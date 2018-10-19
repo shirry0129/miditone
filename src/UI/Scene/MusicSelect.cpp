@@ -20,7 +20,9 @@ namespace ui{
         }
     }
     
-    void MusicBox::compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const {
+    void MusicBox::compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Font &assetInfo, const s3d::String &string) const {
+        auto _region = assetInfo(string).region();
+        
         if (_region.w > maxWidth) {
             Vec2 penPos(centerPos - Vec2(maxWidth / 2, _region.h / 2));
             const double charWidthLate = 340. / _region.w;
@@ -42,9 +44,7 @@ namespace ui{
         
         Vec2 titleCenter(entity.center() + moveWidth + Vec2(0, 100 * scale));
         Vec2 artistCenter(entity.center() + moveWidth + Vec2(0, 160 * scale));
-        auto titleRegion(FontAsset(U"songTitle")(musicInfo.title()).region());
-        auto artistRegion(FontAsset(U"musicInfo")(musicInfo.artist()).region());
-        
+
         entity.movedBy(moveWidth).scaled(scale)(TextureAsset(U"boxTemplate")).draw();
         albumArt.resized(320, 320).scaled(scale).drawAt(entity.center() + moveWidth + Vec2(0, -100 * scale));
         for (auto d : step(diffBox.size())) {
@@ -71,9 +71,9 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, titleCenter));
-        compressedDisplay(titleCenter, titleRegion, FontAsset(U"songTitle"), musicInfo.title());
+        compressedDisplay(titleCenter, FontAsset(U"songTitle"), musicInfo.title());
         t = Transformer2D(Mat3x2::Scale(scale, artistCenter));
-        compressedDisplay(artistCenter, artistRegion, FontAsset(U"musicInfo"), musicInfo.artist());
+        compressedDisplay(artistCenter, FontAsset(U"musicInfo"), musicInfo.artist());
     }
     
     score::Header MusicBox::getMusicInfo() const {

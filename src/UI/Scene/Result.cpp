@@ -19,7 +19,9 @@ namespace ui{
         }
     }
     
-    void Result::compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const {
+    void Result::compressedDisplay(const s3d::Vec2 &centerPos, const s3d::Font &assetInfo, const s3d::String &string) const {
+        auto _region = assetInfo(string).region();
+        
         if (_region.w > maxWidth) {
             Vec2 penPos(centerPos - Vec2(maxWidth / 2, _region.h / 2));
             const double charWidthLate = static_cast<double>(maxWidth) / _region.w;
@@ -73,21 +75,21 @@ namespace ui{
     }
     
     void Result::drawDecision(const s3d::Vec2 &pos) const {
-        double offset = -34 + 316;
+        double offset = -34 + 535;
         TextureAsset(U"resultCombo").scaled(1.3).draw(pos);
         TextureAsset(U"resultDecision").scaled(1.3).draw(pos + Vec2(-34 , TextureAsset(U"resultCombo").height()) * 1.3);
-        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).combo).draw(pos + Vec2(282, -9) * 1.3, gameinfo::fontColor);
-        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).criticalCount).draw(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 18) * 1.3, gameinfo::fontColor);
-        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).correctCount).draw(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 96) * 1.3, gameinfo::fontColor);
-        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).niceCount).draw(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 167) * 1.3, gameinfo::fontColor);
-        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).missCount).draw(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 237) * 1.3, gameinfo::fontColor);
+        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).combo).draw(Arg::topRight(pos + Vec2(506, -9) * 1.3), gameinfo::fontColor);
+        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).criticalCount).draw(Arg::topRight(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 18) * 1.3), gameinfo::fontColor);
+        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).correctCount).draw(Arg::topRight(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 96) * 1.3), gameinfo::fontColor);
+        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).niceCount).draw(Arg::topRight(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 167) * 1.3), gameinfo::fontColor);
+        FontAsset(U"decisionFont")(getData().decisionCount.at(getData().trackCount - 1).missCount).draw(Arg::topRight(pos + Vec2(offset, TextureAsset(U"resultCombo").height() + 237) * 1.3), gameinfo::fontColor);
     }
     
     void Result::drawSongInfo(const s3d::Vec2 &pos) const {
         TextureAsset(U"boxTemplate").resized(550, 600).draw(pos);
         albumArt.resized(410).draw(pos + Vec2(70, 40));
-        compressedDisplay(pos + Vec2(275, 485), FontAsset(U"songTitle")(getData().resultSongInfo.at(getData().trackCount - 1).title).region(), FontAsset(U"songTitle"), getData().resultSongInfo.at(getData().trackCount - 1).title);
-        compressedDisplay(pos + Vec2(275, 530), FontAsset(U"musicInfo")(getData().resultSongInfo.at(getData().trackCount - 1).artist).region(), FontAsset(U"musicInfo"), getData().resultSongInfo.at(getData().trackCount - 1).artist);
+        compressedDisplay(pos + Vec2(275, 485), FontAsset(U"songTitle"), getData().resultSongInfo.at(getData().trackCount - 1).title);
+        compressedDisplay(pos + Vec2(275, 530), FontAsset(U"musicInfo"), getData().resultSongInfo.at(getData().trackCount - 1).artist);
     }
     
 

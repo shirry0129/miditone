@@ -79,7 +79,9 @@ namespace ui{
         time.start();
     }
     
-    void Play::compressedDisplay(const s3d::Vec2 &pos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const {
+    void Play::compressedDisplay(const s3d::Vec2 &pos, const s3d::Font &assetInfo, const s3d::String &string) const {
+        auto _region = assetInfo(string).region();
+        
         if (_region.w > maxWidth) {
             Vec2 penPos(pos);
             const double charWidthLate = static_cast<double>(maxWidth) / _region.w;
@@ -186,7 +188,9 @@ namespace ui{
     
     void Play::draw() const {
         TextureAsset(U"play").drawAt(Window::Center());
-        drawSongInfo({0, 0});
+        TextureAsset(U"track").draw(0, 0, Color(100, 201, 235));
+        FontAsset(U"trackFont")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
+        drawSongInfo({0, 130});
         drawScore({Window::Width(), 0});
         
         LaneBG::getInstance().draw();
@@ -229,12 +233,11 @@ namespace ui{
                 break;
         }
         
-        Transformer2D t(Mat3x2::Scale(1.1, tlPos));
         TextureAsset(U"song").draw(tlPos);
         albumArt.resized(192).draw(tlPos + Vec2(47, 60));
         FontAsset(U"diffInfo")(diff).draw(tlPos + Vec2(248, 65), diffColor);
-        compressedDisplay(tlPos + Vec2(256, 132), FontAsset(U"songInfo")(m_file.getHeader().title).region(), FontAsset(U"songInfo"), m_file.getHeader().title);
-        compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"artistInfo")(m_file.getHeader().artist).region(), FontAsset(U"artistInfo"), m_file.getHeader().artist);
+        compressedDisplay(tlPos + Vec2(256, 132), FontAsset(U"songInfo"), m_file.getHeader().title);
+        compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"artistInfo"), m_file.getHeader().artist);
     }
     
     void Play::drawScore(const s3d::Vec2 &trPos) const {

@@ -30,6 +30,9 @@ void Main() {
     FontAsset::Register(U"comboFont", 200);
     FontAsset::Register(U"resultScore", 100, Typeface::Bold);
     FontAsset::Register(U"decisionFont", 70);
+    FontAsset::Register(U"totalTrackNum", 30);
+    FontAsset::Register(U"totalSong", 45, Typeface::Bold);
+    FontAsset::Register(U"totalArtist", 30);
     TextureAsset::Register(U"gameStart", Resource(U"resource/gamestart.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"boxTemplate", Resource(U"resource/box.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"title", Resource(U"resource/title.jpg"));
