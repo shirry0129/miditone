@@ -19,6 +19,10 @@ namespace gameinfo {
     
     const Color fontColor = Palette::Paleturquoise;
     
+    const Color easy = Palette::Limegreen;
+    const Color normal = Palette::Darkorange;
+    const Color hard = Palette::Crimson;
+    
     const int32 titleFontSize = 120;
     
     const int32 defalutFontSize = 50;

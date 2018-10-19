@@ -37,8 +37,15 @@ namespace ui{
         musicgame::judge_results_t results;
         Effect decisionEffect;
         Texture shine;
+        Texture albumArt;
         size_t combo;
+        size_t maxWidth;
         bool isDrawable;
+        
+        void drawSongInfo(const Vec2& tlPos) const;
+        void drawScore(const Vec2& trPos) const;
+        
+        void compressedDisplay(const s3d::Vec2 &pos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const;
         
     public:
         Play(const InitData& init);

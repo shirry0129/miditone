@@ -52,15 +52,15 @@ namespace ui{
             
             switch (d) {
                 case 0:
-                    diffColor = Palette::Limegreen;
+                    diffColor = gameinfo::easy;
                     diffFrame = Color(U"#259925");
                     break;
                 case 1:
-                    diffColor = Palette::Darkorange;
+                    diffColor = gameinfo::normal;
                     diffFrame = Color(U"#b36200");
                     break;
                 case 2:
-                    diffColor = Palette::Crimson;
+                    diffColor = gameinfo::hard;
                     diffFrame = Color(U"#b31031");
                     break;
                 default:
@@ -85,15 +85,18 @@ namespace ui{
     }
     
     
+    
 
 
     MusicSelect::MusicSelect(const InitData& init):
     IScene(init),
     boxSize(400, 600),
     defaultEntity(Arg::center(Window::Center()), boxSize) {
-        getData().trackCount++;
         for (auto file : getData().scoreList) {
             music.emplace_back(file, defaultEntity);
+        }
+        for (auto i : step(4)) {
+            instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
     }
     
@@ -119,9 +122,33 @@ namespace ui{
         ClearPrint();
         
         TextureAsset(U"select").drawAt(Window::Center());
+        TextureAsset(U"track").draw(0, 0);
+        FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
         
         for (auto i : step(music.size())) {
             music.at(i).draw(Vec2(((int)i - (int)getData().currentMusic) * defaultEntity.w, 0));
+        }
+        
+        for (auto [i, rect] : Indexed(instructionBox)) {
+            switch (i) {
+                case 0:
+                    rect(TextureAsset(U"instBack")).draw();
+                    FontAsset(U"infoFont")(U"Prev").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    break;
+                case 1:
+                    rect(TextureAsset(U"instBack")).draw();
+                    FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    break;
+                case 2:
+                    rect(TextureAsset(U"instBack")).draw();
+                    FontAsset(U"infoFont")(U"Select").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    break;
+                case 3:
+                    rect(TextureAsset(U"instBack")).draw();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

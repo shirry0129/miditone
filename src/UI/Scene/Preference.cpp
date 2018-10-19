@@ -86,11 +86,14 @@ namespace ui{
     currentItem(0),
     adjustment(false),
     defaultEntity(Arg::center(Window::Center()), boxSize){
-        ClearPrint();
         prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity, TextureAsset(U"gameStart"));
         prefItem.emplace_back(PrefItem::DIFFICULTY, U"Difficulty", defaultEntity, TextureAsset(U"boxTemplate"));
         prefItem.emplace_back(PrefItem::SPEED, U"Speed", defaultEntity, TextureAsset(U"boxTemplate"));
         prefItem.emplace_back(PrefItem::DECISIONVOL, U"SE Volume", defaultEntity, TextureAsset(U"boxTemplate"));
+        
+        for (auto i : step(4)) {
+            instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
+        }
     }
     
     void Preference::update() {
@@ -169,6 +172,41 @@ namespace ui{
     
     void Preference::draw() const {
         TextureAsset(U"preference").drawAt(Window::Center());
+        TextureAsset(U"track").draw(0, 0);
+        FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
+        
+        for (auto [i, rect] : Indexed(instructionBox)) {
+            switch (i) {
+                case 0:
+                    rect(TextureAsset(U"instBack")).draw();
+                    if (adjustment) {
+                        FontAsset(U"infoFont")(U"Down").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    }else{
+                        FontAsset(U"infoFont")(U"Prev").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    }
+                    break;
+                case 1:
+                    rect(TextureAsset(U"instBack")).draw();
+                    if (adjustment) {
+                        FontAsset(U"infoFont")(U"Up").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    }else{
+                        FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    }
+                    break;
+                case 2:
+                    rect(TextureAsset(U"instBack")).draw();
+                    if (!adjustment) {
+                        FontAsset(U"infoFont")(U"Select").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    }
+                    break;
+                case 3:
+                    rect(TextureAsset(U"instBack")).draw();
+                    FontAsset(U"infoFont")(U"Back").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    break;
+                default:
+                    break;
+            }
+        }
         
         for (auto i : step(prefItem.size())) {
             Vec2 moveWidth(((int)i - (int)currentItem) * defaultEntity.w, 0);

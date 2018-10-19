@@ -40,6 +40,7 @@ namespace ui{
         const RectF defaultEntity;
         size_t currentItem;
         Array<PrefBox> prefItem;
+        Array<Rect> instructionBox;
         bool adjustment;
     public:
         Preference(const InitData& init);

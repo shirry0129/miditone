@@ -19,8 +19,9 @@ namespace ui{
     hitSound(Resource(U"resource/forSystem/hitSound.wav")),
     combo(0),
     point(0),
+    maxWidth(270),
     isDrawable(false){
-        ClearPrint();
+        getData().trackCount++;
         LaneBG::create();
         
         m_file.create(getData().scoreFile.toUTF32(), static_cast<score::Difficulty>(getData().currentDiff));
@@ -43,6 +44,7 @@ namespace ui{
             time.addEvent(U"Draw", SecondsF(delay - m_score.getWakeUpTime()));
             time.addEvent(U"Start", SecondsF(delay));
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + delay + measureLength));
+            albumArt = Texture(U"../Score/albumArt/{}.png"_fmt(m_file.getHeader().id));
         }
         
         Image buf;
@@ -52,6 +54,19 @@ namespace ui{
         m_song.setVolume(0.5);
         
         time.start();
+    }
+    
+    void Play::compressedDisplay(const s3d::Vec2 &pos, const s3d::Rect &_region, const s3d::Font &assetInfo, const s3d::String &string) const {
+        if (_region.w > maxWidth) {
+            Vec2 penPos(pos);
+            const double charWidthLate = static_cast<double>(maxWidth) / _region.w;
+            for (const auto &c : assetInfo(string)) {
+                c.texture.scaled(charWidthLate, 1).draw(penPos + c.offset, Color(U"#002d45"));
+                penPos.x += c.xAdvance * charWidthLate;
+            }
+        }else{
+            assetInfo(string).draw(pos, Color(U"#002d45"));
+        }
     }
     
     void Play::update() {
@@ -148,6 +163,8 @@ namespace ui{
     
     void Play::draw() const {
         TextureAsset(U"play").drawAt(Window::Center());
+        drawSongInfo({0, 0});
+        drawScore({Window::Width(), 0});
         
         LaneBG::getInstance().draw();
         
@@ -169,5 +186,43 @@ namespace ui{
         
         decisionEffect.update();
     }
+    
+    void Play::drawSongInfo(const s3d::Vec2 &tlPos) const {
+        String diff;
+        Color diffColor;
+        
+        switch (getData().currentDiff) {
+            case 0:
+                diff = U"EASY";
+                diffColor = gameinfo::easy;
+                break;
+            case 1:
+                diff = U"NORMAL";
+                diffColor = gameinfo::normal;
+                break;
+            case 2:
+                diff = U"HARD";
+                diffColor = gameinfo::hard;
+                break;
+        }
+        
+        Transformer2D t(Mat3x2::Scale(1.1, tlPos));
+        TextureAsset(U"song").draw(tlPos);
+        albumArt.resized(192).draw(tlPos + Vec2(47, 60));
+        FontAsset(U"diffInfo")(diff).draw(tlPos + Vec2(248, 65), diffColor);
+        compressedDisplay(tlPos + Vec2(256, 132), FontAsset(U"songInfo")(m_file.getHeader().title).region(), FontAsset(U"songInfo"), m_file.getHeader().title);
+        compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"artistInfo")(m_file.getHeader().artist).region(), FontAsset(U"artistInfo"), m_file.getHeader().artist);
+    }
+    
+    void Play::drawScore(const s3d::Vec2 &trPos) const {
+        Transformer2D t(Mat3x2::Scale(1.1, trPos));
+        TextureAsset(U"score").draw(Arg::topRight(trPos));
+        FontAsset(U"scoreFont")(U"{:0>7.0f}"_fmt(point)).draw(trPos - Vec2(307, -61), Color(U"#c4effd"));
+        FontAsset(U"countFont")(decision.criticalCount).draw(trPos - Vec2(459, -151), Color(U"#c4effd"));
+        FontAsset(U"countFont")(decision.correctCount).draw(trPos - Vec2(302, -151), Color(U"#c4effd"));
+        FontAsset(U"countFont")(decision.niceCount).draw(trPos - Vec2(185, -151), Color(U"#c4effd"));
+        FontAsset(U"countFont")(decision.missCount).draw(trPos - Vec2(81, -151), Color(U"#c4effd"));
+    }
+    
 
 }

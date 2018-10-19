@@ -10,22 +10,12 @@
 namespace ui {
 	
 	Note::Note(size_t _laneNum, float _wakeUpTime, float _acceleration):
-//	looks(U"example/windmill.png"),
 	laneNum(_laneNum),
 	wakeUpTime(_wakeUpTime),
 	acceleration(_acceleration),
 	isJudged(false),
 	isJudging(false),
 	inst(ui::LaneBG::getInstance()){}
-	
-	void Note::draw() const{
-		if (!isJudged) {
-			if(note.p3.y > 0 && note.p0.y < Window::Height()){
-				note.draw(Color(U"#7fffd4"));
-				//note(looks).draw();
-			}
-		}
-	}
 	
 	void Note::makeJudged() {
 		isJudged = true;
@@ -61,6 +51,14 @@ namespace ui {
 		note.set(tl, tr, br, bl);
 	}
 	
+	void HitNote::draw() const{
+		if (!isJudged) {
+			if(note.p3.y > 0 && note.p0.y < Window::Height()){
+				note(TextureAsset(U"hitNote")).draw();
+			}
+		}
+	}
+	
 	
 	
 	
@@ -88,12 +86,42 @@ namespace ui {
 			bottomY = laneEnd;
 		}
 		
+		float startHeight = 60 * (1. / 1250. * bottomY + 0.2);
+		float endHeight = 60 * (1. / 1250. * topY + 0.2);
+		
 		Vec2 tl(inst.getFactor(laneNum).slope * topY + inst.getFactor(laneNum).intercept + 1, topY);
 		Vec2 tr(inst.getFactor(laneNum + 1).slope * topY + inst.getFactor(laneNum + 1).intercept - 1, topY);
 		Vec2 bl(inst.getFactor(laneNum).slope * bottomY + inst.getFactor(laneNum).intercept + 1, bottomY);
 		Vec2 br(inst.getFactor(laneNum + 1).slope * bottomY + inst.getFactor(laneNum + 1).intercept - 1, bottomY);
 		
 		note.set(tl, tr, br, bl);
+		
+		tl = Vec2(inst.getFactor(laneNum).slope * (topY - endHeight / 2) + inst.getFactor(laneNum).intercept + 1, topY - endHeight / 2);
+		tr = Vec2(inst.getFactor(laneNum + 1).slope * (topY - endHeight / 2) + inst.getFactor(laneNum + 1).intercept - 1, topY - endHeight / 2);
+		bl = Vec2(inst.getFactor(laneNum).slope * (topY + endHeight / 2) + inst.getFactor(laneNum).intercept + 1, topY + endHeight / 2);
+		br = Vec2(inst.getFactor(laneNum + 1).slope * (topY + endHeight / 2) + inst.getFactor(laneNum + 1).intercept - 1, topY + endHeight / 2);
+		
+		end.set(tl, tr, br, bl);
+		
+		tl = Vec2(inst.getFactor(laneNum).slope * (bottomY - startHeight / 2) + inst.getFactor(laneNum).intercept + 1, bottomY - startHeight / 2);
+		tr = Vec2(inst.getFactor(laneNum + 1).slope * (bottomY - startHeight / 2) + inst.getFactor(laneNum + 1).intercept - 1, bottomY - startHeight / 2);
+		bl = Vec2(inst.getFactor(laneNum).slope * (bottomY + startHeight / 2) + inst.getFactor(laneNum).intercept + 1, bottomY + startHeight / 2);
+		br = Vec2(inst.getFactor(laneNum + 1).slope * (bottomY + startHeight / 2) + inst.getFactor(laneNum + 1).intercept - 1, bottomY + startHeight / 2);
+		
+		start.set(tl, tr, br, bl);
 	}
+	
+	void HoldNote::draw() const {
+		if (!isJudged) {
+			if(note.p3.y > 0 && note.p0.y < Window::Height()){
+				note.draw(Color(U"#7fffd4"));
+				start(TextureAsset(U"hitNote")).draw();
+			}
+			if (note.p0.y > 0) {
+				end(TextureAsset(U"hitNote")).draw();
+			}
+		}
+	}
+	
 	
 }

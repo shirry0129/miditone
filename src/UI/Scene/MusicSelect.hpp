@@ -34,6 +34,7 @@ namespace ui{
         const Vec2 boxSize;
         const RectF defaultEntity;
         Array<MusicBox> music;
+        Array<Rect> instructionBox;
     public:
         MusicSelect(const InitData& init);
         void update() override;

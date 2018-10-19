@@ -19,7 +19,6 @@ namespace ui{
     class Note {
     protected:
         const LaneBG& inst;
-        const Texture looks;
         const size_t laneNum;
         const float wakeUpTime;
         const float acceleration;
@@ -34,7 +33,7 @@ namespace ui{
         virtual void makeJudging() final;
         
         virtual void update(double currentTime) = 0;
-        virtual void draw() const final;
+        virtual void draw() const = 0;
     };
     
     class HitNote final : public Note {
@@ -46,15 +45,20 @@ namespace ui{
         HitNote(size_t _laneNum, float _judgeTime, float _wakeUpTime, float _acceleration);
         
         virtual void update(double currentTime) override;
+        virtual void draw() const override;
     };
     
     class HoldNote final : public Note {
+    private:
+        Quad start;
+        Quad end;
     public:
         const float startTime;
         const float endTime;
         
         HoldNote(size_t _laneNum, float _startTime, float _endTime, float _wakeUpTime, float _acceleration);
         virtual void update(double currentTime) override;
+        virtual void draw() const override;
     };
 }
 

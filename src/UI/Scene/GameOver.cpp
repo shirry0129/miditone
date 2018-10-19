@@ -24,8 +24,7 @@ namespace ui{
     }
     
     void GameOver::draw() const {
-        ClearPrint();
-        Print << U"GameOver";
+        TextureAsset(U"gameover").drawAt(Window::Center());
     }
 
 }
