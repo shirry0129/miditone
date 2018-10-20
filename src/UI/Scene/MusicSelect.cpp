@@ -46,7 +46,7 @@ namespace ui{
         Vec2 artistCenter(entity.center() + moveWidth + Vec2(0, 160 * scale));
 
         entity.movedBy(moveWidth).scaled(scale)(TextureAsset(U"boxTemplate")).draw();
-        albumArt.resized(320, 320).scaled(scale).drawAt(entity.center() + moveWidth + Vec2(0, -100 * scale));
+        albumArt.resized(320).scaled(scale).drawAt(entity.center() + moveWidth + Vec2(0, -100 * scale));
         for (auto d : step(diffBox.size())) {
             Color diffColor, diffFrame;
             
