@@ -15,6 +15,7 @@ void Main() {
     //Graphics::SetFullScreen(true, {1920, 1080});
     Window::SetTitle(gameinfo::title);
     Graphics::SetBackground(gameinfo::backGroundColor);
+    System::SetExitEvent(WindowEvent::CloseButton);
     
     FontAsset::Register(U"countDown", 100, Typeface::Bold);
     FontAsset::Register(U"songTitle", 50, Typeface::Bold);
@@ -64,6 +65,7 @@ void Main() {
     sceneManager.add<ui::GameOver>(ui::SceneName::GAMEOVER);
     
     while (System::Update()) {
+        Cursor::RequestStyle(CursorStyle::Hidden);
         if(!sceneManager.update()){
             break;
         }

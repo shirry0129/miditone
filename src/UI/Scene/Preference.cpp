@@ -104,9 +104,6 @@ namespace ui{
     }
     
     void Preference::update() {
-        if (example.posSec() > choend) {
-            example.stop(gameinfo::exFadeTime);
-        }
         if (gameinfo::backArrow.down()) {
             if (adjustment) {
                 switch (prefItem.at(currentItem).getEntry()) {
