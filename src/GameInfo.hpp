@@ -41,6 +41,8 @@ namespace gameinfo {
     const size_t maxPoint = 1000000;
     
     const size_t fadeTime = 1000;
+    
+    const SecondsF exFadeTime = 3s;
 }
 
 #endif /* GameInfo_h */

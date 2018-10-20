@@ -70,6 +70,11 @@ namespace ui{
             diffBox.at(d).movedBy(moveWidth + Vec2((-95 + (int)d * 95), 230) * scale).scaled(scale).draw(diffColor).drawFrame(4, 0, diffFrame);
         }
         
+        for (auto [i, lev] : Indexed(musicInfo.level())) {
+            Transformer2D t(Mat3x2::Scale(scale, moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale));
+            FontAsset(U"diffInfo")(lev).drawAt(moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale, Color(U"#061e38"));
+        }
+        
         Transformer2D t(Mat3x2::Scale(scale, titleCenter));
         compressedDisplay(titleCenter, FontAsset(U"songTitle"), musicInfo.title());
         t = Transformer2D(Mat3x2::Scale(scale, artistCenter));
@@ -92,7 +97,7 @@ namespace ui{
     IScene(init),
     boxSize(400, 600),
     defaultEntity(Arg::center(Window::Center()), boxSize),
-    countDown(60){
+    countDown(90){
         for (auto file : getData().scoreList) {
             music.emplace_back(file, defaultEntity);
         }
@@ -100,6 +105,8 @@ namespace ui{
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
         
+        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
+        example.play();
         countDown.start();
     }
     
@@ -107,11 +114,13 @@ namespace ui{
         if (gameinfo::backArrow.down()) {
             if (getData().currentMusic > 0) {
                 getData().currentMusic--;
+                resetEx();
             }
         }
         if (gameinfo::goArrow.down()) {
             if (getData().currentMusic < music.size() - 1) {
                 getData().currentMusic++;
+                resetEx();
             }
         }
         if (gameinfo::decide.down() || countDown.reachedZero()) {
@@ -155,5 +164,13 @@ namespace ui{
             }
         }
     }
+    
+    void MusicSelect::resetEx() {
+        example.stop();
+        example.release();
+        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
+        example.play();
+    }
+    
 
 }

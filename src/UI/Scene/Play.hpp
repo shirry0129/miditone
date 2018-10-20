@@ -29,7 +29,7 @@ namespace ui{
         Audio m_song;
         Audio beatSound;
         Audio hitSound;
-        Audio holdSound;
+//        Audio holdSound;
         EventTimer time;
         DecisionInfo decision;
         double pointEachNote;

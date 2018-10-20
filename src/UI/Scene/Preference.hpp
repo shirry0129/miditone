@@ -38,11 +38,14 @@ namespace ui{
     private:
         const Vec2 boxSize;
         const RectF defaultEntity;
+        Audio example;
+        const score::Header songInfo;
         size_t currentItem;
         Array<PrefBox> prefItem;
         Array<Rect> instructionBox;
         Timer countDown;
         bool adjustment;
+        double chobeg, choend;
     public:
         Preference(const InitData& init);
         void update() override;

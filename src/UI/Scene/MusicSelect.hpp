@@ -36,6 +36,9 @@ namespace ui{
         Array<MusicBox> music;
         Array<Rect> instructionBox;
         Timer countDown;
+        Audio example;
+        double chobeg, choend;
+        void resetEx();
     public:
         MusicSelect(const InitData& init);
         void update() override;

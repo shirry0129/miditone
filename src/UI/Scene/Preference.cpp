@@ -82,6 +82,7 @@ namespace ui{
     
     Preference::Preference(const InitData &init):
     IScene(init),
+    songInfo(getData().scoreFile.toUTF32()),
     boxSize(400, 600),
     currentItem(0),
     adjustment(false),
@@ -96,10 +97,16 @@ namespace ui{
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
         
+        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(songInfo.id()), Arg::loop = true);
+        example.play();
+        
         countDown.start();
     }
     
     void Preference::update() {
+        if (example.posSec() > choend) {
+            example.stop(gameinfo::exFadeTime);
+        }
         if (gameinfo::backArrow.down()) {
             if (adjustment) {
                 switch (prefItem.at(currentItem).getEntry()) {

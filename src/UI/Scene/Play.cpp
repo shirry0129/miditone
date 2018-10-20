@@ -163,6 +163,12 @@ namespace ui{
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
             }
             
+            if (r->index == m_file.getNumofNotes() - 1) {
+                if (decision.criticalCount == m_file.getNumofNotes()) {
+                    point = gameinfo::maxPoint;
+                }
+            }
+            
         }
         
         for (auto l : step(4)) {
