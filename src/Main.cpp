@@ -22,10 +22,10 @@ void Main() {
 	const auto ratio = Float2(screenSize) / Float2(gameinfo::originalResolution);
 	const auto renderRatio = Min(ratio.x, ratio.y);
 	
-	const Size windowSize{static_cast<int32>(gameinfo::originalResolution.x * renderRatio), static_cast<int32>(gameinfo::originalResolution.y * renderRatio)};
-	
-	Logger << ratio;
-	Logger << renderRatio;
+	const Size windowSize {
+		static_cast<int32>(gameinfo::originalResolution.x * renderRatio),
+		static_cast<int32>(gameinfo::originalResolution.y * renderRatio)
+	};
 	
 	Window::Resize(windowSize);
 	//Graphics::SetFullScreen(true, {1920, 1080});
