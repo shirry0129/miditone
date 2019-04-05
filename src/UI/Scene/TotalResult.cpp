@@ -54,7 +54,7 @@ void TotalResult::draw() const {
     
     FontAsset(U"resultScore")(getData().resultScore.sum()).draw(Arg::leftCenter(953, 276), gameinfo::fontColor);
     
-    for (auto i : step(3)) {
+    for (auto i : step(::gameinfo::totalTrack)) {
         drawTrack({320 + 440 * i, 350}, i);
     }
 
