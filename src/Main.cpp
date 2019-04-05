@@ -11,10 +11,27 @@
 #include "UI/Scene/GameOver.hpp"
 
 void Main() {
-    Window::Resize(1920, 1080);
-    //Graphics::SetFullScreen(true, {1920, 1080});
+
+	Size screenSize;
+	auto monitors = System::EnumerateActiveMonitors();
+	for (const auto & m : monitors) {
+		if (m.isPrimary)
+			screenSize = m.displayRect.size;
+	}
+
+	const auto ratio = Float2(screenSize) / Float2(gameinfo::originalResolution);
+	const auto renderRatio = Min(ratio.x, ratio.y);
+	
+	const Size windowSize {
+		static_cast<int32>(gameinfo::originalResolution.x * renderRatio),
+		static_cast<int32>(gameinfo::originalResolution.y * renderRatio)
+	};
+	
+	Window::Resize(windowSize);
+	//Graphics::SetFullScreen(true, {1920, 1080});
     Window::SetTitle(gameinfo::title);
     Graphics::SetBackground(gameinfo::backGroundColor);
+    System::SetExitEvent(WindowEvent::CloseButton);
     
     FontAsset::Register(U"countDown", 100, Typeface::Bold);
     FontAsset::Register(U"songTitle", 50, Typeface::Bold);
@@ -62,8 +79,12 @@ void Main() {
     sceneManager.add<ui::Result>(ui::SceneName::RESULT);
     sceneManager.add<ui::TotalResult>(ui::SceneName::TOTALRESULT);
     sceneManager.add<ui::GameOver>(ui::SceneName::GAMEOVER);
-    
+	
     while (System::Update()) {
+        Cursor::RequestStyle(CursorStyle::Hidden);
+		
+       	const Transformer2D scaler(Mat3x2::Scale(renderRatio));
+	
         if(!sceneManager.update()){
             break;
         }

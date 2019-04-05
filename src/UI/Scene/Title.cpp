@@ -35,8 +35,8 @@ namespace ui{
     
     void Title::draw() const {
         ClearPrint();
-        TextureAsset(U"title").drawAt(Window::Center());
-        FontAsset(U"infoFont")(U"Press Any Button").drawAt(Window::Center() + Vec2(0, 440), ColorF(gameinfo::fontColor, Periodic::Sine0_1(1.5s)));
+		TextureAsset(U"title").drawAt(::gameinfo::originalScreenCenter);
+        FontAsset(U"infoFont")(U"Press Any Button").drawAt(::gameinfo::originalScreenCenter + Vec2(0, 440), ColorF(gameinfo::fontColor, Periodic::Sine0_1(1.5s)));
     }
 
 }

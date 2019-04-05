@@ -6,6 +6,7 @@
 //
 
 #include "Note.hpp"
+#include "../GameInfo.hpp"
 
 namespace ui {
 	
@@ -53,7 +54,7 @@ namespace ui {
 	
 	void HitNote::draw() const{
 		if (!isJudged) {
-			if(note.p3.y > 0 && note.p0.y < Window::Height()){
+			if(note.p3.y > 0 && note.p0.y < ::gameinfo::originalResolution.y){
 				note(TextureAsset(U"hitNote")).draw();
 			}
 		}
@@ -113,7 +114,7 @@ namespace ui {
 	
 	void HoldNote::draw() const {
 		if (!isJudged) {
-			if(note.p3.y > 0 && note.p0.y < Window::Height()){
+			if(note.p3.y > 0 && note.p0.y < ::gameinfo::originalResolution.y){
 				note.draw(Color(U"#7fffd4"));
 				start(TextureAsset(U"hitNote")).draw();
 			}

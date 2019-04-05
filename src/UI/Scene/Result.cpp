@@ -48,10 +48,10 @@ namespace ui{
     
     void Result::draw() const {
         ClearPrint();
-        TextureAsset(U"result").drawAt(Window::Center());
+        TextureAsset(U"result").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount).drawAt(273, 66, Palette::Darkslategray);
-        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::fontColor);
         FontAsset(U"resultScore")(Pad(getData().resultScore.at(getData().trackCount - 1), {7, U'0'})).draw(601, 217, gameinfo::fontColor);
         drawDecision({300, 354});
         drawSongInfo({1142, 239});

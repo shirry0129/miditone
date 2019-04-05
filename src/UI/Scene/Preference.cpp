@@ -87,7 +87,7 @@ namespace ui{
     currentItem(0),
     adjustment(false),
     countDown(30),
-    defaultEntity(Arg::center(Window::Center()), boxSize){
+    defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize){
         prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity, TextureAsset(U"gameStart"));
         prefItem.emplace_back(PrefItem::DIFFICULTY, U"Difficulty", defaultEntity, TextureAsset(U"boxTemplate"));
         prefItem.emplace_back(PrefItem::SPEED, U"Speed", defaultEntity, TextureAsset(U"boxTemplate"));
@@ -104,9 +104,6 @@ namespace ui{
     }
     
     void Preference::update() {
-        if (example.posSec() > choend) {
-            example.stop(gameinfo::exFadeTime);
-        }
         if (gameinfo::backArrow.down()) {
             if (adjustment) {
                 switch (prefItem.at(currentItem).getEntry()) {
@@ -185,10 +182,10 @@ namespace ui{
     }
     
     void Preference::draw() const {
-        TextureAsset(U"preference").drawAt(Window::Center());
+        TextureAsset(U"preference").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
-        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::fontColor);
         
         for (auto [i, rect] : Indexed(instructionBox)) {
             switch (i) {

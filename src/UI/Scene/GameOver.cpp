@@ -22,7 +22,7 @@ namespace ui{
     }
     
     void GameOver::draw() const {
-        TextureAsset(U"gameover").drawAt(Window::Center());
+        TextureAsset(U"gameover").drawAt(::gameinfo::originalScreenCenter);
     }
 
 }

@@ -1,4 +1,5 @@
 #include"Lane.hpp"
+#include"../GameInfo.hpp"
 
 namespace ui {
     
@@ -6,9 +7,9 @@ namespace ui {
      Constructor
      */
     LaneBG::LaneBG():
-    laneBegin(Window::Width()/2, -500),
+    laneBegin(::gameinfo::originalResolution.x/2, -500),
     interval(ui::interval, 0),
-    leftEnd(ui::leftEnd, Window::Height()),
+    leftEnd(ui::leftEnd, ::gameinfo::originalResolution.y),
     rightEnd(leftEnd + interval * 4),
     isCreated(false)
     {
