@@ -185,7 +185,7 @@ namespace ui{
         
         m_score.update(time.sF() - delay);
         
-        if (time.onTriggered(U"End")) {
+        if (time.onTriggered(U"End") || KeyQ.down()) {
             getData().decisionCount.push_back(decision);
             getData().resultScore.push_back(point);
             changeScene(SceneName::RESULT, gameinfo::fadeTime);
