@@ -16,7 +16,7 @@ namespace ui{
     musicInfo(_info.toUTF32()){
         albumArt = Texture(U"../Score/albumArt/{}.png"_fmt(musicInfo.id()));
         for (auto i : step(3)) {
-            diffBox.emplace_back(Arg::center(Window::Center()),90);
+            diffBox.emplace_back(Arg::center(::gameinfo::originalScreenCenter), 90);
         }
     }
     
@@ -96,7 +96,7 @@ namespace ui{
     MusicSelect::MusicSelect(const InitData& init):
     IScene(init),
     boxSize(400, 600),
-    defaultEntity(Arg::center(Window::Center()), boxSize),
+    defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize),
     countDown(90){
         for (auto file : getData().scoreList) {
             music.emplace_back(file, defaultEntity);
@@ -133,10 +133,10 @@ namespace ui{
     void MusicSelect::draw() const {
         ClearPrint();
         
-        TextureAsset(U"select").drawAt(Window::Center());
+        TextureAsset(U"select").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
-        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::fontColor);
         
         for (auto i : step(music.size())) {
             music.at(i).draw(Vec2(((int)i - (int)getData().currentMusic) * defaultEntity.w, 0));

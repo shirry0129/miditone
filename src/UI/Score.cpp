@@ -6,7 +6,7 @@
 //
 
 #include "Score.hpp"
-
+#include "../GameInfo.hpp"
 
 namespace ui {
     
@@ -31,7 +31,7 @@ namespace ui {
     }
     
     void Bar::draw() const {
-        if (bar.begin.y > 0 && bar.begin.y < Window::Height()) {
+        if (bar.begin.y > 0 && bar.begin.y < ::gameinfo::originalResolution.y) {
             bar.draw(LineStyle::RoundCap, 2, Color(Palette::White, 200));
         }
     }

@@ -29,8 +29,8 @@ void TotalResult::update() {
 }
 
 void TotalResult::draw() const {
-    TextureAsset(U"totalResult").drawAt(Window::Center());
-    FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(Window::Width() - 10, 0), gameinfo::fontColor);
+    TextureAsset(U"totalResult").drawAt(::gameinfo::originalScreenCenter);
+    FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::fontColor);
     
     for (auto [i, rect] : Indexed(instructionBox)) {
         switch (i) {

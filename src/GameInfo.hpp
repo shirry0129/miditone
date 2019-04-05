@@ -11,6 +11,11 @@
 #include <Siv3D.hpp>
 
 namespace gameinfo {
+
+	const Size originalResolution = {1920, 1080};
+	
+	const Size originalScreenCenter = originalResolution / 2;
+
     const String title = U"miditone";
     
     const Color backGroundColor = Palette::Yellow;
@@ -27,7 +32,7 @@ namespace gameinfo {
     
     const int32 defalutFontSize = 50;
     
-    const int32 totalTrack = 3;
+    const int32 totalTrack = 2;
     
     const Array<FileFilter> scoreData = {{U"譜面データ", {U"txt"}}};
     

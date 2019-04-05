@@ -193,11 +193,11 @@ namespace ui{
     }
     
     void Play::draw() const {
-        TextureAsset(U"play").drawAt(Window::Center());
+        TextureAsset(U"play").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0, Color(100, 201, 235));
         FontAsset(U"trackFont")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
         drawSongInfo({0, 130});
-        drawScore({Window::Width(), 0});
+        drawScore({::gameinfo::originalResolution.x, 0});
         
         LaneBG::getInstance().draw();
         
@@ -215,7 +215,7 @@ namespace ui{
             m_score.draw();
         }
         
-        FontAsset(U"comboFont")(combo).drawAt(Window::Width()/2, 700);
+        FontAsset(U"comboFont")(combo).drawAt(::gameinfo::originalResolution.x/2, 700);
         
         decisionEffect.update();
     }
