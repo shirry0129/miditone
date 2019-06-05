@@ -12,4 +12,4 @@ Microsoft Visual C++ 2017 15.7?
 Windows 10 SDK (10.0.17763.0?)
 
 ## how to build
-only to add src/ and resource/ to OpenSiv3D brank project.
+only to add src/ and resource/ to OpenSiv3D blank project.
