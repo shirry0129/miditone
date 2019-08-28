@@ -32,7 +32,7 @@ namespace gameinfo {
     
     const int32 defalutFontSize = 50;
     
-    const int32 totalTrack = 2;
+    const int32 totalTrack = 3;
     
     const Array<FileFilter> scoreData = {{U"譜面データ", {U"txt"}}};
     

@@ -9,7 +9,6 @@
 #define CommonInfo_h
 
 #include <Siv3D.hpp>
-#include <HamFramework.hpp>
 #include "../../System/Score.hpp"
 #include "../../GameInfo.hpp"
 

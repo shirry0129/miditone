@@ -1,5 +1,5 @@
 
-# include <Siv3D.hpp> // OpenSiv3D v0.2.8
+# include <Siv3D.hpp> // OpenSiv3D v0.4.0
 #include "GameInfo.hpp"
 #include "UI/Scene/Common.hpp"
 #include "UI/Scene/Title.hpp"
@@ -30,8 +30,8 @@ void Main() {
 	Window::Resize(windowSize);
 	//Graphics::SetFullScreen(true, {1920, 1080});
     Window::SetTitle(gameinfo::title);
-    Graphics::SetBackground(gameinfo::backGroundColor);
-    System::SetExitEvent(WindowEvent::CloseButton);
+    Scene::SetBackground(gameinfo::backGroundColor);
+    System::SetTerminationTriggers(UserAction::CloseButtonClicked);
     
     FontAsset::Register(U"countDown", 100, Typeface::Bold);
     FontAsset::Register(U"songTitle", 50, Typeface::Bold);
@@ -93,14 +93,15 @@ void Main() {
 #endif
     
     ui::MyApp sceneManager;
-    sceneManager.setFadeColor(gameinfo::fadeColor);
-    sceneManager.add<ui::Title>(ui::SceneName::TITLE);
-    sceneManager.add<ui::MusicSelect>(ui::SceneName::MUSICSELECT);
-    sceneManager.add<ui::Preference>(ui::SceneName::PREFERENCE);
-    sceneManager.add<ui::Play>(ui::SceneName::PLAY);
-    sceneManager.add<ui::Result>(ui::SceneName::RESULT);
-    sceneManager.add<ui::TotalResult>(ui::SceneName::TOTALRESULT);
-    sceneManager.add<ui::GameOver>(ui::SceneName::GAMEOVER);
+    sceneManager
+        .add<ui::Title>(ui::SceneName::TITLE)
+        .add<ui::MusicSelect>(ui::SceneName::MUSICSELECT)
+        .add<ui::Preference>(ui::SceneName::PREFERENCE)
+        .add<ui::Play>(ui::SceneName::PLAY)
+        .add<ui::Result>(ui::SceneName::RESULT)
+        .add<ui::TotalResult>(ui::SceneName::TOTALRESULT)
+        .add<ui::GameOver>(ui::SceneName::GAMEOVER)
+        .setFadeColor(gameinfo::fadeColor);
 	
     while (System::Update()) {
         Cursor::RequestStyle(CursorStyle::Hidden);
