@@ -30,8 +30,8 @@ void Main() {
 	Window::Resize(windowSize);
 	//Graphics::SetFullScreen(true, {1920, 1080});
     Window::SetTitle(gameinfo::title);
-    Graphics::SetBackground(gameinfo::backGroundColor);
-    System::SetExitEvent(WindowEvent::CloseButton);
+    Scene::SetBackground(gameinfo::backGroundColor);
+    System::SetTerminationTriggers(UserAction::CloseButtonClicked);
     
     FontAsset::Register(U"countDown", 100, Typeface::Bold);
     FontAsset::Register(U"songTitle", 50, Typeface::Bold);

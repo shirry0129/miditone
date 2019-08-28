@@ -12,7 +12,7 @@
 #include "../Lane.hpp"
 #include "../Score.hpp"
 #include "../Note.hpp"
-#include "../../System/Score.hpp"
+#include "../../System/SystemScore.hpp"
 #include "../../System/EventTimer.hpp"
 #include "../../System/TimingJudge.hpp"
 
@@ -20,7 +20,7 @@ namespace ui{
 
     class Play : public MyApp::Scene {
     private:
-        score::Score m_file;
+        score::SystemScore m_file;
         ui::Score m_score;
         musicgame::TimingJudge judger;
         double measureLength;

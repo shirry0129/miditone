@@ -177,7 +177,7 @@ namespace ui{
             
             if (judger.getJudgingHoldNote(l)) {
                 decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
-                if (System::FrameCount() % 8 == 0) {
+                if (Scene::FrameCount() % 8 == 0) {
                     decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
                 }
             }

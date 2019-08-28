@@ -1,4 +1,4 @@
-#include "ScoreReader.hpp"
+﻿#include "ScoreReader.hpp"
 
 #include <sstream>
 #include <ctype.h>
@@ -233,34 +233,25 @@ namespace score {
 	
 		switch (state) {
 		  case State::S_REACH_CHUNK_END:
-			msg += U"チャンクの終端に達しました";
-			return msg;
+			return U"チャンクの終端に達しました";
 		  case State::S_OK:
-		  	msg += U"成功";
-		  	return msg;
+		  	return U"成功";
 		  case State::E_CANNOT_OPEN_FILE:
-		  	msg += U"ファイルを開けません";
-		  	return msg;
-		  case State::E_CANNOT_READ_WHOLELINE:
-		  	msg += U"1行が長すぎます";
-		  	return msg;
+		  	return U"ファイルを開けません";
+			case State::E_CANNOT_READ_WHOLELINE:
+			return U"1行が長すぎます";
 		  case State::E_CANNOT_FIND_COMMAND:
-		  	msg += U"コマンドが見つかりませんでした";
-		  	return msg;
+		  	return U"コマンドが見つかりませんでした";
 		  case State::E_UNEXPECTED_STRING:
-		  	msg += U"予期せぬ文字列が見つかりました";
-		  	return msg;
+		  	return U"予期せぬ文字列が見つかりました";
 		  case State::E_SET_NOFILE:
-		  	msg += U"ファイルが設定されていません";
-		  	return msg;
+		  	return U"ファイルが設定されていません";
 		  case State::E_EMBED_NO_BEAT_OR_TEMPO:
-		  	msg += U"拍子またはテンポ情報が埋め込まれていません";
-			return msg;
+		  	return U"拍子またはテンポ情報が埋め込まれていません";
 		  case State::E_CANNOT_FIND_CHUNK:
-		    msg += U"難易度またはヘッダが見つかりませんでした";
-		    return msg;
+		    return U"難易度またはヘッダが見つかりませんでした";
 		  default:
-			return msg;
+			return U"";
 		}
 	}
 	
