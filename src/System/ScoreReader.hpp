@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 This class reads the score file of music game
 

@@ -31,8 +31,8 @@ namespace ui{
         if (moveWidth.x == 0) {
             scale = 1;
             if (isSelected) {
-                value.push_front(U'◀');
-                value.push_back(U'▶');
+                value.push_front(U'<');
+                value.push_back(U'>');
             }
         }
         
@@ -62,8 +62,8 @@ namespace ui{
         if (moveWidth.x == 0) {
             scale = 1;
             if (isSelected) {
-                diff.push_front(U'◀');
-                diff.push_back(U'▶');
+                diff.push_front(U'<');
+                diff.push_back(U'>');
             }
         }
         

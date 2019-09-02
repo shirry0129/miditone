@@ -10,7 +10,7 @@
 
 #include <Siv3D.hpp>
 #include "Note.hpp"
-#include "../System/Score.hpp"
+#include "../System/SystemScore.hpp"
 
 namespace ui {
     
@@ -38,9 +38,9 @@ namespace ui {
         
     public:
         Score();
-        Score(const score::Score& _fromFile, float _speed);
+        Score(const score::SystemScore& _fromFile, float _speed);
         ~Score() = default;
-        void setFromFile(const score::Score& _fromFile, float _speed);
+        void setFromFile(const score::SystemScore& _fromFile, float _speed);
         float getWakeUpTime() const;
         void deleteJudgedNote(size_t _lane, int spot);
         void adjustJudgingNote(size_t _lane, int spot);

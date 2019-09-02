@@ -10,7 +10,7 @@
 
 #include <Siv3D.hpp>
 #include "Lane.hpp"
-#include "../System/Score.hpp"
+#include "../System/SystemScore.hpp"
 
 namespace ui{
     

@@ -44,14 +44,14 @@ namespace ui {
     hold(numObLane),
     score(numObLane){}
     
-    Score::Score(const score::Score& _fromFile, float _speed):
+    Score::Score(const score::SystemScore& _fromFile, float _speed):
     hit(numObLane),
     hold(numObLane),
     score(numObLane){
         setFromFile(_fromFile, _speed);
     }
     
-    void Score::setFromFile(const score::Score& _fromFile, float _speed) {
+    void Score::setFromFile(const score::SystemScore& _fromFile, float _speed) {
         wakeUpTime = 2 * xMax / (_speed * xMax);
         acceleration = (_speed * xMax * _speed * xMax) / (2 * xMax);
         

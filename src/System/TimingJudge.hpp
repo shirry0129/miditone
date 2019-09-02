@@ -14,7 +14,7 @@ Date	: 2018/9/26
 
 #include <functional>
 
-#include "Score.hpp"
+#include "SystemScore.hpp"
 #include "Controller.hpp"
 #include "Judgement.hpp"
 

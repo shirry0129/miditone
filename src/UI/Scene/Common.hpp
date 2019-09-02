@@ -9,7 +9,7 @@
 #define CommonInfo_h
 
 #include <Siv3D.hpp>
-#include "../../System/Score.hpp"
+#include "../../System/SystemScore.hpp"
 #include "../../GameInfo.hpp"
 
 namespace ui{
@@ -46,7 +46,7 @@ namespace ui{
         size_t currentMusic;
         Array<FilePath> scoreList;
         Array<DecisionInfo> decisionCount;
-        Array<score::Score::Header> resultSongInfo;
+        Array<score::SystemScore::Header> resultSongInfo;
         Array<size_t> resultScore;
     };
     
