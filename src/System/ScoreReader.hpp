@@ -66,7 +66,7 @@ namespace score {
 	
 	class ScoreReader {
 	public:
-		static constexpr size_t buffer_size = 256;
+		static constexpr size_t buffer_size = 1050;
 		
 		using rch_type = char;
 		
