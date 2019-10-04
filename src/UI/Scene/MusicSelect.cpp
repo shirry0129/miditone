@@ -105,9 +105,17 @@ namespace ui{
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
         
-        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
-        example.play();
+//        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
+//        example.play();
         countDown.start();
+        
+        scoreFilter = {
+            FileFilter::Text()
+        };
+        
+        musicFilter = {
+            FileFilter::MP3()
+        };
     }
     
     void MusicSelect::update() {
@@ -124,10 +132,14 @@ namespace ui{
             }
         }
         if (gameinfo::decide.down() || countDown.reachedZero()) {
-            getData().scoreFile = music.at(getData().currentMusic).getScoreFile();
-            getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id());
+//            getData().scoreFile = music.at(getData().currentMusic).getScoreFile();
+//            getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id());
             changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
         };
+        
+        getData().scoreFile = Dialog::OpenFile(scoreFilter, U"", U"choose score file").value();
+        getData().musicFile = Dialog::OpenFile(musicFilter, U"", U"choose music file").value();
+        changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
     }
     
     void MusicSelect::draw() const {
@@ -166,10 +178,10 @@ namespace ui{
     }
     
     void MusicSelect::resetEx() {
-        example.stop();
-        example.release();
-        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
-        example.play();
+//        example.stop();
+//        example.release();
+//        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
+//        example.play();
     }
     
 

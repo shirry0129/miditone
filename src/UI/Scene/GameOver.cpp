@@ -17,7 +17,8 @@ namespace ui{
     
     void GameOver::update() {        
         if (KeyR.pressed() || changeTime.reachedZero()) {
-            changeScene(SceneName::TITLE, gameinfo::fadeTime);
+//            changeScene(SceneName::TITLE, gameinfo::fadeTime);
+            System::Exit();
         }
     }
     

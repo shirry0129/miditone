@@ -97,8 +97,8 @@ namespace ui{
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
         
-        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(songInfo.id()), Arg::loop = true);
-        example.play();
+//        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(songInfo.id()), Arg::loop = true);
+//        example.play();
         
         countDown.start();
     }

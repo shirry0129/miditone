@@ -50,8 +50,8 @@ namespace ui{
         m_file.create(getData().scoreFile.toUTF32(), static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
-            Print << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
-            Print << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
+            Logger << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
+            Logger << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
         }else{
             getData().resultSongInfo.push_back(m_file.getHeader());
             m_score.setFromFile(m_file, getData().speed / 10);
@@ -163,7 +163,7 @@ namespace ui{
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
             }
             
-            if (r->index == m_file.getNumofNotes()  - 1) {
+            if (r->index == m_file.getNumofNotes() - 1) {
                 if (decision.criticalCount == m_file.getNumofNotes() + m_file.getNumofHolds()) {
                     point = gameinfo::maxPoint;
                 }
