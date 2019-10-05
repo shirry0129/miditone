@@ -112,9 +112,11 @@ namespace ui{
         .input(3, KeyK.pressed())
         .judge(time.sF() - delay);
         
+        float remainSec = 60 / m_file.getTempo(time.sF() - delay);
+        
         for (const auto &r : results) {
             Point effectPos(leftEnd + (interval * r->lane) + (interval / 2), laneEnd);
-            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
+            Point effectStrPos(leftEnd + (interval * r->lane) + (interval / 2), laneEnd - 100);
             bool shineEffect = true;
             
             if (r->type == score::NoteType::HOLD) {
@@ -126,20 +128,20 @@ namespace ui{
                     decision.criticalCount++;
                     point += pointEachNote;
                     decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
                     break;
                 case musicgame::JudgeState::BETTER:
                     decision.correctCount++;
                     point += pointEachNote * 0.8;
                     decisionEffect.add<CorrectHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
                     break;
                 case musicgame::JudgeState::GOOD:
                 case musicgame::JudgeState::NOTBAD:
                     decision.niceCount++;
                     point += pointEachNote * 0.6;
                     decisionEffect.add<NiceHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<NiceStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                    decisionEffect.add<NiceStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
                     break;
                 default:
                     break;
@@ -173,12 +175,12 @@ namespace ui{
         
         for (auto l : step(4)) {
             Point effectPos(leftEnd + (interval * l) + (interval / 2), laneEnd);
-            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
+            Point effectStrPos(leftEnd + (interval * l) + (interval / 2), laneEnd - 100);
             
             if (judger.getJudgingHoldNote(l)) {
-                decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
-                if (Scene::FrameCount() % 8 == 0) {
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                if (Scene::FrameCount() % 10 == 0) {
+                    decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
                 }
             }
         }
@@ -240,7 +242,7 @@ namespace ui{
         }
         
         TextureAsset(U"song").draw(tlPos);
-        albumArt.resized(192).draw(tlPos + Vec2(47, 60));
+        albumArt.resized(192).drawAt(tlPos + Vec2(143, 156));
         FontAsset(U"diffInfo")(diff).draw(tlPos + Vec2(248, 65), diffColor);
         compressedDisplay(tlPos + Vec2(256, 132), FontAsset(U"songInfo"), m_file.getHeader().title);
         compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"artistInfo"), m_file.getHeader().artist);
