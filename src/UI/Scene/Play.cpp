@@ -171,17 +171,17 @@ namespace ui{
             
         }
         
-        for (auto l : step(4)) {
-            Point effectPos(leftEnd + (interval * l) + (interval / 2), laneEnd);
-            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
-            
-            if (judger.getJudgingHoldNote(l)) {
-                decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
-                if (Scene::FrameCount() % 8 == 0) {
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
-                }
-            }
-        }
+//        for (auto l : step(4)) {
+//            Point effectPos(leftEnd + (interval * l) + (interval / 2), laneEnd);
+//            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
+//
+//            if (judger.getJudgingHoldNote(l)) {
+//                decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
+//                if (Scene::FrameCount() % 10 == 0) {
+//                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+//                }
+//            }
+//        }
         
         m_score.update(time.sF() - delay);
         
@@ -193,6 +193,8 @@ namespace ui{
     }
     
     void Play::draw() const {
+        ClearPrint();
+        Print << Profiler::FPS();
         TextureAsset(U"play").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0, Color(100, 201, 235));
         FontAsset(U"trackFont")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
