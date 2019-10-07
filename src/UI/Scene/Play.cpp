@@ -171,17 +171,17 @@ namespace ui{
             
         }
         
-//        for (auto l : step(4)) {
-//            Point effectPos(leftEnd + (interval * l) + (interval / 2), laneEnd);
-//            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
-//
-//            if (judger.getJudgingHoldNote(l)) {
-//                decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
-//                if (Scene::FrameCount() % 10 == 0) {
-//                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
-//                }
-//            }
-//        }
+        for (auto l : step(4)) {
+            Point effectPos(leftEnd + (interval * l) + (interval / 2), laneEnd);
+            float remainSec = 60 / m_file.getTempo(time.sF() - delay);
+
+            if (judger.getJudgingHoldNote(l)) {
+                decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
+                if (Scene::FrameCount() % 10 == 0) {
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                }
+            }
+        }
         
         m_score.update(time.sF() - delay);
         
