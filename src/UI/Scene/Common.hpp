@@ -35,18 +35,25 @@ namespace ui{
         niceCount(0),
         missCount(0){};
     };
+
+    struct ScoreData {
+        std::u32string scorePath;
+        score::Header songInfo;
+        FilePath musicPath;
+        FilePath jacketPath;
+        FilePath exPath;
+        FilePath exNote;
+    };
     
     struct PlayData {
         size_t trackCount;
-        FilePath scoreFile;
-        FilePath musicFile;
         double decisionVolume;
         double speed;
         size_t currentDiff;
-        size_t currentMusic;
-        Array<FilePath> scoreList;
+        Array<ScoreData>::iterator currentMusic;
+        Array<ScoreData> scoreList;
         Array<DecisionInfo> decisionCount;
-        Array<score::SystemScore::Header> resultSongInfo;
+        Array<std::pair<ScoreData, score::Difficulty>> resultSongInfo;
         Array<size_t> resultScore;
     };
     

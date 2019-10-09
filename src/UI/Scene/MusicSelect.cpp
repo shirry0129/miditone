@@ -9,12 +9,16 @@
 
 namespace ui{
     
-    MusicBox::MusicBox(const FilePath& _info, const s3d::RectF &_entity):
+    MusicBox::MusicBox(const ScoreData& _info, const s3d::RectF &_entity):
     IBox(_entity, TextureAsset(U"boxTemplate")),
-    maxWidth(340),
-    scoreFile(_info),
-    musicInfo(_info.toUTF32()){
-        albumArt = Texture(U"../Score/albumArt/{}.png"_fmt(musicInfo.id()));
+    albumArt(_info.jacketPath),
+    title(_info.songInfo.title()),
+    artist(_info.songInfo.artist()),
+    maxWidth(340){
+        for (const auto& lev : _info.songInfo.level()){
+            level.emplace_back(lev);
+        }
+        
         for (auto i : step(3)) {
             diffBox.emplace_back(Arg::center(::gameinfo::originalScreenCenter), 90);
         }
@@ -70,25 +74,16 @@ namespace ui{
             diffBox.at(d).movedBy(moveWidth + Vec2((-95 + (int)d * 95), 230) * scale).scaled(scale).draw(diffColor).drawFrame(4, 0, diffFrame);
         }
         
-        for (auto [i, lev] : Indexed(musicInfo.level())) {
+        for (auto [i, lev] : Indexed(level)) {
             Transformer2D t(Mat3x2::Scale(scale, moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale));
             FontAsset(U"diffInfo")(lev).drawAt(moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale, Color(U"#061e38"));
         }
         
         Transformer2D t(Mat3x2::Scale(scale, titleCenter));
-        compressedDisplay(titleCenter, FontAsset(U"songTitle"), musicInfo.title());
+        compressedDisplay(titleCenter, FontAsset(U"songTitle"), title);
         t = Transformer2D(Mat3x2::Scale(scale, artistCenter));
-        compressedDisplay(artistCenter, FontAsset(U"musicInfo"), musicInfo.artist());
+        compressedDisplay(artistCenter, FontAsset(U"musicInfo"), artist);
     }
-    
-    score::Header MusicBox::getMusicInfo() const {
-        return musicInfo;
-    }
-    
-    s3d::FilePath MusicBox::getScoreFile() const {
-        return scoreFile;
-    }
-    
     
     
 
@@ -97,35 +92,38 @@ namespace ui{
     IScene(init),
     boxSize(400, 600),
     defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize),
+    example(getData().currentMusic->musicPath),
     countDown(90){
-        for (auto file : getData().scoreList) {
-            music.emplace_back(file, defaultEntity);
+        for (const auto& file : getData().scoreList) {
+            musics.emplace_back(file, defaultEntity);
         }
         for (auto i : step(4)) {
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
         
-        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
+        example.setLoop(
+                        Arg::loopBegin = static_cast<SecondsF>(getData().currentMusic->songInfo.chorusBegSec()),
+                        Arg::loopEnd   = static_cast<SecondsF>(getData().currentMusic->songInfo.chorusEndSec())
+                        );
+        example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
         countDown.start();
     }
     
     void MusicSelect::update() {
         if (gameinfo::backArrow.down()) {
-            if (getData().currentMusic > 0) {
+            if (getData().currentMusic > getData().scoreList.begin()) {
                 getData().currentMusic--;
                 resetEx();
             }
         }
         if (gameinfo::goArrow.down()) {
-            if (getData().currentMusic < music.size() - 1) {
+            if (getData().currentMusic < getData().scoreList.end() - 1) {
                 getData().currentMusic++;
                 resetEx();
             }
         }
         if (gameinfo::decide.down() || countDown.reachedZero()) {
-            getData().scoreFile = music.at(getData().currentMusic).getScoreFile();
-            getData().musicFile = U"../Score/music/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id());
             changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
         };
     }
@@ -138,8 +136,11 @@ namespace ui{
         FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
         FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::fontColor);
         
-        for (auto i : step(music.size())) {
-            music.at(i).draw(Vec2(((int)i - (int)getData().currentMusic) * defaultEntity.w, 0));
+        for (const auto i : step(musics.size())) {
+            auto dist = std::distance(getData().scoreList.begin(), getData().currentMusic);
+            musics.at(i).draw(
+                Vec2(((int)i - dist) * defaultEntity.w, 0)
+            );
         }
         
         for (auto [i, rect] : Indexed(instructionBox)) {
@@ -168,7 +169,12 @@ namespace ui{
     void MusicSelect::resetEx() {
         example.stop();
         example.release();
-        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(music.at(getData().currentMusic).getMusicInfo().id()), Arg::loop = true);
+        example = Audio(getData().currentMusic->musicPath);
+        example.setLoop(
+                        Arg::loopBegin = static_cast<SecondsF>(getData().currentMusic->songInfo.chorusBegSec()),
+                        Arg::loopEnd   = static_cast<SecondsF>(getData().currentMusic->songInfo.chorusEndSec())
+                        );
+        example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
     }
     

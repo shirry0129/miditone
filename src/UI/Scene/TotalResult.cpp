@@ -14,7 +14,7 @@ IScene(init),
 countDown(20),
 maxWidth(340){
     for (auto i : step(gameinfo::totalTrack)) {
-        albumArt.emplace_back(U"../Score/albumArt/{}.png"_fmt(getData().resultSongInfo.at(i).id));
+        albumArt.emplace_back(getData().resultSongInfo.at(i).first.jacketPath);
     }
     for (auto i : step(4)) {
         instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
@@ -78,7 +78,7 @@ void TotalResult::drawTrack(const s3d::Vec2 &pos, size_t track) const {
     String diff;
     Color diffColor;
     
-    switch (getData().resultSongInfo.at(track).difficulty) {
+    switch (getData().resultSongInfo.at(track).second) {
         case score::Difficulty::EASY:
             diff = U"EASY";
             diffColor = gameinfo::easy;
@@ -97,8 +97,8 @@ void TotalResult::drawTrack(const s3d::Vec2 &pos, size_t track) const {
     FontAsset(U"totalTrackNum")(U"Track {}"_fmt(track + 1)).draw(pos + Vec2(20, 10), gameinfo::fontColor);
     FontAsset(U"totalTrackNum")(diff).draw(Arg::topRight(pos + Vec2(380, 10)), diffColor);
     albumArt.at(track).resized(260).draw(pos + Vec2(70, FontAsset(U"totalTrackNum").height() + 10));
-    compressedDisplay(pos + Vec2(200, 300 + FontAsset(U"totalTrackNum").height()), FontAsset(U"totalSong"), getData().resultSongInfo.at(track).title);
-    compressedDisplay(pos + Vec2(200, 350 + FontAsset(U"totalTrackNum").height()), FontAsset(U"totalArtist"), getData().resultSongInfo.at(track).artist);
+    compressedDisplay(pos + Vec2(200, 300 + FontAsset(U"totalTrackNum").height()), FontAsset(U"totalSong"), getData().resultSongInfo.at(track).first.songInfo.title());
+    compressedDisplay(pos + Vec2(200, 350 + FontAsset(U"totalTrackNum").height()), FontAsset(U"totalArtist"), getData().resultSongInfo.at(track).first  .songInfo.artist());
     FontAsset(U"scoreFont")(Pad(getData().resultScore.at(track), {7, U'0'})).drawAt(pos + Vec2(200, 310 + FontAsset(U"totalTrackNum").height() + FontAsset(U"songInfo").height() + FontAsset(U"totalArtist").height()), gameinfo::fontColor);
 }
 

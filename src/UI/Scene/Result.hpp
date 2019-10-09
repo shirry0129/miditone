@@ -15,7 +15,7 @@ namespace ui{
     class Result : public MyApp::Scene{
     private:
         Array<Rect> instructionBox;
-        Texture albumArt;
+        const Texture albumArt;
         size_t maxWidth;
         Timer countDown;
         void drawDecision(const Vec2& pos) const;

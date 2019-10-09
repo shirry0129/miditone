@@ -15,7 +15,7 @@ namespace ui{
 
     Play::Play(const InitData& init):
     IScene(init),
-    m_song(getData().musicFile),
+    m_song(getData().currentMusic->musicPath),
     beatSound(Resource(U"resource/forSystem/beats.mp3")),
     hitSound(Resource(U"resource/forSystem/hitSound.wav")),
     combo(0),
@@ -47,13 +47,13 @@ namespace ui{
                 break;
         }
         
-        m_file.create(getData().scoreFile.toUTF32(), static_cast<score::Difficulty>(getData().currentDiff));
+        m_file.create(getData().currentMusic->scorePath, static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
             Print << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
             Print << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
         }else{
-            getData().resultSongInfo.push_back(m_file.getHeader());
+            getData().resultSongInfo.emplace_back(*getData().currentMusic, m_file.getHeader().difficulty);
             m_score.setFromFile(m_file, getData().speed / 10);
             pointEachNote = static_cast<double>(gameinfo::maxPoint) / static_cast<double>(m_file.getNumofNotes() + m_file.getNumofHolds());
             judger.create(score::numofLanes, m_file.getNotes(), beg, end, miss);
@@ -67,7 +67,7 @@ namespace ui{
             time.addEvent(U"Draw", SecondsF(delay - m_score.getWakeUpTime()));
             time.addEvent(U"Start", SecondsF(delay));
             time.addEvent(U"End", SecondsF(m_song.lengthSec() + delay + measureLength));
-            albumArt = Texture(U"../Score/albumArt/{}.png"_fmt(m_file.getHeader().id));
+            albumArt = Texture(getData().currentMusic->jacketPath);
         }
         
         Image buf;
@@ -112,8 +112,9 @@ namespace ui{
         .input(3, KeyK.pressed())
         .judge(time.sF() - delay);
         
-        float remainSec = 60 / m_file.getTempo(time.sF() - delay);
-        
+        double currentTime =  time.sF() - delay;
+        float remainSec = 60 / m_file.getTempo(currentTime < 0 ? 0 : currentTime);
+            
         for (const auto &r : results) {
             Point effectPos(leftEnd + (interval * r->lane) + (interval / 2), laneEnd);
             Point effectStrPos(leftEnd + (interval * r->lane) + (interval / 2), laneEnd - 100);
@@ -121,6 +122,10 @@ namespace ui{
             
             if (r->type == score::NoteType::HOLD) {
                 shineEffect = false;
+            }
+            
+            if (isinf(remainSec)) {
+                Print << U"oops";
             }
             
             switch (r->result.getJudge()) {

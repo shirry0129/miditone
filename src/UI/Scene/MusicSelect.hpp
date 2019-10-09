@@ -16,16 +16,15 @@ namespace ui{
     
     class MusicBox : IBox {
     private:
-        FilePath scoreFile;
-        Texture albumArt;
+        const Texture albumArt;
+        const String title;
+        const String artist;
+        Array<String> level;
         Array<RectF> diffBox;
-        score::Header musicInfo;
         const size_t maxWidth;
         void compressedDisplay(const Vec2& centerPos, const Font& assetInfo, const String& string) const;
     public:
-        MusicBox(const FilePath& _info, const RectF& _entity);
-        FilePath getScoreFile() const;
-        score::Header getMusicInfo() const;
+        MusicBox(const ScoreData& _info, const RectF& _entity);
         void draw(const Vec2& moveWidth) const;
     };
 
@@ -33,7 +32,7 @@ namespace ui{
     private:
         const Vec2 boxSize;
         const RectF defaultEntity;
-        Array<MusicBox> music;
+        Array<MusicBox> musics;
         Array<Rect> instructionBox;
         Timer countDown;
         Audio example;

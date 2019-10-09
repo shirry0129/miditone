@@ -14,7 +14,7 @@ namespace ui{
     IScene(init),
     maxWidth(470),
     countDown(20),
-    albumArt(U"../Score/albumArt/{}.png"_fmt(getData().resultSongInfo.at(getData().trackCount - 1).id)){
+    albumArt(getData().resultSongInfo.at(getData().trackCount - 1).first.jacketPath){
         for (auto i : step(4)) {
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
@@ -91,8 +91,8 @@ namespace ui{
     void Result::drawSongInfo(const s3d::Vec2 &pos) const {
         TextureAsset(U"boxTemplate").resized(550, 600).draw(pos);
         albumArt.resized(410).draw(pos + Vec2(70, 40));
-        compressedDisplay(pos + Vec2(275, 485), FontAsset(U"songTitle"), getData().resultSongInfo.at(getData().trackCount - 1).title);
-        compressedDisplay(pos + Vec2(275, 530), FontAsset(U"musicInfo"), getData().resultSongInfo.at(getData().trackCount - 1).artist);
+        compressedDisplay(pos + Vec2(275, 485), FontAsset(U"songTitle"), getData().resultSongInfo.at(getData().trackCount - 1).first.songInfo.title());
+        compressedDisplay(pos + Vec2(275, 530), FontAsset(U"musicInfo"), getData().resultSongInfo.at(getData().trackCount - 1).first.songInfo.artist());
     }
     
 

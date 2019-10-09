@@ -26,9 +26,9 @@ namespace ui{
         double measureLength;
         double delay;
         double beatLength;
-        Audio m_song;
-        Audio beatSound;
-        Audio hitSound;
+        const Audio m_song;
+        const Audio beatSound;
+        const Audio hitSound;
 //        Audio holdSound;
         EventTimer time;
         DecisionInfo decision;

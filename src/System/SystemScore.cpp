@@ -1,4 +1,4 @@
-﻿#include "SystemScore.hpp"
+#include "SystemScore.hpp"
 
 #include <list>
 #include "ChEncoder.hpp"

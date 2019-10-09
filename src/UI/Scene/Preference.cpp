@@ -82,10 +82,10 @@ namespace ui{
     
     Preference::Preference(const InitData &init):
     IScene(init),
-    songInfo(getData().scoreFile.toUTF32()),
     boxSize(400, 600),
     currentItem(0),
     adjustment(false),
+    example(getData().currentMusic->musicPath, Arg::loop = true),
     countDown(30),
     defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize){
         prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity, TextureAsset(U"gameStart"));
@@ -97,7 +97,11 @@ namespace ui{
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
         }
         
-        example = Audio(U"../Score/musicEx/{}.mp3"_fmt(songInfo.id()), Arg::loop = true);
+        example.setLoop(
+                        Arg::loopBegin = static_cast<SecondsF>(getData().currentMusic->songInfo.chorusBegSec()),
+                        Arg::loopEnd   = static_cast<SecondsF>(getData().currentMusic->songInfo.chorusEndSec())
+                        );
+        example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
         
         countDown.start();

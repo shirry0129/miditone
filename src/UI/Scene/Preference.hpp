@@ -39,7 +39,6 @@ namespace ui{
         const Vec2 boxSize;
         const RectF defaultEntity;
         Audio example;
-        const score::Header songInfo;
         size_t currentItem;
         Array<PrefBox> prefItem;
         Array<Rect> instructionBox;
