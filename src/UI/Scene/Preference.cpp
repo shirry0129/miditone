@@ -1,4 +1,4 @@
-//
+﻿//
 //  Preference.cpp
 //  MusicGame
 //
@@ -82,7 +82,7 @@ namespace ui{
     
     Preference::Preference(const InitData &init):
     IScene(init),
-    songInfo(getData().scoreFile.toUTF32()),
+    songInfo(getData().scoreFile.narrow()),
     boxSize(400, 600),
     currentItem(0),
     adjustment(false),

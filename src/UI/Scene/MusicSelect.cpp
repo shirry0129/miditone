@@ -1,4 +1,4 @@
-//
+﻿//
 //  MusicSelect.cpp
 //  MusicGame
 //
@@ -13,7 +13,7 @@ namespace ui{
     IBox(_entity, TextureAsset(U"boxTemplate")),
     maxWidth(340),
     scoreFile(_info),
-    musicInfo(_info.toUTF32()){
+    musicInfo(_info.narrow()){
         albumArt = Texture(U"../Score/albumArt/{}.png"_fmt(musicInfo.id()));
         for (auto i : step(3)) {
             diffBox.emplace_back(Arg::center(::gameinfo::originalScreenCenter), 90);

@@ -1,4 +1,4 @@
-//
+﻿//
 //  Play.cpp
 //  MusicGame
 //
@@ -47,7 +47,7 @@ namespace ui{
                 break;
         }
         
-        m_file.create(getData().scoreFile.toUTF32(), static_cast<score::Difficulty>(getData().currentDiff));
+        m_file.create(getData().scoreFile.narrow(), static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
             Logger << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
