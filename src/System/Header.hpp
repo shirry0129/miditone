@@ -29,11 +29,11 @@ namespace score {
 	public:
 		
 		Header();
-		Header(const std::filesystem::path& filePath);
+		Header(const boost::filesystem::path& filePath);
 		
 		~Header();
 		
-		scorereader_err_t read(const std::filesystem::path& filePath);
+		scorereader_err_t read(const boost::filesystem::path& filePath);
 		
 		scorereader_err_t getReaderError() const noexcept;
 		

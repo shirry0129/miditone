@@ -31,7 +31,7 @@ namespace score {
 		init();
 	}
 
-	ScoreReader::ScoreReader(const std::filesystem::path& file, rch_type delim)
+	ScoreReader::ScoreReader(const boost::filesystem::path& file, rch_type delim)
 		: prevState(State::E_SET_NOFILE, createErrMessage)  {
 		prevState = open(file);
 		this->delim = delim;
@@ -39,19 +39,19 @@ namespace score {
 
 	ScoreReader::~ScoreReader() {}
 
-	Error<ScoreReader::State> ScoreReader::open(const std::filesystem::path& file) {
+	Error<ScoreReader::State> ScoreReader::open(const boost::filesystem::path& file) {
 		// init
 		rch_type d = delim;
 		init();
 		delim = d;
 
-		score.open(file);
+		score.open(file.c_str());
 
 		if (!score) {
 			return prevState = State::E_CANNOT_OPEN_FILE;
 		}
 
-		return prevState = State::S_OK;
+		return prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::moveChunk(const std::basic_string<rch_type> &chunkName) {
@@ -76,7 +76,7 @@ namespace score {
 			return prevState = State::E_CANNOT_FIND_CHUNK;
 		}
 
-		return prevState = State::S_OK;
+		return prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::readHeader(Header &_header, const std::basic_string<rch_type> &chunkName) {
@@ -108,7 +108,7 @@ namespace score {
 
 		_header = std::move(header);
 
-		return prevState = State::S_OK;
+		return prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::readNote(std::vector<NoteEvent> &_notes, const std::basic_string<rch_type> &chunkName) {
@@ -135,7 +135,7 @@ namespace score {
 
 		_notes = std::move(notes);
 
-		return prevState = State::S_OK;
+		return prevState = State::S_OK_;
 	}
 	
 	size_t ScoreReader::getCurrentLine() const noexcept {
@@ -224,7 +224,7 @@ namespace score {
 
 		argProcessFlag = false;
 
-		return prevState = State::S_OK;
+		return prevState = State::S_OK_;
 	}
 	
 	std::basic_string<char32_t> ScoreReader::createErrMessage(State state) {
@@ -233,7 +233,7 @@ namespace score {
 		switch (state) {
 		  case State::S_REACH_CHUNK_END:
 			return U"チャンクの終端に達しました";
-		  case State::S_OK:
+		  case State::S_OK_:
 		  	return U"成功";
 		  case State::E_CANNOT_OPEN_FILE:
 		  	return U"ファイルを開けません";
@@ -309,7 +309,7 @@ namespace score {
 		sr.currentChunk = firstArg;
 
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::EndCmd::execute(ScoreReader &sr, const rch_type *line) {
@@ -324,7 +324,7 @@ namespace score {
 
 	Error<ScoreReader::State> ScoreReader::IdCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -340,12 +340,12 @@ namespace score {
 		if (sstream.fail())
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::TitleCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -363,12 +363,12 @@ namespace score {
 		if (sstream.fail())
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::ArtistCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -386,12 +386,12 @@ namespace score {
 		if (sstream.fail())
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::GenreCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -409,12 +409,12 @@ namespace score {
 		if (sstream.fail())
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::LevelCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -435,12 +435,12 @@ namespace score {
 		}
 
 		
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::TempoCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -477,12 +477,12 @@ namespace score {
 			tempo, bar, math::Fraction(n, d).reduce()
 		);
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::BeatCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -514,12 +514,12 @@ namespace score {
 		// add beat data
 		sr.header.beat.emplace_back(math::Fraction(n, d), bar);
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::NoteCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -559,12 +559,12 @@ namespace score {
 		}
 
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 	
 	Error<ScoreReader::State> ScoreReader::ChobegCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -580,12 +580,12 @@ namespace score {
 		if (sstream.fail())
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 	
 	Error<ScoreReader::State> ScoreReader::ChoendCmd::execute(ScoreReader & sr, const rch_type * line) {
 		if (!sr.argProcessFlag)
-			return State::S_OK;	// skip
+			return State::S_OK_;	// skip
 
 		if (sr.currentChunk == "")
 			return State::E_UNEXPECTED_STRING;
@@ -601,11 +601,11 @@ namespace score {
 		if (sstream.fail())
 			return sr.prevState = State::E_UNEXPECTED_STRING;
 
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	Error<ScoreReader::State> ScoreReader::NullCmd::execute(ScoreReader & sr, const rch_type * line) {
-		return sr.prevState = State::S_OK;
+		return sr.prevState = State::S_OK_;
 	}
 
 	ScoreReader::Command * ScoreReader::CommandManager::inputHandler(const rch_type * line, rch_type delim) {

@@ -6,16 +6,16 @@
 namespace score {
 
 	SystemScore::SystemScore() noexcept
-		: prevError(State::S_OK, createErrMessage) {}
+		: prevError(State::S_OK_, createErrMessage) {}
 
-	SystemScore::SystemScore(const std::filesystem::path& file, Difficulty difficulty)
-		: prevError(State::S_OK, createErrMessage) {
+	SystemScore::SystemScore(const boost::filesystem::path& file, Difficulty difficulty)
+		: prevError(State::S_OK_, createErrMessage) {
 		create(file, difficulty);
 	}
 
 	SystemScore::~SystemScore() {}
 
-	score_err_t SystemScore::create(const std::filesystem::path& file, Difficulty difficulty) {
+	score_err_t SystemScore::create(const boost::filesystem::path& file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
@@ -151,7 +151,7 @@ namespace score {
 		numofHits = hitCount;
 		numofHolds = holdCount;
 		numofNotesInLane = laneNoteCnt;
-		path.assign(file);
+		path = file;
 
 		header.difficulty = difficulty;
 		header.id = h.id();
@@ -178,7 +178,7 @@ namespace score {
 		}
 
 		
-		return prevError = State::S_OK;
+		return prevError = State::S_OK_;
 	}
 
 	score_err_t SystemScore::recreate() {
@@ -283,7 +283,7 @@ namespace score {
 		tempo.clear();
 		beat.clear();
 		bar.clear();
-		prevError = State::S_OK;
+		prevError = State::S_OK_;
 		for (auto &n : numofNotesInLane)
 			n = 0;
 	}
@@ -291,7 +291,7 @@ namespace score {
 
 	std::basic_string<char_type> SystemScore::createErrMessage(State state) {
 		switch (state) {
-		  case State::S_OK:
+		  case State::S_OK_:
 			return U"成功";
 		  case State::E_INVALID_ARGUMENT:
 		  	return (U"無効な引数です");

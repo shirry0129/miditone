@@ -12,13 +12,13 @@ namespace score {
 
 	Header::Header() {};
 
-	Header::Header(const std::filesystem::path& filePath) {
+	Header::Header(const boost::filesystem::path& filePath) {
 		read(filePath);
 	}
 
 	Header::~Header() {};
 
-	scorereader_err_t Header::read(const std::filesystem::path& filePath) {
+	scorereader_err_t Header::read(const boost::filesystem::path& filePath) {
 		ScoreReader reader;
 
 		if (reader.open(filePath).isError())
