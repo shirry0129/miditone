@@ -8,27 +8,24 @@ namespace score {
 	SystemScore::SystemScore() noexcept
 		: prevError(State::S_OK, createErrMessage) {}
 
-	SystemScore::SystemScore(const std::basic_string<char_type> &file, Difficulty difficulty)
+	SystemScore::SystemScore(const std::filesystem::path& file, Difficulty difficulty)
 		: prevError(State::S_OK, createErrMessage) {
 		create(file, difficulty);
 	}
 
 	SystemScore::~SystemScore() {}
 
-	score_err_t SystemScore::create(const std::basic_string<char_type> &file, Difficulty difficulty) {
+	score_err_t SystemScore::create(const std::filesystem::path& file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
-
 
 		// read header
 		score::Header h;
 		if (h.read(file).isError())
 			return prevError = State::E_READER_FAILED;
 		
-		
-		reader.open(ch_encoder::toUTF8(file).c_str());
-
+		reader.open(file.c_str());
 
 		// create chunk name of difficulty
 		std::basic_string<ScoreReader::rch_type> chunkName;
@@ -185,7 +182,7 @@ namespace score {
 	}
 
 	score_err_t SystemScore::recreate() {
-		return create(path.c_str(), header.difficulty);
+		return create(path, header.difficulty);
 	}
 
 	void SystemScore::clear() {
@@ -305,7 +302,7 @@ namespace score {
 		  case State::E_INVALID_TEMPO_BEAT:
 		  	return (U"テンポまたは拍子が無効です");
 		  case State::E_INVALID_LANE:
-		    return (U"無効なレーンが存在します");
+			return (U"無効なレーンが存在します");
 		  default:
 		  	return (U"");
 		}

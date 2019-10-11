@@ -2,7 +2,7 @@
 
 #include <sstream>
 #include <ctype.h>
-
+#include <filesystem>
 
 //std::locale::id std::codecvt<char32_t, char, std::mbstate_t>::id;
 
@@ -31,7 +31,7 @@ namespace score {
 		init();
 	}
 
-	ScoreReader::ScoreReader(const char *file, rch_type delim)
+	ScoreReader::ScoreReader(const std::filesystem::path& file, rch_type delim)
 		: prevState(State::E_SET_NOFILE, createErrMessage)  {
 		prevState = open(file);
 		this->delim = delim;
@@ -39,12 +39,11 @@ namespace score {
 
 	ScoreReader::~ScoreReader() {}
 
-	Error<ScoreReader::State> ScoreReader::open(const char *file) {
+	Error<ScoreReader::State> ScoreReader::open(const std::filesystem::path& file) {
 		// init
 		rch_type d = delim;
 		init();
 		delim = d;
-
 
 		score.open(file);
 
@@ -104,7 +103,7 @@ namespace score {
 
 		// exist any tempo data or beat data ?
 		if (header.tempo.empty() || header.beat.empty())
-			return prevState = State::E_EMBED_NO_BEAT_OR_TEMPO;
+			prevState = State::E_EMBED_NO_BEAT_OR_TEMPO;
 
 
 		_header = std::move(header);
@@ -249,7 +248,7 @@ namespace score {
 		  case State::E_EMBED_NO_BEAT_OR_TEMPO:
 		  	return U"拍子またはテンポ情報が埋め込まれていません";
 		  case State::E_CANNOT_FIND_CHUNK:
-		    return U"難易度またはヘッダが見つかりませんでした";
+			return U"難易度またはヘッダが見つかりませんでした";
 		  default:
 			return U"";
 		}

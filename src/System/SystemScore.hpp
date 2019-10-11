@@ -155,7 +155,7 @@ namespace score {
 	
 		std::vector<Note> notes;
 
-		std::basic_string<char_type> path;
+		std::filesystem::path path;
 
 		score::ScoreTimeConverter timeConv;
 		
