@@ -108,7 +108,7 @@ namespace ui{
     }
     
     void Preference::update() {
-        if (gameinfo::backArrow.down()) {
+        if (gameinfo::prev.down()) {
             if (adjustment) {
                 switch (prefItem.at(currentItem).getEntry()) {
                     case PrefItem::SPEED:
@@ -136,7 +136,7 @@ namespace ui{
             }
         }
         
-        if (gameinfo::goArrow.down()) {
+        if (gameinfo::next.down()) {
             if (adjustment) {
                 switch (prefItem.at(currentItem).getEntry()) {
                     case PrefItem::SPEED:

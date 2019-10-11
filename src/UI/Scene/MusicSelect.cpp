@@ -94,8 +94,8 @@ namespace ui{
     defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize),
     example(getData().currentMusic->musicPath),
     countDown(90){
-        for (const auto& file : getData().scoreList) {
-            musics.emplace_back(file, defaultEntity);
+        for (const auto& score : getData().scoreList) {
+            musics.emplace_back(score, defaultEntity);
         }
         for (auto i : step(4)) {
             instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
@@ -111,13 +111,13 @@ namespace ui{
     }
     
     void MusicSelect::update() {
-        if (gameinfo::backArrow.down()) {
+        if (gameinfo::prev.down()) {
             if (getData().currentMusic > getData().scoreList.begin()) {
                 getData().currentMusic--;
                 resetEx();
             }
         }
-        if (gameinfo::goArrow.down()) {
+        if (gameinfo::next.down()) {
             if (getData().currentMusic < getData().scoreList.end() - 1) {
                 getData().currentMusic++;
                 resetEx();

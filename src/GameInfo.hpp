@@ -36,8 +36,8 @@ namespace gameinfo {
     
     const Array<FileFilter> scoreData = {{U"譜面データ", {U"txt"}}};
     
-    const auto backArrow = KeyD;
-    const auto goArrow = KeyF;
+    const auto prev = KeyD;
+    const auto next = KeyF;
     const auto decide = KeyJ;
     const auto back = KeyK;
     
