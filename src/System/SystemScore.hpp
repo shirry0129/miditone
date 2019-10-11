@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 This class retains all note data of a difficulty mode
 
@@ -116,10 +116,10 @@ namespace score {
 
 	
 		SystemScore() noexcept;
-		SystemScore(const std::basic_string<char_type> &file, Difficulty difficulty);
+		SystemScore(const std::filesystem::path& file, Difficulty difficulty);
 		~SystemScore();
 
-		Error<State> create(const std::basic_string<char_type> &file, Difficulty difficulty);
+		Error<State> create(const std::filesystem::path& file, Difficulty difficulty);
 		Error<State> recreate();
 
 		void clear();

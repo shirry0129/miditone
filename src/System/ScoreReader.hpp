@@ -16,6 +16,7 @@ This class reads the score file of music game
 #include <array>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #include "Fraction.hpp"
 #include "Error.hpp"
@@ -105,10 +106,10 @@ namespace score {
 		
 	
 		ScoreReader();
-		ScoreReader(const rch_type *file, rch_type delim = ':');
+		ScoreReader(const std::filesystem::path& file, rch_type delim = ':');
 		~ScoreReader();
 
-		Error<State> open(const rch_type * file);
+		Error<State> open(const std::filesystem::path& file);
 
 
 		void setDelim(rch_type delim) noexcept;
@@ -265,5 +266,3 @@ namespace score {
 }
 
 #endif // !_SCOREREADER_HPP_
-
-
