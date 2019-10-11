@@ -103,13 +103,20 @@ void Main() {
         .add<ui::GameOver>(ui::SceneName::GAMEOVER)
         .setFadeColor(gameinfo::fadeColor);
 	
-    while (System::Update()) {
-        Cursor::RequestStyle(CursorStyle::Hidden);
-		
-       	const Transformer2D scaler(Mat3x2::Scale(renderRatio));
-	
-        if(!sceneManager.update()){
-            break;
+    try {
+        while (System::Update()) {
+            Cursor::RequestStyle(CursorStyle::Hidden);
+            
+            const Transformer2D scaler(Mat3x2::Scale(renderRatio));
+        
+            if(!sceneManager.update()){
+                break;
+            }
         }
+    } catch (std::exception e) {
+        auto s = e.what();
+        std::ofstream ofs("../error.txt");
+        ofs << s;
+        ofs.close();
     }
 }

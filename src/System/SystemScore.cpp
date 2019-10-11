@@ -1,6 +1,7 @@
 #include "SystemScore.hpp"
 
 #include <list>
+#include <float.h>
 #include "ChEncoder.hpp"
 
 namespace score {
@@ -225,7 +226,8 @@ namespace score {
 				return it->tempo;
 		}
 
-		return 0.0f;
+//		return 0.0f;
+        return FLT_EPSILON;
 	}
 
 	const std::vector<Beat>& SystemScore::getBeat() const noexcept {
