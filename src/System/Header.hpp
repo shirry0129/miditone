@@ -47,8 +47,8 @@ namespace score {
 		const Genre&							genre()		const noexcept;
 		const std::vector<TempoEvent>&			tempo()		const noexcept;
 		const std::vector<BeatEvent>&			beat()		const noexcept;
-		int 									chorusBegSec() const noexcept;
-		int 									chorusEndSec() const noexcept;
+		float 									chorusBegSec() const noexcept;
+		float									chorusEndSec() const noexcept;
 		
 		
 	private:
@@ -63,8 +63,8 @@ namespace score {
 		Genre							m_genre;
 		std::vector<TempoEvent>			m_tempo;
 		std::vector<BeatEvent>			m_beat;
-		int 							m_chorusBegSec;
-		int								m_chorusEndSec;
+		float 							m_chorusBegSec;
+		float							m_chorusEndSec;
 		
 		scorereader_err_t prevError;
 		

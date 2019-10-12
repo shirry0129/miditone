@@ -90,11 +90,11 @@ namespace score {
 		return m_beat;
 	}
 	
-	int Header::chorusBegSec() const noexcept {
+	float Header::chorusBegSec() const noexcept {
 		return m_chorusBegSec;
 	}
 	
-	int Header::chorusEndSec() const noexcept {
+	float Header::chorusEndSec() const noexcept {
 		return m_chorusEndSec;
 	}
 	

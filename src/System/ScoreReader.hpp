@@ -1,4 +1,4 @@
-﻿/*
+/*
 
 This class reads the score file of music game
 
@@ -82,8 +82,8 @@ namespace score {
 			std::basic_string<rch_type>		genre;
 			std::vector<TempoEvent>			tempo;
 			std::vector<BeatEvent>			beat;
-			int								chorusBegSec;
-			int								chorusEndSec;
+			float							chorusBegSec;
+			float							chorusEndSec;
 		};
 		
 
