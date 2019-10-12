@@ -16,6 +16,7 @@ This class reads the score file of music game
 #include <array>
 #include <string>
 #include <vector>
+#include <boost/filesystem/path.hpp>
 
 #include "Fraction.hpp"
 #include "Error.hpp"
@@ -89,7 +90,7 @@ namespace score {
 
 		enum class State {
 			S_REACH_CHUNK_END = 1,
-			S_OK = 0,
+			S_OK_ = 0,
 			E_CANNOT_OPEN_FILE = -1,		// when open file
 			E_CANNOT_READ_WHOLELINE = -2,	// when read file (move file pointer)
 			E_CANNOT_FIND_COMMAND = -3,		// when read file (move file pointer)
@@ -105,10 +106,10 @@ namespace score {
 		
 	
 		ScoreReader();
-		ScoreReader(const rch_type *file, rch_type delim = ':');
+		ScoreReader(const boost::filesystem::path& file, rch_type delim = ':');
 		~ScoreReader();
 
-		Error<State> open(const rch_type * file);
+		Error<State> open(const boost::filesystem::path& file);
 
 
 		void setDelim(rch_type delim) noexcept;
@@ -265,5 +266,3 @@ namespace score {
 }
 
 #endif // !_SCOREREADER_HPP_
-
-

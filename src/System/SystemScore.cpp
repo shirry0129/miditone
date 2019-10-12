@@ -1,4 +1,4 @@
-#include "SystemScore.hpp"
+﻿#include "SystemScore.hpp"
 
 #include <list>
 #include <float.h>
@@ -7,29 +7,26 @@
 namespace score {
 
 	SystemScore::SystemScore() noexcept
-		: prevError(State::S_OK, createErrMessage) {}
+		: prevError(State::S_OK_, createErrMessage) {}
 
-	SystemScore::SystemScore(const std::basic_string<char_type> &file, Difficulty difficulty)
-		: prevError(State::S_OK, createErrMessage) {
+	SystemScore::SystemScore(const boost::filesystem::path& file, Difficulty difficulty)
+		: prevError(State::S_OK_, createErrMessage) {
 		create(file, difficulty);
 	}
 
 	SystemScore::~SystemScore() {}
 
-	score_err_t SystemScore::create(const std::basic_string<char_type> &file, Difficulty difficulty) {
+	score_err_t SystemScore::create(const boost::filesystem::path& file, Difficulty difficulty) {
 		using namespace score;
 
 		init();
-
 
 		// read header
 		score::Header h;
 		if (h.read(file).isError())
 			return prevError = State::E_READER_FAILED;
 		
-		
-		reader.open(ch_encoder::toUTF8(file).c_str());
-
+		reader.open(file.c_str());
 
 		// create chunk name of difficulty
 		std::basic_string<ScoreReader::rch_type> chunkName;
@@ -155,7 +152,7 @@ namespace score {
 		numofHits = hitCount;
 		numofHolds = holdCount;
 		numofNotesInLane = laneNoteCnt;
-		path.assign(file);
+		path = file;
 
 		header.difficulty = difficulty;
 		header.id = h.id();
@@ -182,11 +179,11 @@ namespace score {
 		}
 
 		
-		return prevError = State::S_OK;
+		return prevError = State::S_OK_;
 	}
 
 	score_err_t SystemScore::recreate() {
-		return create(path.c_str(), header.difficulty);
+		return create(path, header.difficulty);
 	}
 
 	void SystemScore::clear() {
@@ -288,7 +285,7 @@ namespace score {
 		tempo.clear();
 		beat.clear();
 		bar.clear();
-		prevError = State::S_OK;
+		prevError = State::S_OK_;
 		for (auto &n : numofNotesInLane)
 			n = 0;
 	}
@@ -296,7 +293,7 @@ namespace score {
 
 	std::basic_string<char_type> SystemScore::createErrMessage(State state) {
 		switch (state) {
-		  case State::S_OK:
+		  case State::S_OK_:
 			return U"成功";
 		  case State::E_INVALID_ARGUMENT:
 		  	return (U"無効な引数です");
@@ -307,7 +304,7 @@ namespace score {
 		  case State::E_INVALID_TEMPO_BEAT:
 		  	return (U"テンポまたは拍子が無効です");
 		  case State::E_INVALID_LANE:
-		    return (U"無効なレーンが存在します");
+			return (U"無効なレーンが存在します");
 		  default:
 		  	return (U"");
 		}

@@ -1,4 +1,4 @@
-//
+﻿//
 //  CommonInfo.hpp
 //  MusicGame
 //
@@ -37,7 +37,7 @@ namespace ui{
     };
 
     struct ScoreData {
-        std::u32string scorePath;
+        std::string scorePath;
         score::Header songInfo;
         FilePath musicPath;
         FilePath jacketPath;

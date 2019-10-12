@@ -1,4 +1,4 @@
-//
+﻿//
 //  Header.hpp
 //  MusicGame
 //
@@ -29,11 +29,11 @@ namespace score {
 	public:
 		
 		Header();
-		Header(const std::basic_string<char_type> filePath);
+		Header(const boost::filesystem::path& filePath);
 		
 		~Header();
 		
-		scorereader_err_t read(const std::basic_string<char_type> filePath);
+		scorereader_err_t read(const boost::filesystem::path& filePath);
 		
 		scorereader_err_t getReaderError() const noexcept;
 		

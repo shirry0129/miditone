@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 This class retains all note data of a difficulty mode
 
@@ -90,7 +90,7 @@ namespace score {
 	public:
 		
 		enum class State {
-			S_OK = 0,
+			S_OK_ = 0,
 			E_INVALID_ARGUMENT = -1,
 			E_INVALID_NOTE = -2,
 			E_READER_FAILED = -3,
@@ -116,10 +116,10 @@ namespace score {
 
 	
 		SystemScore() noexcept;
-		SystemScore(const std::basic_string<char_type> &file, Difficulty difficulty);
+		SystemScore(const boost::filesystem::path& file, Difficulty difficulty);
 		~SystemScore();
 
-		Error<State> create(const std::basic_string<char_type> &file, Difficulty difficulty);
+		Error<State> create(const boost::filesystem::path& file, Difficulty difficulty);
 		Error<State> recreate();
 
 		void clear();
@@ -155,7 +155,7 @@ namespace score {
 	
 		std::vector<Note> notes;
 
-		std::basic_string<char_type> path;
+		boost::filesystem::path path;
 
 		score::ScoreTimeConverter timeConv;
 		

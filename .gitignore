@@ -445,3 +445,4 @@ a.out.dSYM
 test/
 resource/**
 Score/**
+*.editorconfig

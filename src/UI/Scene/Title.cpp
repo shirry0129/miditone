@@ -1,4 +1,4 @@
-//
+﻿//
 //  Title.cpp
 //  MusicGame
 //
@@ -26,7 +26,7 @@ namespace ui{
                     const INIData music(ini);
                     ScoreData data;
                     
-                    data.scorePath = (songDir + music[U".score"].removed(U'"')).toUTF32();
+                    data.scorePath = (songDir + music[U".score"].removed(U'"')).narrow();
                     data.songInfo.read(data.scorePath);
                     data.musicPath = songDir + music[U".music"].removed(U'"');
                     data.jacketPath = songDir + music[U".jacket"].removed(U'"');

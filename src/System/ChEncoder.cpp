@@ -1,4 +1,4 @@
-#include "ChEncoder.hpp"
+﻿#include "ChEncoder.hpp"
 
 
 namespace ch_encoder {
