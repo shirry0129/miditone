@@ -1,4 +1,4 @@
-﻿//
+//
 //  MusicSelect.cpp
 //  MusicGame
 //
@@ -137,9 +137,13 @@ namespace ui{
             changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
         };
         
-        getData().scoreFile = Dialog::OpenFile(scoreFilter, U"", U"choose score file").value();
-        getData().musicFile = Dialog::OpenFile(musicFilter, U"", U"choose music file").value();
-        changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
+        try {
+            getData().scoreFile = Dialog::OpenFile(scoreFilter, U"", U"choose score file").value();
+            getData().musicFile = Dialog::OpenFile(musicFilter, U"", U"choose music file").value();
+            changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
+        } catch (BadOptionalAccess e) {
+            Logger << Unicode::Widen(e.what());
+        }
     }
     
     void MusicSelect::draw() const {
