@@ -446,4 +446,4 @@ test/
 resource/**
 Score/**
 *.editorconfig
-auth.ini
+settings.ini
