@@ -92,6 +92,9 @@ void Main() {
     TextureAsset::Register(U"resultCombo", U"resource/max_combo_.png");
 #endif
     
+    const INIData settings(U"../settings.ini");
+    gameinfo::totalTrack = Parse<int32>(settings[U"play.tracks"]);
+    
     ui::MyApp sceneManager;
     sceneManager
         .add<ui::Title>(ui::SceneName::TITLE)

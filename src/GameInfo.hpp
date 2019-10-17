@@ -10,44 +10,42 @@
 
 #include <Siv3D.hpp>
 
-namespace gameinfo {
+struct gameinfo {
 
-	const Size originalResolution = {1920, 1080};
+	static const Size originalResolution;
 	
-	const Size originalScreenCenter = originalResolution / 2;
+	static const Size originalScreenCenter;
 
-    const String title = U"miditone";
+    static const String title;
     
-    const Color backGroundColor = Palette::Yellow;
+    static const Color backGroundColor;
     
-    const Color fadeColor = Palette::White;
+    static const Color fadeColor;
     
-    const Color fontColor = Palette::Paleturquoise;
+    static const Color fontColor;
     
-    const Color easy = Palette::Limegreen;
-    const Color normal = Palette::Darkorange;
-    const Color hard = Palette::Crimson;
+    static const Color easy;
+    static const Color normal;
+    static const Color hard;
     
-    const int32 titleFontSize = 120;
+    static const int32 titleFontSize;
     
-    const int32 defalutFontSize = 50;
+    static const int32 defalutFontSize;
     
-    const int32 totalTrack = 3;
+    static int32 totalTrack;
     
-    const Array<FileFilter> scoreData = {{U"譜面データ", {U"txt"}}};
+    static const Key prev;
+    static const Key next;
+    static const Key decide;
+    static const Key back;
     
-    const auto prev = KeyD;
-    const auto next = KeyF;
-    const auto decide = KeyJ;
-    const auto back = KeyK;
+    static const size_t maxSpeed;
     
-    const size_t maxSpeed = 15;
+    static const size_t maxPoint;
     
-    const size_t maxPoint = 1000000;
+    static const size_t fadeTime;
     
-    const size_t fadeTime = 1000;
-    
-    const SecondsF exFadeTime = 3s;
-}
+    static const SecondsF exFadeTime;
+};
 
 #endif /* GameInfo_h */
