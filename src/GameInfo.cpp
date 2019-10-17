@@ -38,6 +38,6 @@ const size_t gameinfo::maxSpeed = 15;
 
 const size_t gameinfo::maxPoint = 1000000;
 
-const size_t gameinfo::fadeTime = 1000;
+const int32 gameinfo::fadeTime = 1000;
 
 const SecondsF gameinfo::exFadeTime = 3s;

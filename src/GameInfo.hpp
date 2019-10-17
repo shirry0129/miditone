@@ -43,7 +43,7 @@ struct gameinfo {
     
     static const size_t maxPoint;
     
-    static const size_t fadeTime;
+    static const int32 fadeTime;
     
     static const SecondsF exFadeTime;
 };
