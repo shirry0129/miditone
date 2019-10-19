@@ -1,4 +1,4 @@
-﻿//
+//
 //  Play.cpp
 //  MusicGame
 //
@@ -50,8 +50,8 @@ namespace ui{
         m_file.create(getData().currentMusic->scorePath, static_cast<score::Difficulty>(getData().currentDiff));
         
         if(m_file.getLastError().isError()){
-            Print << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
-            Print << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
+            Logger << U"譜面読み込み失敗:" << m_file.getLastError().getMessage();
+            Logger << U"エラー箇所:" << m_file.getReader().getLastError().getMessage() <<  U" 行数:" << m_file.getReader().getCurrentLine();
         }else{
             getData().resultSongInfo.emplace_back(*getData().currentMusic, m_file.getHeader().difficulty);
             m_score.setFromFile(m_file, getData().speed / 10);
