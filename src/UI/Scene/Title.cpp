@@ -1,4 +1,4 @@
-﻿//
+//
 //  Title.cpp
 //  MusicGame
 //
@@ -38,19 +38,18 @@ namespace ui{
             }
         }
         
-        getData().currentMusic = getData().scoreList.begin();
+        getData().currentMusic = getData().scoreList.cbegin();
     }
     
     void Title::update() {
         if (button.down()) {
-            changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
+            changeScene(SceneName::AUTHENTICATION, gameinfo::fadeTime);
         };
     }
     
     void Title::draw() const {
-        ClearPrint();
 		TextureAsset(U"title").drawAt(::gameinfo::originalScreenCenter);
-        FontAsset(U"infoFont")(U"Press Any Button").drawAt(::gameinfo::originalScreenCenter + Vec2(0, 440), ColorF(gameinfo::fontColor, Periodic::Sine0_1(1.5s)));
+        FontAsset(U"infoFont")(U"Press Any Button").drawAt(::gameinfo::originalScreenCenter + Vec2(0, 440), ColorF(gameinfo::defaultFontColor, Periodic::Sine0_1(1.5s)));
     }
 
 }

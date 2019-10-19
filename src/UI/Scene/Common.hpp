@@ -1,4 +1,4 @@
-﻿//
+//
 //  CommonInfo.hpp
 //  MusicGame
 //
@@ -11,6 +11,7 @@
 #include <Siv3D.hpp>
 #include "../../System/SystemScore.hpp"
 #include "../../GameInfo.hpp"
+#include "../../System/MiditoneClient.hpp"
 
 namespace ui{
     
@@ -50,15 +51,18 @@ namespace ui{
         double decisionVolume;
         double speed;
         size_t currentDiff;
-        Array<ScoreData>::iterator currentMusic;
+        Array<ScoreData>::const_iterator currentMusic;
         Array<ScoreData> scoreList;
         Array<DecisionInfo> decisionCount;
         Array<std::pair<ScoreData, score::Difficulty>> resultSongInfo;
         Array<size_t> resultScore;
+        api_client::MiditoneClient client;
+        String userName;
     };
     
     enum class SceneName {
         TITLE,
+        AUTHENTICATION,
         MUSICSELECT,
         PREFERENCE,
         PLAY,

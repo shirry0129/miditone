@@ -3,6 +3,7 @@
 #include "GameInfo.hpp"
 #include "UI/Scene/Common.hpp"
 #include "UI/Scene/Title.hpp"
+#include "UI/Scene/Authentication.hpp"
 #include "UI/Scene/MusicSelect.hpp"
 #include "UI/Scene/Preference.hpp"
 #include "UI/Scene/Play.hpp"
@@ -56,6 +57,7 @@ void Main() {
     TextureAsset::Register(U"gameStart", Resource(U"resource/gamestart.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"boxTemplate", Resource(U"resource/box.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"title", Resource(U"resource/title.jpg"));
+    TextureAsset::Register(U"login", Resource(U"resource/login.png"));
     TextureAsset::Register(U"select", Resource(U"resource/select.jpg"));
     TextureAsset::Register(U"preference", Resource(U"resource/preference.jpg"));
     TextureAsset::Register(U"play", Resource(U"resource/play.jpg"));
@@ -64,6 +66,7 @@ void Main() {
     TextureAsset::Register(U"track", Resource(U"resource/track.png"));
     TextureAsset::Register(U"score", Resource(U"resource/score_box.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"song", Resource(U"resource/song_box_long.png"), TextureDesc::Mipped);
+    TextureAsset::Register(U"name", Resource(U"resource/namebox.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"gameover", Resource(U"resource/end.png"));
     TextureAsset::Register(U"hitNote", Resource(U"resource/hitnote.png"));
     TextureAsset::Register(U"arrow", Resource(U"resource/ya.png"));
@@ -75,6 +78,7 @@ void Main() {
     TextureAsset::Register(U"gameStart", U"resource/gamestart.png", TextureDesc::Mipped);
     TextureAsset::Register(U"boxTemplate", U"resource/box.png", TextureDesc::Mipped);
     TextureAsset::Register(U"title", U"resource/title.jpg");
+    TextureAsset::Resource(U"login", U"resource/login.png");
     TextureAsset::Register(U"select", U"resource/select.jpg");
     TextureAsset::Register(U"preference", U"resource/preference.jpg");
     TextureAsset::Register(U"play", U"resource/play.jpg");
@@ -83,6 +87,7 @@ void Main() {
     TextureAsset::Register(U"track", U"resource/track.png");
     TextureAsset::Register(U"score", U"resource/score_box.png", TextureDesc::Mipped);
     TextureAsset::Register(U"song", U"resource/song_box_long.png", TextureDesc::Mipped);
+    TextureAsset::Register(U"name", U"resource/namebox.png", TextureDesc::Mipped);
     TextureAsset::Register(U"gameover", U"resource/end.png");
     TextureAsset::Register(U"hitNote", U"resource/hitnote.png");
     TextureAsset::Register(U"arrow", U"resource/ya.png");
@@ -98,6 +103,7 @@ void Main() {
     ui::MyApp sceneManager;
     sceneManager
         .add<ui::Title>(ui::SceneName::TITLE)
+        .add<ui::Authentication>(ui::SceneName::AUTHENTICATION)
         .add<ui::MusicSelect>(ui::SceneName::MUSICSELECT)
         .add<ui::Preference>(ui::SceneName::PREFERENCE)
         .add<ui::Play>(ui::SceneName::PLAY)
