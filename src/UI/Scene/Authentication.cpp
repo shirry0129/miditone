@@ -46,13 +46,19 @@ namespace ui{
                     getData().userName = Unicode::Widen(response.parsed_body().name);
                 } else {
                     isFailed = true;
+                    getData().userName = U"Guest";
                     const auto& error = result.failed_value();
                     Logger << U"error      : " << Unicode::Widen(error.body());
                 }
             }
         }
         
-        if ((!authed && gameinfo::back.down()) || (authed && gameinfo::decide.down())) {
+        if (!authed && gameinfo::back.down()) {
+            getData().userName = U"Guest";
+            changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
+        }
+        
+        if (authed && gameinfo::decide.down()) {
             changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
         }
     }
