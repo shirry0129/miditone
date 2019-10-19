@@ -37,8 +37,8 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::fontColor);
-        FontAsset(U"infoFont")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::fontColor);
+        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
+        FontAsset(U"infoFont")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
     }
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, score::Difficulty currentDiff) const {
@@ -68,8 +68,8 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::fontColor);
-        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::fontColor);
+        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
+        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
     }
     
     ui::PrefItem PrefBox::getEntry() const {
@@ -189,35 +189,32 @@ namespace ui{
         TextureAsset(U"preference").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0);
         FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
-        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::fontColor);
+        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         
         for (auto [i, rect] : Indexed(instructionBox)) {
+            rect(TextureAsset(U"instBack")).draw();
             switch (i) {
                 case 0:
-                    rect(TextureAsset(U"instBack")).draw();
                     if (adjustment) {
-                        FontAsset(U"infoFont")(U"Down").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                        FontAsset(U"infoFont")(U"Down").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }else{
-                        FontAsset(U"infoFont")(U"Prev").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                        FontAsset(U"infoFont")(U"Prev").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 1:
-                    rect(TextureAsset(U"instBack")).draw();
                     if (adjustment) {
-                        FontAsset(U"infoFont")(U"Up").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                        FontAsset(U"infoFont")(U"Up").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }else{
-                        FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                        FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 2:
-                    rect(TextureAsset(U"instBack")).draw();
                     if (!adjustment) {
-                        FontAsset(U"infoFont")(U"Select").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                        FontAsset(U"infoFont")(U"Select").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 3:
-                    rect(TextureAsset(U"instBack")).draw();
-                    FontAsset(U"infoFont")(U"Back").drawAt(rect.center() + Vec2(0, 25), Color(U"#061e38"));
+                    FontAsset(U"infoFont")(U"Back").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     break;
                 default:
                     break;

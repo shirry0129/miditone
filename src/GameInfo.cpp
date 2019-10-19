@@ -17,7 +17,8 @@ const Color gameinfo::backGroundColor = Palette::Yellow;
 
 const Color gameinfo::fadeColor = Palette::White;
 
-const Color gameinfo::fontColor = Palette::Paleturquoise;
+const Color gameinfo::defaultFontColor = Palette::Paleturquoise;
+const Color gameinfo::infoFontColor = Color(U"#051e38");
 
 const Color gameinfo::easy = Palette::Limegreen;
 const Color gameinfo::normal = Palette::Darkorange;

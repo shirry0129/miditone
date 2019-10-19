@@ -22,7 +22,8 @@ struct gameinfo {
     
     static const Color fadeColor;
     
-    static const Color fontColor;
+    static const Color defaultFontColor;
+    static const Color infoFontColor;
     
     static const Color easy;
     static const Color normal;
