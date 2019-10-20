@@ -43,7 +43,20 @@ namespace ui{
                 
                 if (result) {
                     const auto& response = result.success_value();
-                    getData().userName = Unicode::Widen(response.parsed_body().name);
+                    getData().userName = Unicode::Widen(response.parsed_body().user.name);
+                    try {
+                        getData().speed = response.parsed_body().button_pref.note_speed.value();
+                    } catch (std::exception e) {
+                        Logger << U"noteSpped:" << Unicode::Widen(e.what());
+                        getData().speed = 7.5;
+                    }
+                    
+                    try {
+                        getData().decisionVolume = response.parsed_body().button_pref.se_volume.value();
+                    } catch (std::exception e) {
+                        Logger << U"seVolume:" << Unicode::Widen(e.what());
+                        getData().decisionVolume = 8;
+                    }
                 } else {
                     isFailed = true;
                     getData().userName = U"Guest";
