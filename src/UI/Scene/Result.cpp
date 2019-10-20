@@ -49,8 +49,14 @@ namespace ui{
     void Result::draw() const {
         ClearPrint();
         TextureAsset(U"result").drawAt(::gameinfo::originalScreenCenter);
-        TextureAsset(U"track").draw(0, 0);
-        FontAsset(U"80_bold")(getData().trackCount).drawAt(273, 66, Palette::Darkslategray);
+        
+        {
+            Transformer2D scaler(Mat3x2::Scale(gameinfo::scale, Vec2(0, 0)));
+            TextureAsset(U"name").draw(0, 0);
+            TextureAsset(U"track").draw(25, 115);
+            FontAsset(U"80_bold")(getData().trackCount).drawAt(296, 180, Palette::Darkslategray);
+            FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
+        }
         FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         FontAsset(U"100_bold")(Pad(getData().resultScore.at(getData().trackCount - 1), {7, U'0'})).draw(601, 217, gameinfo::defaultFontColor);
         drawDecision({300, 354});

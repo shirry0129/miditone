@@ -30,6 +30,12 @@ void TotalResult::update() {
 
 void TotalResult::draw() const {
     TextureAsset(U"totalResult").drawAt(::gameinfo::originalScreenCenter);
+    
+    {
+        Transformer2D scaler(Mat3x2::Scale(gameinfo::scale, Vec2(0, 0)));
+        TextureAsset(U"name").draw(0, 0);
+        FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
+    }
     FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
     
     for (auto [i, rect] : Indexed(instructionBox)) {
@@ -88,8 +94,8 @@ void TotalResult::drawTrack(const s3d::Vec2 &pos, size_t track) const {
     FontAsset(U"30")(U"Track {}"_fmt(track + 1)).draw(pos + Vec2(20, 10), gameinfo::defaultFontColor);
     FontAsset(U"30")(diff).draw(Arg::topRight(pos + Vec2(380, 10)), diffColor);
     albumArt.at(track).resized(260).draw(pos + Vec2(70, FontAsset(U"30").height() + 10));
-    compressedDisplay(pos + Vec2(200, 300 + FontAsset(U"30").height()), FontAsset(U"totalSong"), getData().resultSongInfo.at(track).first.songInfo.title());
-    compressedDisplay(pos + Vec2(200, 350 + FontAsset(U"30").height()), FontAsset(U"totalArtist"), getData().resultSongInfo.at(track).first  .songInfo.artist());
+    compressedDisplay(pos + Vec2(200, 300 + FontAsset(U"30").height()), FontAsset(U"45_bold"), getData().resultSongInfo.at(track).first.songInfo.title());
+    compressedDisplay(pos + Vec2(200, 350 + FontAsset(U"30").height()), FontAsset(U"30"), getData().resultSongInfo.at(track).first  .songInfo.artist());
     FontAsset(U"50_bold")(Pad(getData().resultScore.at(track), {7, U'0'})).drawAt(pos + Vec2(200, 310 + FontAsset(U"30").height() + FontAsset(U"30_bold").height() + FontAsset(U"30").height()), gameinfo::defaultFontColor);
 }
 

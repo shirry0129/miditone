@@ -42,3 +42,5 @@ const size_t gameinfo::maxPoint = 1000000;
 const int32 gameinfo::fadeTime = 1000;
 
 const SecondsF gameinfo::exFadeTime = 3s;
+
+const float gameinfo::scale = 0.8;

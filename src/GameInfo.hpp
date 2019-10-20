@@ -47,6 +47,8 @@ struct gameinfo {
     static const int32 fadeTime;
     
     static const SecondsF exFadeTime;
+    
+    static const float scale;
 };
 
 #endif /* GameInfo_h */

@@ -254,13 +254,14 @@ namespace ui{
     }
     
     void Play::drawScore(const s3d::Vec2 &trPos) const {
-        Transformer2D t(Mat3x2::Scale(1.1, trPos));
+//        Transformer2D t(Mat3x2::Scale(1.1, trPos));
         TextureAsset(U"score").draw(Arg::topRight(trPos));
-        FontAsset(U"50_bold")(U"{:0>7.0f}"_fmt(point)).draw(trPos - Vec2(307, -61), Color(U"#c4effd"));
-        FontAsset(U"15")(decision.criticalCount).draw(trPos - Vec2(459, -151), Color(U"#c4effd"));
-        FontAsset(U"15")(decision.correctCount).draw(trPos - Vec2(302, -151), Color(U"#c4effd"));
-        FontAsset(U"15")(decision.niceCount).draw(trPos - Vec2(185, -151), Color(U"#c4effd"));
-        FontAsset(U"15")(decision.missCount).draw(trPos - Vec2(81, -151), Color(U"#c4effd"));
+        FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = trPos - Vec2(541, -44), gameinfo::defaultFontColor);
+        FontAsset(U"50_bold")(U"{:0>7.0f}"_fmt(point)).draw(Arg::leftCenter = trPos - Vec2(288, -157), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.criticalCount).draw(Arg::leftCenter = trPos - Vec2(442, -221), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.correctCount).draw(Arg::leftCenter = trPos - Vec2(286, -221), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.niceCount).draw(Arg::leftCenter = trPos - Vec2(166, -221), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.missCount).draw(Arg::leftCenter = trPos - Vec2(62, -221), Color(U"#c4effd"));
     }
     
 
