@@ -203,7 +203,7 @@ namespace ui{
         TextureAsset(U"play").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0, Color(100, 201, 235));
         FontAsset(U"80_bold")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
-        drawSongInfo({0, 130});
+        drawSongInfo({-10, 100});
         drawScore({::gameinfo::originalResolution.x, 0});
         
         LaneBG::getInstance().draw();
@@ -254,7 +254,6 @@ namespace ui{
     }
     
     void Play::drawScore(const s3d::Vec2 &trPos) const {
-//        Transformer2D t(Mat3x2::Scale(1.1, trPos));
         TextureAsset(U"score").draw(Arg::topRight(trPos));
         FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = trPos - Vec2(541, -44), gameinfo::defaultFontColor);
         FontAsset(U"50_bold")(U"{:0>7.0f}"_fmt(point)).draw(Arg::leftCenter = trPos - Vec2(288, -157), Color(U"#c4effd"));
