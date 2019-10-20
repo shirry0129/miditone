@@ -34,24 +34,16 @@ void Main() {
     Scene::SetBackground(gameinfo::backGroundColor);
     System::SetTerminationTriggers(UserAction::CloseButtonClicked);
     
-    FontAsset::Register(U"countDown", 100, Typeface::Bold);
-    FontAsset::Register(U"songTitle", 50, Typeface::Bold);
-    FontAsset::Register(U"musicInfo", 30);
-    FontAsset::Register(U"trackFont", 80, Typeface::Bold);
-    FontAsset::Register(U"prefFont", 50, Typeface::Bold);
-    FontAsset::Register(U"infoFont", 50);
-    FontAsset::Register(U"songInfo", 30, Typeface::Bold);
-    FontAsset::Register(U"artistInfo", 15);
-    FontAsset::Register(U"diffInfo", 45, Typeface::Bold);
-    FontAsset::Register(U"scoreFont", 50, Typeface::Bold);
-    FontAsset::Register(U"countFont", 15);
-    FontAsset::Register(U"effectFont", 30, Typeface::Bold);
-    FontAsset::Register(U"comboFont", 200);
-    FontAsset::Register(U"resultScore", 100, Typeface::Bold);
-    FontAsset::Register(U"decisionFont", 70);
-    FontAsset::Register(U"totalTrackNum", 30);
-    FontAsset::Register(U"totalSong", 45, Typeface::Bold);
-    FontAsset::Register(U"totalArtist", 30);
+    FontAsset::Register(U"15", 15); // artistInfo, countFont
+    FontAsset::Register(U"30", 30); // musicInfo, totalTrackNum, totalArtist
+    FontAsset::Register(U"30_bold", 30, Typeface::Bold); // effectFont, songInfo
+    FontAsset::Register(U"45_bold", 45, Typeface::Bold); // diffInfo, totalSong
+    FontAsset::Register(U"50", 50); // infoFont
+    FontAsset::Register(U"50_bold", 50, Typeface::Bold); // songTitle, prefFont, scoreFont
+    FontAsset::Register(U"70", 70); // decisionFont
+    FontAsset::Register(U"80_bold", 80, Typeface::Bold); // trackFont,
+    FontAsset::Register(U"100_bold", 100, Typeface::Bold); // countDown, resultScore
+    FontAsset::Register(U"200", 200); // comboFont
     
 #if defined(SIV3D_TARGET_MACOS)
     TextureAsset::Register(U"gameStart", Resource(U"resource/gamestart.png"), TextureDesc::Mipped);

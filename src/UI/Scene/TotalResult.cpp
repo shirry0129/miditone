@@ -30,20 +30,20 @@ void TotalResult::update() {
 
 void TotalResult::draw() const {
     TextureAsset(U"totalResult").drawAt(::gameinfo::originalScreenCenter);
-    FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
+    FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
     
     for (auto [i, rect] : Indexed(instructionBox)) {
         rect(TextureAsset(U"instBack")).draw();
         switch (i) {
             case 2:
-                FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                FontAsset(U"50")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                 break;
             default:
                 break;
         }
     }
     
-    FontAsset(U"resultScore")(getData().resultScore.sum()).draw(Arg::leftCenter(953, 276), gameinfo::defaultFontColor);
+    FontAsset(U"100_bold")(getData().resultScore.sum()).draw(Arg::leftCenter(953, 276), gameinfo::defaultFontColor);
     
     for (auto i : step(::gameinfo::totalTrack)) {
         drawTrack({320 + 440 * i, 350}, i);
@@ -85,11 +85,11 @@ void TotalResult::drawTrack(const s3d::Vec2 &pos, size_t track) const {
     }
     
     TextureAsset(U"boxTemplate").resized(400, 500).draw(pos);
-    FontAsset(U"totalTrackNum")(U"Track {}"_fmt(track + 1)).draw(pos + Vec2(20, 10), gameinfo::defaultFontColor);
-    FontAsset(U"totalTrackNum")(diff).draw(Arg::topRight(pos + Vec2(380, 10)), diffColor);
-    albumArt.at(track).resized(260).draw(pos + Vec2(70, FontAsset(U"totalTrackNum").height() + 10));
-    compressedDisplay(pos + Vec2(200, 300 + FontAsset(U"totalTrackNum").height()), FontAsset(U"totalSong"), getData().resultSongInfo.at(track).first.songInfo.title());
-    compressedDisplay(pos + Vec2(200, 350 + FontAsset(U"totalTrackNum").height()), FontAsset(U"totalArtist"), getData().resultSongInfo.at(track).first  .songInfo.artist());
-    FontAsset(U"scoreFont")(Pad(getData().resultScore.at(track), {7, U'0'})).drawAt(pos + Vec2(200, 310 + FontAsset(U"totalTrackNum").height() + FontAsset(U"songInfo").height() + FontAsset(U"totalArtist").height()), gameinfo::defaultFontColor);
+    FontAsset(U"30")(U"Track {}"_fmt(track + 1)).draw(pos + Vec2(20, 10), gameinfo::defaultFontColor);
+    FontAsset(U"30")(diff).draw(Arg::topRight(pos + Vec2(380, 10)), diffColor);
+    albumArt.at(track).resized(260).draw(pos + Vec2(70, FontAsset(U"30").height() + 10));
+    compressedDisplay(pos + Vec2(200, 300 + FontAsset(U"30").height()), FontAsset(U"totalSong"), getData().resultSongInfo.at(track).first.songInfo.title());
+    compressedDisplay(pos + Vec2(200, 350 + FontAsset(U"30").height()), FontAsset(U"totalArtist"), getData().resultSongInfo.at(track).first  .songInfo.artist());
+    FontAsset(U"50_bold")(Pad(getData().resultScore.at(track), {7, U'0'})).drawAt(pos + Vec2(200, 310 + FontAsset(U"30").height() + FontAsset(U"30_bold").height() + FontAsset(U"30").height()), gameinfo::defaultFontColor);
 }
 

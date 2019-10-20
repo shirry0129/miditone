@@ -133,20 +133,20 @@ namespace ui{
                     decision.criticalCount++;
                     point += pointEachNote;
                     decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
                     break;
                 case musicgame::JudgeState::BETTER:
                     decision.correctCount++;
                     point += pointEachNote * 0.8;
                     decisionEffect.add<CorrectHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
+                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
                     break;
                 case musicgame::JudgeState::GOOD:
                 case musicgame::JudgeState::NOTBAD:
                     decision.niceCount++;
                     point += pointEachNote * 0.6;
                     decisionEffect.add<NiceHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<NiceStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
+                    decisionEffect.add<NiceStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
                     break;
                 default:
                     break;
@@ -156,7 +156,7 @@ namespace ui{
                 combo = 0;
                 decision.missCount++;
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
-                decisionEffect.add<MissStrEffect>(FontAsset(U"effectFont"), effectPos - Vec2(0, 100), remainSec);
+                decisionEffect.add<MissStrEffect>(FontAsset(U"30_bold"), effectPos - Vec2(0, 100), remainSec);
             }else{
                 combo++;
                 if (combo >= decision.combo) {
@@ -185,7 +185,7 @@ namespace ui{
             if (judger.getJudgingHoldNote(l)) {
                 if (Scene::FrameCount() % 10 == 0) {
                     decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"effectFont"), effectStrPos, remainSec);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
                 }
             }
         }
@@ -202,7 +202,7 @@ namespace ui{
     void Play::draw() const {
         TextureAsset(U"play").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0, Color(100, 201, 235));
-        FontAsset(U"trackFont")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
+        FontAsset(U"80_bold")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
         drawSongInfo({0, 130});
         drawScore({::gameinfo::originalResolution.x, 0});
         
@@ -222,7 +222,7 @@ namespace ui{
             m_score.draw();
         }
         
-        FontAsset(U"comboFont")(combo).drawAt(::gameinfo::originalResolution.x/2, 700);
+        FontAsset(U"200")(combo).drawAt(::gameinfo::originalResolution.x/2, 700);
         
         decisionEffect.update();
     }
@@ -248,19 +248,19 @@ namespace ui{
         
         TextureAsset(U"song").draw(tlPos);
         albumArt.resized(192).drawAt(tlPos + Vec2(143, 156));
-        FontAsset(U"diffInfo")(diff).draw(tlPos + Vec2(248, 65), diffColor);
-        compressedDisplay(tlPos + Vec2(256, 132), FontAsset(U"songInfo"), m_file.getHeader().title);
-        compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"artistInfo"), m_file.getHeader().artist);
+        FontAsset(U"45_bold")(diff).draw(tlPos + Vec2(248, 65), diffColor);
+        compressedDisplay(tlPos + Vec2(256, 132), FontAsset(U"30_bold"), m_file.getHeader().title);
+        compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"15"), m_file.getHeader().artist);
     }
     
     void Play::drawScore(const s3d::Vec2 &trPos) const {
         Transformer2D t(Mat3x2::Scale(1.1, trPos));
         TextureAsset(U"score").draw(Arg::topRight(trPos));
-        FontAsset(U"scoreFont")(U"{:0>7.0f}"_fmt(point)).draw(trPos - Vec2(307, -61), Color(U"#c4effd"));
-        FontAsset(U"countFont")(decision.criticalCount).draw(trPos - Vec2(459, -151), Color(U"#c4effd"));
-        FontAsset(U"countFont")(decision.correctCount).draw(trPos - Vec2(302, -151), Color(U"#c4effd"));
-        FontAsset(U"countFont")(decision.niceCount).draw(trPos - Vec2(185, -151), Color(U"#c4effd"));
-        FontAsset(U"countFont")(decision.missCount).draw(trPos - Vec2(81, -151), Color(U"#c4effd"));
+        FontAsset(U"50_bold")(U"{:0>7.0f}"_fmt(point)).draw(trPos - Vec2(307, -61), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.criticalCount).draw(trPos - Vec2(459, -151), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.correctCount).draw(trPos - Vec2(302, -151), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.niceCount).draw(trPos - Vec2(185, -151), Color(U"#c4effd"));
+        FontAsset(U"15")(decision.missCount).draw(trPos - Vec2(81, -151), Color(U"#c4effd"));
     }
     
 

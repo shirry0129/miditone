@@ -76,13 +76,13 @@ namespace ui{
         
         for (auto [i, lev] : Indexed(level)) {
             Transformer2D t(Mat3x2::Scale(scale, moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale));
-            FontAsset(U"diffInfo")(lev).drawAt(moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale, Color(U"#061e38"));
+            FontAsset(U"45_bold")(lev).drawAt(moveWidth + diffBox.at(i).center() + Vec2((-95 + (int)i * 95), 230) * scale, Color(U"#061e38"));
         }
         
         Transformer2D t(Mat3x2::Scale(scale, titleCenter));
-        compressedDisplay(titleCenter, FontAsset(U"songTitle"), title);
+        compressedDisplay(titleCenter, FontAsset(U"50_bold"), title);
         t = Transformer2D(Mat3x2::Scale(scale, artistCenter));
-        compressedDisplay(artistCenter, FontAsset(U"musicInfo"), artist);
+        compressedDisplay(artistCenter, FontAsset(U"30"), artist);
     }
     
     
@@ -133,8 +133,8 @@ namespace ui{
         
         TextureAsset(U"select").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0);
-        FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
-        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
+        FontAsset(U"80_bold")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
+        FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         
         for (const auto i : step(musics.size())) {
             auto dist = std::distance(getData().scoreList.cbegin(), getData().currentMusic);
@@ -147,13 +147,13 @@ namespace ui{
             rect(TextureAsset(U"instBack")).draw();
             switch (i) {
                 case 0:
-                    FontAsset(U"infoFont")(U"Prev").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                    FontAsset(U"50")(U"Prev").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     break;
                 case 1:
-                    FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                    FontAsset(U"50")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     break;
                 case 2:
-                    FontAsset(U"infoFont")(U"Select").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                    FontAsset(U"50")(U"Select").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     break;
                 default:
                     break;

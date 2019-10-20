@@ -37,8 +37,8 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
-        FontAsset(U"infoFont")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
+        FontAsset(U"50_bold")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
+        FontAsset(U"50")(value).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
     }
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, score::Difficulty currentDiff) const {
@@ -68,8 +68,8 @@ namespace ui{
         }
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
-        FontAsset(U"prefFont")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
-        FontAsset(U"infoFont")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
+        FontAsset(U"50_bold")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
+        FontAsset(U"50")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
     }
     
     ui::PrefItem PrefBox::getEntry() const {
@@ -188,33 +188,33 @@ namespace ui{
     void Preference::draw() const {
         TextureAsset(U"preference").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0);
-        FontAsset(U"trackFont")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
-        FontAsset(U"countDown")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
+        FontAsset(U"80_bold")(getData().trackCount + 1).drawAt(273, 66, Palette::Darkslategray);
+        FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         
         for (auto [i, rect] : Indexed(instructionBox)) {
             rect(TextureAsset(U"instBack")).draw();
             switch (i) {
                 case 0:
                     if (adjustment) {
-                        FontAsset(U"infoFont")(U"Down").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"Down").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }else{
-                        FontAsset(U"infoFont")(U"Prev").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"Prev").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 1:
                     if (adjustment) {
-                        FontAsset(U"infoFont")(U"Up").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"Up").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }else{
-                        FontAsset(U"infoFont")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"Next").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 2:
                     if (!adjustment) {
-                        FontAsset(U"infoFont")(U"Select").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"Select").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 3:
-                    FontAsset(U"infoFont")(U"Back").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                    FontAsset(U"50")(U"Back").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     break;
                 default:
                     break;

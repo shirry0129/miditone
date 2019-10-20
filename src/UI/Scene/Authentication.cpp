@@ -74,12 +74,12 @@ namespace ui{
             if (isFailed) {
                 const String errorMsg = U"Network Error. Continue as Guest.";
                 Rect(Arg::center = gameinfo::originalScreenCenter, gameinfo::originalResolution.x, 100).draw(Color(Palette::Darkslategray, 200));
-                FontAsset(U"trackFont")(errorMsg).draw(Arg::center = gameinfo::originalScreenCenter, gameinfo::defaultFontColor);
+                FontAsset(U"80_bold")(errorMsg).draw(Arg::center = gameinfo::originalScreenCenter, gameinfo::defaultFontColor);
             } else {
-                FontAsset(U"countDown")(U"Welcome!").draw(Arg::center = gameinfo::originalScreenCenter - Vec2(0, 240), gameinfo::infoFontColor);
-                Rect(Arg::center = gameinfo::originalScreenCenter, gameinfo::originalResolution.x, FontAsset(U"countDown").height() * 1.75).draw(Color(Palette::Darkslategray, 200));
-                FontAsset(U"countDown")(getData().userName).draw(Arg::center = gameinfo::originalScreenCenter, gameinfo::defaultFontColor);
-                FontAsset(U"prefFont")(U"Continue with this data?").draw(Arg::center = gameinfo::originalScreenCenter + Vec2(0, 350), gameinfo::infoFontColor);
+                FontAsset(U"100_bold")(U"Welcome!").draw(Arg::center = gameinfo::originalScreenCenter - Vec2(0, 240), gameinfo::infoFontColor);
+                Rect(Arg::center = gameinfo::originalScreenCenter, gameinfo::originalResolution.x, FontAsset(U"100_bold").height() * 1.75).draw(Color(Palette::Darkslategray, 200));
+                FontAsset(U"100_bold")(getData().userName).draw(Arg::center = gameinfo::originalScreenCenter, gameinfo::defaultFontColor);
+                FontAsset(U"50_bold")(U"Continue with this data?").draw(Arg::center = gameinfo::originalScreenCenter + Vec2(0, 350), gameinfo::infoFontColor);
             }
         }
         
@@ -88,12 +88,12 @@ namespace ui{
             switch (i) {
                 case 2:
                     if (authed) {
-                        FontAsset(U"infoFont")(U"OK").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"OK").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 case 3:
                     if (!authed) {
-                        FontAsset(U"infoFont")(U"Guest").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                        FontAsset(U"50")(U"Guest").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
                 default:

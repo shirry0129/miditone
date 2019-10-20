@@ -49,7 +49,7 @@ namespace ui{
     
     void Title::draw() const {
 		TextureAsset(U"title").drawAt(::gameinfo::originalScreenCenter);
-        FontAsset(U"infoFont")(U"Press Any Button").drawAt(::gameinfo::originalScreenCenter + Vec2(0, 440), ColorF(gameinfo::defaultFontColor, Periodic::Sine0_1(1.5s)));
+        FontAsset(U"50")(U"Press Any Button").drawAt(::gameinfo::originalScreenCenter + Vec2(0, 440), ColorF(gameinfo::defaultFontColor, Periodic::Sine0_1(1.5s)));
     }
 
 }
