@@ -23,6 +23,7 @@ namespace ui {
         Array<Rect> instructionBox;
         
         bool authed, isFailed;
+        const INIData settings;
         
     public:
         Authentication(const InitData& init);

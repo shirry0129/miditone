@@ -11,9 +11,6 @@ namespace ui{
 
     Title::Title(const InitData& init):IScene(init) {
         getData().trackCount = 0;
-        getData().decisionVolume = 8;
-        getData().speed = 7.5;
-        getData().currentDiff = 1;
         getData().resultSongInfo.clear();
         getData().resultScore.clear();
         getData().decisionCount.clear();

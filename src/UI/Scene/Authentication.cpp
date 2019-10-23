@@ -13,12 +13,13 @@ namespace ui{
     IScene(init),
     cam(0),
     authed(false),
-    isFailed(false)
+    isFailed(false),
+    settings(U"../settings.ini")
     {
-        const INIData authData(U"../settings.ini");
+        getData().client.destination(settings[U"auth.host"].narrow(), settings[U"auth.port"].narrow());
+        getData().client.token(settings[U"auth.token"].narrow());
         
-        getData().client.destination(authData[U"auth.host"].narrow(), authData[U"auth.port"].narrow());
-        getData().client.token(authData[U"auth.token"].narrow());
+        getData().currentDiff = Parse<size_t>(settings[U"defaultValue.difficulty"]);
         
         cam.setResolution(DisplayResolution::SVGA_800x600);
         if (!cam.start()) {
@@ -43,31 +44,41 @@ namespace ui{
                 
                 if (result) {
                     const auto& response = result.success_value();
-                    getData().userName = Unicode::Widen(response.parsed_body().user.name);
-                    try {
-                        getData().speed = response.parsed_body().button_pref.note_speed.value();
-                    } catch (std::exception e) {
-                        Logger << U"noteSpped:" << Unicode::Widen(e.what());
-                        getData().speed = 7.5;
-                    }
-                    
-                    try {
-                        getData().decisionVolume = response.parsed_body().button_pref.se_volume.value();
-                    } catch (std::exception e) {
-                        Logger << U"seVolume:" << Unicode::Widen(e.what());
-                        getData().decisionVolume = 8;
+                    if (response.status() == http::http_status::ok) {
+                        getData().userName = Unicode::Widen(response.parsed_body().user.name);
+                        try {
+                            getData().speed = response.parsed_body().button_pref.note_speed.value();
+                        } catch(std::exception e) {
+                            getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
+                        }
+                        
+                        try {
+                            getData().decisionVolume = response.parsed_body().button_pref.se_volume.value();
+                        } catch(std::exception e) {
+                            getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
+                        }
+                    } else {
+                        isFailed = true;
+                        Logger << U"status error   : " << response.status_code();
                     }
                 } else {
                     isFailed = true;
-                    getData().userName = U"Guest";
                     const auto& error = result.failed_value();
                     Logger << U"error      : " << Unicode::Widen(error.body());
+                }
+                
+                if (isFailed) {
+                    getData().userName = U"Guest";
+                    getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
+                    getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
                 }
             }
         }
         
-        if (!authed && gameinfo::back.down()) {
+        if (gameinfo::back.down()) {
             getData().userName = U"Guest";
+            getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
+            getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
             changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
         }
         
@@ -105,7 +116,7 @@ namespace ui{
                     }
                     break;
                 case 3:
-                    if (!authed) {
+                    if (!isFailed) {
                         FontAsset(U"50")(U"Guest").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
                     }
                     break;
