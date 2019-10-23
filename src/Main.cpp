@@ -1,4 +1,4 @@
-
+﻿
 # include <Siv3D.hpp> // OpenSiv3D v0.4.0
 #include "GameInfo.hpp"
 #include "UI/Scene/Common.hpp"

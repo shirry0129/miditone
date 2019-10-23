@@ -18,7 +18,7 @@ public:
         explicit BadAccess(const char* method_name) {
             using namespace std::literals::string_literals;
 
-            msg_ = u8"Bad Access in `"s + method_name + u8"' method of `Result' class.\n";
+            msg_ = "Bad Access in `"s + method_name + "' method of `Result' class.\n";
         }
 
         const char* what() const noexcept override {
@@ -81,7 +81,7 @@ public:
         if (is_success_)
             return std::get<success_type>(result_.value());
         else
-            throw BadAccess(u8"success_value");
+            throw BadAccess("success_value");
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public:
         if (is_success_)
             return std::move(std::get<success_type>(result_.value()));
         else
-            throw BadAccess(u8"success_value");
+            throw BadAccess("success_value");
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public:
         if (is_success_)
             return std::get<success_type>(result_.value());
         else
-            throw BadAccess(u8"success_value");
+            throw BadAccess("success_value");
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public:
         if (is_success_)
             return std::move(std::get<success_type>(result_.value()));
         else
-            throw BadAccess(u8"success_value");
+            throw BadAccess("success_value");
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public:
         if (!is_success_ && result_.has_value())
             return std::get<failed_type>(result_.value());
         else
-            throw BadAccess(u8"failed_value");
+            throw BadAccess("failed_value");
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public:
         if (!is_success_ && result_.has_value())
             return std::move(std::get<failed_type>(result_.value()));
         else
-            throw BadAccess(u8"failed_value");
+            throw BadAccess("failed_value");
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ public:
         if (!is_success_ && result_.has_value())
             return std::get<failed_type>(result_.value());
         else
-            throw BadAccess(u8"failed_value");
+            throw BadAccess("failed_value");
     }
 
     /// <summary>
@@ -151,7 +151,7 @@ public:
         if (!is_success_ && result_.has_value())
             return std::move(std::get<failed_type>(result_.value()));
         else
-            throw BadAccess(u8"failed_value");
+            throw BadAccess("failed_value");
     }
 
     /// <summary>
