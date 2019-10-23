@@ -6,7 +6,11 @@
 #include "UI/Scene/Authentication.hpp"
 #include "UI/Scene/MusicSelect.hpp"
 #include "UI/Scene/Preference.hpp"
-#include "UI/Scene/Play.hpp"
+#if defined(MIDITONE_WIIBALANCEBOARD)
+#include "UI/Scene/BalanceBoardPlay.hpp"
+#else
+#include "UI/Scene/ButtonPlay.hpp"
+#endif
 #include "UI/Scene/Result.hpp"
 #include "UI/Scene/TotalResult.hpp"
 #include "UI/Scene/GameOver.hpp"
@@ -70,7 +74,7 @@ void Main() {
     TextureAsset::Register(U"gameStart", U"resource/gamestart.png", TextureDesc::Mipped);
     TextureAsset::Register(U"boxTemplate", U"resource/box.png", TextureDesc::Mipped);
     TextureAsset::Register(U"title", U"resource/title.jpg");
-    TextureAsset::Resource(U"login", U"resource/login.png");
+    TextureAsset::Register(U"login", U"resource/login.png");
     TextureAsset::Register(U"select", U"resource/select.jpg");
     TextureAsset::Register(U"preference", U"resource/preference.jpg");
     TextureAsset::Register(U"play", U"resource/play.jpg");
@@ -98,7 +102,11 @@ void Main() {
         .add<ui::Authentication>(ui::SceneName::AUTHENTICATION)
         .add<ui::MusicSelect>(ui::SceneName::MUSICSELECT)
         .add<ui::Preference>(ui::SceneName::PREFERENCE)
-        .add<ui::Play>(ui::SceneName::PLAY)
+#if defined(MIDITONE_WIIBALANCEBOARD)
+        .add<ui::BalanceBoardPlay>(ui::SceneName::PLAY)
+#else
+        .add<ui::ButtonPlay>(ui::SceneName::PLAY)
+#endif
         .add<ui::Result>(ui::SceneName::RESULT)
         .add<ui::TotalResult>(ui::SceneName::TOTALRESULT)
         .add<ui::GameOver>(ui::SceneName::GAMEOVER)

@@ -1,11 +1,11 @@
-//
+﻿//
 //  Play.cpp
 //  MusicGame
 //
 //  Created by Shimizu Yuta on 2018/10/08.
 //
 
-#include "Play.hpp"
+#include "ButtonPlay.hpp"
 #include "../../GameInfo.hpp"
 #include "../JudgeEffect.hpp"
 #include "../JudgeStrEffect.hpp"
@@ -13,11 +13,16 @@
 
 namespace ui{
 
-    Play::Play(const InitData& init):
+    ButtonPlay::ButtonPlay(const InitData& init):
     IScene(init),
     m_song(getData().currentMusic->musicPath),
+#if defined(SIV3D_TARGET_MACOS)
     beatSound(Resource(U"resource/forSystem/beats.mp3")),
     hitSound(Resource(U"resource/forSystem/hitSound.wav")),
+#elif defined(SIV3D_TARGET_WINDOWS)
+    beatSound(U"resource/forSystem/beats.mp3"),
+    hitSound(U"resource/forSystem/hitSound.wav"),
+#endif
     combo(0),
     point(0),
     maxWidth(270),
@@ -74,12 +79,12 @@ namespace ui{
         writeShineImage(buf);
         shine = Texture(buf);
         
-        m_song.setVolume(0.5);
+        m_song.setVolume(0.8);
         
         time.start();
     }
     
-    void Play::compressedDisplay(const s3d::Vec2 &pos, const s3d::Font &assetInfo, const s3d::String &string) const {
+    void ButtonPlay::compressedDisplay(const s3d::Vec2 &pos, const s3d::Font &assetInfo, const s3d::String &string) const {
         auto _region = assetInfo(string).region();
         
         if (_region.w > maxWidth) {
@@ -94,7 +99,7 @@ namespace ui{
         }
     }
     
-    void Play::update() {
+    void ButtonPlay::update() {
         time.update();
         
         if (time.onTriggered(U"Draw")) {
@@ -124,29 +129,25 @@ namespace ui{
                 shineEffect = false;
             }
             
-            if (isinf(remainSec)) {
-                Print << U"oops";
-            }
-            
             switch (r->result.getJudge()) {
                 case musicgame::JudgeState::BEST:
                     decision.criticalCount++;
                     point += pointEachNote;
                     decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec, 0);
                     break;
                 case musicgame::JudgeState::BETTER:
                     decision.correctCount++;
                     point += pointEachNote * 0.8;
                     decisionEffect.add<CorrectHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
+                    decisionEffect.add<CorrectStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec, 0);
                     break;
                 case musicgame::JudgeState::GOOD:
                 case musicgame::JudgeState::NOTBAD:
                     decision.niceCount++;
                     point += pointEachNote * 0.6;
                     decisionEffect.add<NiceHitEffect>(shine, effectPos, remainSec, shineEffect);
-                    decisionEffect.add<NiceStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
+                    decisionEffect.add<NiceStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec, 0);
                     break;
                 default:
                     break;
@@ -156,7 +157,7 @@ namespace ui{
                 combo = 0;
                 decision.missCount++;
                 m_score.deleteJudgedNote(r->lane, r->indexInLane);
-                decisionEffect.add<MissStrEffect>(FontAsset(U"30_bold"), effectPos - Vec2(0, 100), remainSec);
+                decisionEffect.add<MissStrEffect>(FontAsset(U"30_bold"), effectPos - Vec2(0, 100), remainSec, 0);
             }else{
                 combo++;
                 if (combo >= decision.combo) {
@@ -185,7 +186,7 @@ namespace ui{
             if (judger.getJudgingHoldNote(l)) {
                 if (Scene::FrameCount() % 10 == 0) {
                     decisionEffect.add<CriticalHitEffect>(shine, effectPos, remainSec, false);
-                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec);
+                    decisionEffect.add<CriticalStrEffect>(FontAsset(U"30_bold"), effectStrPos, remainSec, 0);
                 }
             }
         }
@@ -196,10 +197,10 @@ namespace ui{
             getData().decisionCount.push_back(decision);
             getData().resultScore.push_back(point);
             changeScene(SceneName::RESULT, gameinfo::fadeTime);
-        };
+        }
     }
     
-    void Play::draw() const {
+    void ButtonPlay::draw() const {
         TextureAsset(U"play").drawAt(::gameinfo::originalScreenCenter);
         TextureAsset(U"track").draw(0, 0, Color(100, 201, 235));
         FontAsset(U"80_bold")(getData().trackCount).drawAt(273, 66, Color(U"#1e3333"));
@@ -227,7 +228,7 @@ namespace ui{
         decisionEffect.update();
     }
     
-    void Play::drawSongInfo(const s3d::Vec2 &tlPos) const {
+    void ButtonPlay::drawSongInfo(const s3d::Vec2 &tlPos) const {
         String diff;
         Color diffColor;
         
@@ -253,7 +254,7 @@ namespace ui{
         compressedDisplay(tlPos + Vec2(256, 209), FontAsset(U"15"), m_file.getHeader().artist);
     }
     
-    void Play::drawScore(const s3d::Vec2 &trPos) const {
+    void ButtonPlay::drawScore(const s3d::Vec2 &trPos) const {
         TextureAsset(U"score").draw(Arg::topRight(trPos));
         FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = trPos - Vec2(541, -44), gameinfo::defaultFontColor);
         FontAsset(U"50_bold")(U"{:0>7.0f}"_fmt(point)).draw(Arg::leftCenter = trPos - Vec2(288, -157), Color(U"#c4effd"));

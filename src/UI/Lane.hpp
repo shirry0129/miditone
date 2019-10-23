@@ -12,7 +12,7 @@
 
 namespace ui {
     constexpr int laneEnd = 1000;
-    constexpr int numObLane = 4;
+    constexpr int numOfLane = 4;
     constexpr int interval = 300;
     constexpr int leftEnd = 360;
     

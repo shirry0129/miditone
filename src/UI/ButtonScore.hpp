@@ -1,4 +1,4 @@
-//
+﻿//
 //  Score.hpp
 //  MusicGame
 //
@@ -9,7 +9,7 @@
 #define Score_hpp
 
 #include <Siv3D.hpp>
-#include "Note.hpp"
+#include "ButtonNote.hpp"
 #include "../System/SystemScore.hpp"
 
 namespace ui {
@@ -27,19 +27,19 @@ namespace ui {
         void draw() const;
     };
     
-    class Score {
+    class ButtonScore {
     private:
-        Array<Array<HitNote>> hit;
-        Array<Array<HoldNote>> hold;
-        Array<Array<Note*>> score;
+        Array<Array<ButtonHitNote>> hit;
+        Array<Array<ButtonHoldNote>> hold;
+        Array<Array<ButtonNote*>> score;
         Array<Bar> bar;
         float wakeUpTime;
         float acceleration;
         
     public:
-        Score();
-        Score(const score::SystemScore& _fromFile, float _speed);
-        ~Score() = default;
+        ButtonScore();
+        ButtonScore(const score::SystemScore& _fromFile, float _speed);
+        ~ButtonScore() = default;
         void setFromFile(const score::SystemScore& _fromFile, float _speed);
         float getWakeUpTime() const;
         void deleteJudgedNote(size_t _lane, int spot);

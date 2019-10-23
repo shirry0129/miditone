@@ -1,27 +1,25 @@
+﻿//
+//  BaranceBoardPlay.hpp
+//  empty
 //
-//  Play.hpp
-//  MusicGame
-//
-//  Created by Shimizu Yuta on 2018/10/08.
+//  Created by Shimizu Yuta on 2019/10/20.
 //
 
-#ifndef Play_hpp
-#define Play_hpp
+#ifndef BaranceBoardPlay_hpp
+#define BaranceBoardPlay_hpp
 
 #include "Common.hpp"
-#include "../Lane.hpp"
-#include "../Score.hpp"
-#include "../Note.hpp"
+#include "../BalanceBoardScore.hpp"
 #include "../../System/SystemScore.hpp"
 #include "../../System/EventTimer.hpp"
 #include "../../System/TimingJudge.hpp"
 
-namespace ui{
+namespace ui {
 
-    class Play : public MyApp::Scene {
+    class BalanceBoardPlay : public MyApp::Scene {
     private:
         score::SystemScore m_file;
-        ui::Score m_score;
+        ui::BalanceBoardScore m_score;
         musicgame::TimingJudge judger;
         double measureLength;
         double delay;
@@ -29,7 +27,6 @@ namespace ui{
         const Audio m_song;
         const Audio beatSound;
         const Audio hitSound;
-//        Audio holdSound;
         EventTimer time;
         DecisionInfo decision;
         double pointEachNote;
@@ -42,17 +39,20 @@ namespace ui{
         size_t maxWidth;
         bool isDrawable;
         
+        Circle decisionLine;
+        Array<double> laneAngle;
+        Array<double> effectAngle;
+        
         void drawSongInfo(const Vec2& tlPos) const;
         void drawScore(const Vec2& trPos) const;
-        
-        void compressedDisplay(const s3d::Vec2 &pos, const s3d::Font &assetInfo, const s3d::String &string) const;
+        void compressedDisplay(const Vec2 &pos,const Font &assetInfo, const String &string) const;
         
     public:
-        Play(const InitData& init);
+        BalanceBoardPlay(const InitData& init);
         void update() override;
         void draw() const override;
     };
-    
+
 }
 
-#endif /* Play_hpp */
+#endif /* BaranceBoardPlay_hpp */

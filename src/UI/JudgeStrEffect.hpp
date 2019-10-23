@@ -1,4 +1,4 @@
-//
+﻿//
 //  JudgeStrEffect.hpp
 //  MusicGame
 //
@@ -20,7 +20,7 @@ namespace ui {
 		static constexpr double floatingHeight = 100;
 
 		JudgeStrEffect(
-			const Font& _font, const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color
+			const Font& _font, const String& _str, const Vec2& _fromPos, double _remainSec, const Color& _color, double _angle
 		) noexcept;
 
 		virtual bool update(double t) override;
@@ -32,6 +32,7 @@ namespace ui {
 		const Vec2 fromPos;
 		const double remainSec;
 		const Color color;
+        const double angle;
 		
 	};
 	
@@ -40,7 +41,7 @@ namespace ui {
 	struct _1stJudgeStrEffect : JudgeStrEffect {
 	
 		_1stJudgeStrEffect(
-			const Font& _font, const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec, double _angle
 		) noexcept;
 
 	};
@@ -49,7 +50,7 @@ namespace ui {
 	struct _2ndJudgeStrEffect : JudgeStrEffect {
 	
 		_2ndJudgeStrEffect(
-			const Font& _font, const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec, double _angle
 		) noexcept;
 
 	};
@@ -58,7 +59,7 @@ namespace ui {
 	struct _3rdJudgeStrEffect : JudgeStrEffect {
 	
 		_3rdJudgeStrEffect(
-			const Font& _font, const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec, double _angle
 		) noexcept;
 
 	};
@@ -66,7 +67,7 @@ namespace ui {
 	struct MissJudgeStrEffect : JudgeStrEffect {
 	
 		MissJudgeStrEffect(
-			const Font& _font, const Vec2& _fromPos, double _remainSec
+			const Font& _font, const Vec2& _fromPos, double _remainSec, double _angle
 		) noexcept;
 
 	};

@@ -1,11 +1,11 @@
-//
+﻿//
 //  Score.cpp
 //  MusicGame
 //
 //  Created by Shimizu Yuta on 2018/09/27.
 //
 
-#include "Score.hpp"
+#include "ButtonScore.hpp"
 #include "../GameInfo.hpp"
 
 namespace ui {
@@ -39,19 +39,19 @@ namespace ui {
     
     
     
-    Score::Score():
-    hit(numObLane),
-    hold(numObLane),
-    score(numObLane){}
+    ButtonScore::ButtonScore():
+    hit(numOfLane),
+    hold(numOfLane),
+    score(numOfLane){}
     
-    Score::Score(const score::SystemScore& _fromFile, float _speed):
-    hit(numObLane),
-    hold(numObLane),
-    score(numObLane){
+    ButtonScore::ButtonScore(const score::SystemScore& _fromFile, float _speed):
+    hit(numOfLane),
+    hold(numOfLane),
+    score(numOfLane){
         setFromFile(_fromFile, _speed);
     }
     
-    void Score::setFromFile(const score::SystemScore& _fromFile, float _speed) {
+    void ButtonScore::setFromFile(const score::SystemScore& _fromFile, float _speed) {
         wakeUpTime = 2 * xMax / (_speed * xMax);
         acceleration = (_speed * xMax * _speed * xMax) / (2 * xMax);
         
@@ -71,7 +71,7 @@ namespace ui {
             bar.emplace_back(b.time.sec, wakeUpTime, acceleration);
         }
         
-        for(auto i:step(numObLane)){
+        for(auto i:step(numOfLane)){
             auto hitCount = hit.at(i).begin();
             auto holdCount = hold.at(i).begin();
             
@@ -102,7 +102,7 @@ namespace ui {
         }
     }
     
-    void Score::update(double currentTime) {
+    void ButtonScore::update(double currentTime) {
         for (auto &b : bar) {
             b.update(currentTime);
         }
@@ -114,7 +114,7 @@ namespace ui {
         }
     }
     
-    void Score::draw() const{
+    void ButtonScore::draw() const{
         for (auto b : bar) {
             b.draw();
         }
@@ -126,15 +126,15 @@ namespace ui {
         }
     }
     
-    void Score::deleteJudgedNote(size_t _lane, int spot) {
+    void ButtonScore::deleteJudgedNote(size_t _lane, int spot) {
         score.at(_lane).at(spot)->makeJudged();
     }
     
-    float Score::getWakeUpTime() const {
+    float ButtonScore::getWakeUpTime() const {
         return wakeUpTime;
     }
     
-    void Score::adjustJudgingNote(size_t _lane, int spot) {
+    void ButtonScore::adjustJudgingNote(size_t _lane, int spot) {
         score.at(_lane).at(spot)->makeJudging();
     }
     
