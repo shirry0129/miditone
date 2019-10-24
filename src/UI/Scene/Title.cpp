@@ -14,6 +14,7 @@ namespace ui{
         getData().resultSongInfo.clear();
         getData().resultScore.clear();
         getData().decisionCount.clear();
+        getData().isGuest = true;
         
         if (getData().scoreList.isEmpty()) {
             for (const auto& songDir : FileSystem::DirectoryContents(U"../Score").filter(FileSystem::IsDirectory)) {

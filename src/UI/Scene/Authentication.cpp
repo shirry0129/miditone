@@ -45,15 +45,24 @@ namespace ui{
                 if (result) {
                     const auto& response = result.success_value();
                     if (response.status() == http::http_status::ok) {
-                        getData().userName = Unicode::Widen(response.parsed_body().user.name);
+                        getData().isGuest = false;
+                        getData().user = response.parsed_body().user;
                         try {
+#if defined(MIDITONE_WIIBALANCEBOARD)
+                            getData().speed = response.parsed_body().board_pref.note_speed.value();
+#else
                             getData().speed = response.parsed_body().button_pref.note_speed.value();
+#endif
                         } catch(std::exception e) {
                             getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
                         }
                         
                         try {
+#if defined(MIDITONE_WIIBALANCEBOARD)
+                            getData().decisionVolume = response.parsed_body().board_pref.se_volume.value();
+#else
                             getData().decisionVolume = response.parsed_body().button_pref.se_volume.value();
+#endif
                         } catch(std::exception e) {
                             getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
                         }
@@ -68,7 +77,7 @@ namespace ui{
                 }
                 
                 if (isFailed) {
-                    getData().userName = U"Guest";
+                    getData().user.name = "Guest";
                     getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
                     getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
                 }
@@ -76,7 +85,7 @@ namespace ui{
         }
         
         if (gameinfo::back.down()) {
-            getData().userName = U"Guest";
+            getData().user.name = "Guest";
             getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
             getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
             changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
@@ -102,7 +111,7 @@ namespace ui{
             } else {
                 FontAsset(U"100_bold")(U"Welcome!").draw(Arg::center = gameinfo::originalScreenCenter - Vec2(0, 240), gameinfo::infoFontColor);
                 Rect(Arg::center = gameinfo::originalScreenCenter, gameinfo::originalResolution.x, FontAsset(U"100_bold").height() * 1.75).draw(Color(Palette::Darkslategray, 200));
-                FontAsset(U"100_bold")(getData().userName).draw(Arg::center = gameinfo::originalScreenCenter, gameinfo::defaultFontColor);
+                FontAsset(U"100_bold")(Unicode::Widen(getData().user.name)).draw(Arg::center = gameinfo::originalScreenCenter, gameinfo::defaultFontColor);
                 FontAsset(U"50_bold")(U"Continue with this data?").draw(Arg::center = gameinfo::originalScreenCenter + Vec2(0, 350), gameinfo::infoFontColor);
             }
         }

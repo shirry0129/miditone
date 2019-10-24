@@ -19,6 +19,13 @@ maxWidth(340){
     for (auto i : step(4)) {
         instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
     }
+    
+#if defined(MIDITONE_WIIBALANCEBOARD)
+    getData().client.put_board_preference(getData().user.qrcode, getData().speed, getData().decisionVolume);
+#else
+    getData().client.put_button_preference(getData().user.qrcode, getData().speed, getData().decisionVolume);
+#endif
+    
     countDown.start();
 }
 
@@ -34,7 +41,7 @@ void TotalResult::draw() const {
     {
         Transformer2D scaler(Mat3x2::Scale(gameinfo::scale, Vec2(0, 0)));
         TextureAsset(U"name").draw(0, 0);
-        FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
+        FontAsset(U"45_bold")(Unicode::Widen(getData().user.name)).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
     }
     FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
     

@@ -57,7 +57,8 @@ namespace ui{
         Array<std::pair<ScoreData, score::Difficulty>> resultSongInfo;
         Array<size_t> resultScore;
         api_client::MiditoneClient client;
-        String userName;
+        api_client::response::user_attr user;
+        bool isGuest;
     };
     
     enum class SceneName {

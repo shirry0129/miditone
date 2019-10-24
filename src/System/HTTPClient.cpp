@@ -1,5 +1,6 @@
 ﻿#include "HTTPClient.hpp"
 
+
 namespace http {
 
     ConnectionError::ConnectionError(const string_type& message) : message_(message) {}
@@ -71,6 +72,7 @@ namespace http {
 
     Request& Request::set_body(const string_type& value) {
         request_.body() = value;
+        set(field::content_length, std::to_string(value.size()));
 
         return *this;
     }

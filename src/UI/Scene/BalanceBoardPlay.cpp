@@ -254,7 +254,7 @@ void BalanceBoardPlay::drawSongInfo(const s3d::Vec2 &tlPos) const {
 
 void BalanceBoardPlay::drawScore(const s3d::Vec2 &trPos) const {
     TextureAsset(U"score").draw(Arg::topRight(trPos));
-    FontAsset(U"45_bold")(getData().userName).draw(Arg::topLeft = trPos - Vec2(541, -44), gameinfo::defaultFontColor);
+    FontAsset(U"45_bold")(Unicode::Widen(getData().user.name)).draw(Arg::topLeft = trPos - Vec2(541, -44), gameinfo::defaultFontColor);
     FontAsset(U"50_bold")(U"{:0>7.0f}"_fmt(point)).draw(Arg::leftCenter = trPos - Vec2(288, -157), Color(U"#c4effd"));
     FontAsset(U"15")(decision.criticalCount).draw(Arg::leftCenter = trPos - Vec2(442, -221), Color(U"#c4effd"));
     FontAsset(U"15")(decision.correctCount).draw(Arg::leftCenter = trPos - Vec2(286, -221), Color(U"#c4effd"));
