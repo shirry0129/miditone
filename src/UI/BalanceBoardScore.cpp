@@ -7,6 +7,7 @@
 
 #include "BalanceBoardScore.hpp"
 #include "Lane.hpp"
+#include "../GameInfo.hpp"
 
 using namespace ui;
 
@@ -86,7 +87,7 @@ void BalanceBoardScore::update(double currentTime) {
     };
 }
 
-void BalanceBoardScore::draw() const { 
+void BalanceBoardScore::draw() const {
     for (const auto &l : score) {
         for (const auto &n : l) {
             n->draw();

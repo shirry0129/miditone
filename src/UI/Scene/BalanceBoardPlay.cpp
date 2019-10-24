@@ -1,4 +1,4 @@
-﻿//
+//
 //  BaranceBoardPlay.cpp
 //  empty
 //
@@ -213,13 +213,17 @@ void BalanceBoardPlay::draw() const {
         }
     }
     
-    if (isDrawable) {
-        m_score.draw();
+    {
+        Transformer2D rotate(Mat3x2::Rotate(45_deg, gameinfo::originalScreenCenter));
+        
+        if (isDrawable) {
+            m_score.draw();
+        }
+    
+        decisionEffect.update();
     }
     
     FontAsset(U"200")(combo).drawAt(gameinfo::originalScreenCenter);
-    
-    decisionEffect.update();
 }
 
 void BalanceBoardPlay::drawSongInfo(const s3d::Vec2 &tlPos) const {
