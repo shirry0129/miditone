@@ -5,6 +5,7 @@
 #include <chrono>
 #include <mutex>
 #include <functional>
+#include <thread>
 
 
 struct sensor_weight {

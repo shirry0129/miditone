@@ -1,6 +1,9 @@
-﻿#include "BalanceBoardController.hpp"
+﻿#ifdef MIDITONE_WIIBALANCEBOARD
 
-#include <thread>
+#include "BalanceBoardController.hpp"
+
+#include <cmath>
+
 
 BalanceBoardController::BalanceBoardController()
     : threshold_(1.0), last_update_time_(std::chrono::system_clock::now()) {}
@@ -288,3 +291,5 @@ bool AsyncBalanceBoardController::calibration() {
     std::lock_guard<std::mutex> lock(board_mutex_);
     return board_.calibration();
 }
+
+#endif

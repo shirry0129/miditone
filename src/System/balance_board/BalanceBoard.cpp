@@ -1,14 +1,17 @@
-﻿#include "BalanceBoard.hpp"
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+
+#include "BalanceBoard.hpp"
 
 #include <chrono>
-#include "../include/wiiuse.h"
+#include "wiiuse.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "wiiuse_debug.lib")
 #else
 #pragma comment(lib, "wiiuse.lib")
 #endif
-
 
 namespace wii {
     Button::Button() : state_(State::Released) {}
@@ -87,8 +90,7 @@ namespace wii {
         wchar_t wstr[128];
         wiiuse_serial_number(*device_, wstr, sizeof(wstr));
         char str[256];
-        size_t _;
-        wcstombs_s(&_, str, 256, wstr, 255);
+        wcstombs(str, wstr, 256);
         serial_number_.parse(str);
 
         return wiiuse_connect(device_.get(), 1);
@@ -155,3 +157,5 @@ namespace wii {
     }
 
 }
+
+#endif
