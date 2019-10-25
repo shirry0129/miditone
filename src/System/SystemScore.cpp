@@ -45,6 +45,9 @@ namespace score {
 			return prevError = State::E_INVALID_ARGUMENT;
 		}
 
+#ifdef MIDITONE_WIIBALANCEBOARD
+        chunkName += "-wii";
+#endif
 
 		// read note data
 		std::vector<NoteEvent> event;

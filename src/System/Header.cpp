@@ -28,13 +28,24 @@ namespace score {
 		if (reader.readHeader(h, "header").isError())
 			return prevError = reader.getLastError();
 
+#ifdef MIDITONE_WIIBALANCEBOARD
+        ScoreReader::Header wii_h;
+        if (reader.readHeader(wii_h, "header-wii").isError())
+            return prevError = reader.getLastError();
+#endif
 
 		// update member
 		m_id = h.id;
 		m_title = ch_encoder::toUTF32(h.title);
 		m_artist = ch_encoder::toUTF32(h.artist);
-		for (size_t i = 0; i < numofDifficulty; i++)
-			m_level[i] = ch_encoder::toUTF32(h.level[i]);
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+        for (size_t i = 0; i < numofDifficulty; i++)
+            m_level[i] = ch_encoder::toUTF32(wii_h.level[i]);
+#else
+        for (size_t i = 0; i < numofDifficulty; i++)
+            m_level[i] = ch_encoder::toUTF32(h.level[i]);
+#endif
 
 		if (h.genre == "0")
 			m_genre = Genre::JPOP_ANIME;
