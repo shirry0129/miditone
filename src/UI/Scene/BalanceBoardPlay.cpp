@@ -1,9 +1,11 @@
-//
+﻿//
 //  BaranceBoardPlay.cpp
 //  empty
 //
 //  Created by Shimizu Yuta on 2019/10/20.
 //
+
+#ifdef MIDITONE_WIIBALANCEBOARD
 
 #include "BalanceBoardPlay.hpp"
 #include "../../GameInfo.hpp"
@@ -107,10 +109,10 @@ void BalanceBoardPlay::update(){
         m_song.play();
     }
     
-    results = judger.input(0, KeyD.pressed())
-    .input(1, KeyF.pressed())
-    .input(2, KeyJ.pressed())
-    .input(3, KeyK.pressed())
+    results = judger.input(0, gameinfo::balanceBoard.top_left().pressed())
+    .input(1, gameinfo::balanceBoard.bottom_left().pressed())
+    .input(2, gameinfo::balanceBoard.top_right().pressed())
+    .input(3, gameinfo::balanceBoard.bottom_right().pressed())
     .judge(time.sF() - delay);
     
     double currentTime = time.sF() - delay;
@@ -278,4 +280,4 @@ void BalanceBoardPlay::compressedDisplay(const s3d::Vec2 &pos, const s3d::Font &
 }
 
 
-
+#endif

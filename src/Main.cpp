@@ -95,6 +95,13 @@ void Main() {
     
     const INIData settings(U"../settings.ini");
     gameinfo::totalTrack = Parse<int32>(settings[U"play.tracks"]);
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+    gameinfo::balanceBoard.start_connect(settings[U"balanceBoard.macAddress"].narrow());
+    gameinfo::balanceBoard.wait_connect();
+    gameinfo::balanceBoard.set_threshold(0.5);
+    gameinfo::balanceBoard.start_update();
+#endif
     
     ui::MyApp sceneManager;
     sceneManager

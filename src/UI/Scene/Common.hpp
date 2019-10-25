@@ -1,4 +1,4 @@
-//
+﻿//
 //  CommonInfo.hpp
 //  MusicGame
 //

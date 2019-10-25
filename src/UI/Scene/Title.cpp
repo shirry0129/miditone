@@ -1,4 +1,4 @@
-//
+﻿//
 //  Title.cpp
 //  MusicGame
 //
@@ -15,7 +15,7 @@ namespace ui{
         getData().resultScore.clear();
         getData().decisionCount.clear();
         getData().isGuest = true;
-        
+
         if (getData().scoreList.isEmpty()) {
             for (const auto& songDir : FileSystem::DirectoryContents(U"../Score").filter(FileSystem::IsDirectory)) {
                 for (const auto& ini : FileSystem::DirectoryContents(songDir).filter(
@@ -48,6 +48,10 @@ namespace ui{
     void Title::draw() const {
 		TextureAsset(U"title").drawAt(::gameinfo::originalScreenCenter);
         FontAsset(U"50")(U"Press Any Button").drawAt(::gameinfo::originalScreenCenter + Vec2(0, 440), ColorF(gameinfo::defaultFontColor, Periodic::Sine0_1(1.5s)));
+#ifdef MIDITONE_WIIBALANCEBOARD
+        FontAsset(U"15")(U"Battery {:3} %"_fmt(gameinfo::balanceBoard.battery_level() * 100))
+            .draw(Arg::bottomLeft = Vec2(10, gameinfo::originalResolution.y - 20));
+#endif
     }
 
 }

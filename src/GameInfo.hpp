@@ -1,4 +1,4 @@
-//
+﻿//
 //  GameInfo.hpp
 //  MusicGame
 //
@@ -9,6 +9,10 @@
 #define GameInfo_h
 
 #include <Siv3D.hpp>
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+#include "System/balance_board/BalanceBoardController.hpp"
+#endif
 
 struct gameinfo {
 
@@ -49,6 +53,10 @@ struct gameinfo {
     static const SecondsF exFadeTime;
     
     static const float scale;
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+    static AsyncBalanceBoardController balanceBoard;
+#endif
 };
 
 #endif /* GameInfo_h */

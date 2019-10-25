@@ -1,4 +1,4 @@
-//
+﻿//
 //  GameInfo.cpp
 //  empty
 //
@@ -44,3 +44,7 @@ const int32 gameinfo::fadeTime = 1000;
 const SecondsF gameinfo::exFadeTime = 3s;
 
 const float gameinfo::scale = 0.8;
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+AsyncBalanceBoardController gameinfo::balanceBoard;
+#endif
