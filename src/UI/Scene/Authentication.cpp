@@ -1,4 +1,4 @@
-//
+﻿//
 //  Authentication.cpp
 //  empty
 //
@@ -82,6 +82,18 @@ namespace ui{
                     getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
                 }
             }
+        }
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+        const auto& result = getData().client.get_users_board_score(getData().user.qrcode);
+#else
+        const auto& response = getData().client.get_users_button_score(getData().user.qrcode);
+#endif
+
+        if (result) {
+             const auto& response = result.success_value();
+             for (const auto& record : response.parsed_body())
+                getData().usersScore.push_back(record.score);
         }
         
         if (gameinfo::back.down()) {

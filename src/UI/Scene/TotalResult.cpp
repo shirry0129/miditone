@@ -1,4 +1,4 @@
-//
+﻿//
 //  TotalResult.cpp
 //  MusicGame
 //
@@ -9,22 +9,59 @@
 
 using namespace ui;
 
-TotalResult::TotalResult(const InitData &init):
-IScene(init),
-countDown(20),
-maxWidth(340){
+TotalResult::TotalResult(const InitData& init) :
+    IScene(init),
+    countDown(20),
+    maxWidth(340) {
     for (auto i : step(gameinfo::totalTrack)) {
         albumArt.emplace_back(getData().resultSongInfo.at(i).first.jacketPath);
     }
     for (auto i : step(4)) {
         instructionBox.emplace_back(325.5 + 355 * i, 880, 200);
     }
-    
+
+    if (!getData().isGuest) {
+        Array<api_client::request::new_record_params> records;
+        for (size_t i = 0; i < gameinfo::totalTrack; i++) {
+            api_client::request::new_record_params record;
+            record.music_id         = getData().resultSongInfo.at(i).first.songInfo.id();
+            record.points           = getData().resultScore.at(i);
+            record.max_combo        = getData().decisionCount.at(i).combo;
+            record.critical_count   = getData().decisionCount.at(i).criticalCount;
+            record.correct_count    = getData().decisionCount.at(i).correctCount;
+            record.nice_count       = getData().decisionCount.at(i).niceCount;
+            record.miss_count       = getData().decisionCount.at(i).missCount;
+
+            switch (getData().resultSongInfo.at(i).second) {
+            case score::Difficulty::EASY:
+                record.difficulty = api_client::difficulty::easy;
+                break;
+            case score::Difficulty::NORMAL:
+                record.difficulty = api_client::difficulty::normal;
+                break;
+            case score::Difficulty::HARD:
+                record.difficulty = api_client::difficulty::hard;
+                break;
+            default:
+                record.difficulty = "";
+            }
+
+            records.push_back(record);
+        }
+
 #if defined(MIDITONE_WIIBALANCEBOARD)
-    getData().client.put_board_preference(getData().user.qrcode, getData().speed, getData().decisionVolume);
+        getData().client.put_board_preference(getData().user.qrcode, getData().speed, getData().decisionVolume);
+        for (const auto& record : records) {
+            getData().client.put_users_board_score(getData().user.qrcode, record);
+        }
 #else
-    getData().client.put_button_preference(getData().user.qrcode, getData().speed, getData().decisionVolume);
+        getData().client.put_button_preference(getData().user.qrcode, getData().speed, getData().decisionVolume);
+        for (const auto& record : records) {
+            getData().client.put_users_button_score(getData().user.qrcode, record);
+        }
 #endif
+
+    }
     
     countDown.start();
 }

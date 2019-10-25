@@ -73,6 +73,20 @@ namespace api_client {
         return request::UsersScore(*this, http::verb::get, qrcode, platform::board).send();
     }
 
+	request::result_type<response::UsersScore> MiditoneClient::put_users_button_score(
+        const string_type& qrcode,
+        const request::new_record_params& params
+    ) const noexcept {
+		return request::NewRecord(*this, http::verb::put, qrcode, platform::button).params(params).send();
+	}
+
+    request::result_type<response::UsersScore> MiditoneClient::put_users_board_score(
+        const string_type& qrcode,
+        const request::new_record_params& params
+    ) const noexcept {
+        return request::NewRecord(*this, http::verb::put, qrcode, platform::board).params(params).send();
+    }
+
     request::result_type<response::Ranking> MiditoneClient::get_button_score_ranking(
         int music_id
     ) const noexcept {

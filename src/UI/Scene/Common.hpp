@@ -58,6 +58,7 @@ namespace ui{
         Array<size_t> resultScore;
         api_client::MiditoneClient client;
         api_client::response::user_attr user;
+        Array<api_client::response::score_attr> usersScore;
         bool isGuest;
     };
     

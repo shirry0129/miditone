@@ -25,7 +25,8 @@ namespace ui{
                     ScoreData data;
                     
                     data.scorePath = (songDir + music[U".score"].removed(U'"')).narrow();
-                    data.songInfo.read(data.scorePath);
+                    if (data.songInfo.read(data.scorePath).isError())
+                        continue;
                     data.musicPath = songDir + music[U".music"].removed(U'"');
                     data.jacketPath = songDir + music[U".jacket"].removed(U'"');
                     data.exPath = songDir + music[U".musicEx"].removed(U'"');

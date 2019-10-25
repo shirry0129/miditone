@@ -114,6 +114,22 @@ namespace api_client {
         ) const noexcept;
 
         /// <summary>
+        /// ユーザのボタン版のスコアを更新する
+        /// </summary>
+        request::result_type<response::UsersScore> put_users_button_score(
+            const string_type& qrcode,
+            const request::new_record_params& params
+        ) const noexcept;
+
+        /// <summary>
+        /// ユーザのバランスボード版のスコアを更新する
+        /// </summary>
+        request::result_type<response::UsersScore> put_users_board_score(
+            const string_type& qrcode,
+            const request::new_record_params& params
+        ) const noexcept;
+
+        /// <summary>
         /// ボタン版のスコアランキングを取得する
         /// ※ スコアの降順に返します
         /// </summary>

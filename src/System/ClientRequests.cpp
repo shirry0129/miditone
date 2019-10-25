@@ -165,6 +165,51 @@ namespace api_client {
 
 
         // ############################################
+        // UsersScore
+        // ############################################
+        NewRecord::NewRecord(
+            const MiditoneClient& client,
+            http::verb method,
+            const string_type& qrcode,
+            const string_type& platform
+        ) : qrcode_(qrcode), platform_(platform), RequestBase(client, method) {}
+
+        NewRecord& NewRecord::params(
+            const new_record_params& req_params
+        ) {
+            response::parser::ptree_type ptree;
+            
+            ptree.put("score.music_id", req_params.music_id);
+            ptree.put("score.difficulty", req_params.difficulty);
+            ptree.put("score.points", req_params.points);
+            ptree.put("score.max_combo", req_params.max_combo);
+            ptree.put("score.critical_count", req_params.critical_count);
+            ptree.put("score.correct_count", req_params.correct_count);
+            ptree.put("score.nice_count", req_params.nice_count);
+            ptree.put("score.miss_count", req_params.miss_count);
+
+            write_json(ptree, params_);
+
+            return *this;
+        }
+
+        result_type<response::UsersScore> NewRecord::send() const noexcept {
+            const string_type uri = "/api/users/" + qrcode_ + '/' + platform_ + '/' + "scores/new_record";
+
+            auto result =
+                create_base_request(client_.http_version, client_.token())
+                .set(method_, uri)
+                .set_body(params_)
+                .send(client_.destination().host, client_.destination().port);
+
+            if (result)
+                return result_type<response::UsersScore>(response::UsersScore(result.success_value(), response::parser::users_score_parser));
+            else
+                return result_type<response::UsersScore>(result.failed_value());
+        }
+
+
+        // ############################################
         // Ranking
         // ############################################
         Ranking::Ranking(

@@ -14,6 +14,12 @@ namespace api_client {
         static const string_type board = "board";
     }
 
+    namespace difficulty {
+        static const string_type easy = "easy";
+        static const string_type normal = "normal";
+        static const string_type hard = "hard";
+    }
+
 
     namespace request {
         template<typename S>
@@ -106,6 +112,37 @@ namespace api_client {
         private:
             string_type qrcode_;
             string_type platform_;
+        };
+
+        struct new_record_params {
+            int music_id;
+            string_type difficulty;
+            int points;
+            int max_combo;
+            int critical_count;
+            int correct_count;
+            int nice_count;
+            int miss_count;
+        };
+
+        struct NewRecord : public RequestBase<response::UsersScore> {
+            NewRecord(
+                const MiditoneClient& client,
+                http::verb method,
+                const string_type& qrcode,
+                const string_type& platform
+            );
+
+            NewRecord& params(
+                const new_record_params& req_params
+            );
+
+            result_type<response::UsersScore> send() const noexcept override;
+
+        private:
+            string_type qrcode_;
+            string_type platform_;
+            string_type params_;
         };
 
         struct Ranking : public RequestBase<response::Ranking> {
