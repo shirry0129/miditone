@@ -1,4 +1,4 @@
-﻿//
+//
 //  Play.cpp
 //  MusicGame
 //
@@ -16,8 +16,13 @@ namespace ui{
     Play::Play(const InitData& init):
     IScene(init),
     m_song(getData().musicFile),
+#if defined(SIV3D_TARGET_MACOS)
     beatSound(Resource(U"resource/forSystem/beats.mp3")),
     hitSound(Resource(U"resource/forSystem/hitSound.wav")),
+#elif defined(SIV3D_TARGET_WiNDOWS)
+    beatSound(U"resource/forSystem/beats.mp3"),
+    hitSound(U"resource/forSystem/hitSound.wav"),
+#endif
     combo(0),
     point(0),
     maxWidth(270),
