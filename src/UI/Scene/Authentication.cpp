@@ -32,79 +32,75 @@ namespace ui{
     }
     
     void Authentication::update(){
-        if (cam.hasNewFrame()) {
-            cam.getFrame(camImage);
-            camTexture.fillIfNotBusy(camImage);
-            
-            if (decoder.decode(camImage, userId)) {
-                authed = true;
-                cam.stop();
-                
-                const auto& result = getData().client.get_user(userId.text.narrow());
-                
-                if (result) {
-                    const auto& response = result.success_value();
-                    if (response.status() == http::http_status::ok) {
-                        getData().isGuest = false;
-                        getData().user = response.parsed_body().user;
-                        try {
-#if defined(MIDITONE_WIIBALANCEBOARD)
-                            getData().speed = response.parsed_body().board_pref.note_speed.value();
-#else
-                            getData().speed = response.parsed_body().button_pref.note_speed.value();
-#endif
-                        } catch(std::exception e) {
-                            getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
-                        }
-                        
-                        try {
-#if defined(MIDITONE_WIIBALANCEBOARD)
-                            getData().decisionVolume = response.parsed_body().board_pref.se_volume.value();
-#else
-                            getData().decisionVolume = response.parsed_body().button_pref.se_volume.value();
-#endif
-                        } catch(std::exception e) {
-                            getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
-                        }
-                    } else {
-                        isFailed = true;
-                        Logger << U"status error   : " << response.status_code();
-                    }
-                } else {
-                    isFailed = true;
-                    const auto& error = result.failed_value();
-                    Logger << U"error      : " << Unicode::Widen(error.body());
-                }
-                
-                if (isFailed) {
-                    getData().user.name = "Guest";
-                    getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
-                    getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
-                }
-            }
-        }
-
-#ifdef MIDITONE_WIIBALANCEBOARD
-        const auto& result = getData().client.get_users_board_score(getData().user.qrcode);
-#else
-        const auto& response = getData().client.get_users_button_score(getData().user.qrcode);
-#endif
-
-        if (result) {
-             const auto& response = result.success_value();
-             for (const auto& record : response.parsed_body())
-                getData().usersScore.push_back(record.score);
-        }
-        
         if (gameinfo::back.down()) {
             getData().user.name = "Guest";
             getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
             getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
             changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
         }
-        
+
         if (authed && gameinfo::decide.down()) {
             changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
+        }
+
+        if (!cam.hasNewFrame())
+            return ;
+
+
+        cam.getFrame(camImage);
+        camTexture.fillIfNotBusy(camImage);
+        
+        if (decoder.decode(camImage, userId)) {
+            authed = true;
+            cam.stop();
+
+            const auto& getUserResult = getData().client.get_user(userId.text.narrow());
+
+            if (getUserResult) {
+                const auto& response = getUserResult.success_value();
+                if (response.status() == http::http_status::ok) {
+                    getData().isGuest = false;
+                    getData().user = response.parsed_body().user;
+
+#if defined(MIDITONE_WIIBALANCEBOARD)
+                    getData().speed = response.parsed_body().board_pref.note_speed.value(Parse<double>(settings[U"defaultValue.speed"]));
+                    getData().decisionVolume = response.parsed_body().board_pref.se_volume.value_or(Parse<double>(settings[U"defaultValue.seVolume"]);
+#else
+                    getData().speed = response.parsed_body().button_pref.note_speed.value_or(Parse<double>(settings[U"defaultValue.speed"]));
+                    getData().decisionVolume = response.parsed_body().button_pref.se_volume.value_or(Parse<double>(settings[U"defaultValue.seVolume"]));
+#endif
+                } else {
+                    isFailed = true;
+                    Logger << U"[get user] status error   : " << response.status_code();
+                }
+            } else {
+                isFailed = true;
+                const auto& error = getUserResult.failed_value();
+                Logger << U"[get user] error      : " << Unicode::Widen(error.body());
+            }
+
+            if (isFailed) {
+                getData().user.name = "Guest";
+                getData().speed = Parse<double>(settings[U"defaultValue.speed"]);
+                getData().decisionVolume = Parse<double>(settings[U"defaultValue.seVolume"]);
+            }
+
+
+#ifdef MIDITONE_WIIBALANCEBOARD
+            const auto& getUsersScoreResult = getData().client.get_users_board_score(getData().user.qrcode);
+#else
+            const auto& getUsersScoreResult = getData().client.get_users_button_score(getData().user.qrcode);
+#endif
+
+            if (getUsersScoreResult) {
+                const auto& response = getUsersScoreResult.success_value();
+                for (const auto& record : response.parsed_body())
+                    getData().usersScore.push_back(record.score);
+            } else {
+                const auto& error = getUsersScoreResult.failed_value();
+                Logger << U"[get users score] status error : " << Unicode::Widen(error.body());
+            }
+
         }
     }
 
