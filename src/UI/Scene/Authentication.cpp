@@ -1,4 +1,4 @@
-﻿//
+//
 //  Authentication.cpp
 //  empty
 //
@@ -41,6 +41,10 @@ namespace ui{
 
         if (authed && gameinfo::decide.down()) {
             changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
+        }
+        
+        if (!authed && gameinfo::prev.down()) {
+            changeScene(SceneName::TITLE, gameinfo::fadeTime);
         }
 
         if (!cam.hasNewFrame())
@@ -127,6 +131,11 @@ namespace ui{
         for (const auto [i, rect] : Indexed(instructionBox)) {
             rect(TextureAsset(U"instBack")).draw();
             switch (i) {
+                case 0:
+                    if (!authed) {
+                        FontAsset(U"50")(U"Cancel").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
+                    }
+                    break;
                 case 2:
                     if (authed) {
                         FontAsset(U"50")(U"OK").drawAt(rect.center() + Vec2(0, 25), gameinfo::infoFontColor);
