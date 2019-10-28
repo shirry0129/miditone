@@ -1,4 +1,4 @@
-﻿//
+//
 //  MusicSelect.cpp
 //  MusicGame
 //
@@ -115,11 +115,17 @@ namespace ui{
             if (getData().currentMusic > getData().scoreList.cbegin()) {
                 getData().currentMusic--;
                 resetEx();
+            } else if (getData().currentMusic == getData().scoreList.cbegin()) {
+                getData().currentMusic = getData().scoreList.cend() - 1;
+                resetEx();
             }
         }
         if (gameinfo::next.down()) {
             if (getData().currentMusic < getData().scoreList.cend() - 1) {
                 getData().currentMusic++;
+                resetEx();
+            } else if (getData().currentMusic == getData().scoreList.cend() - 1) {
+                getData().currentMusic = getData().scoreList.cbegin();
                 resetEx();
             }
         }
