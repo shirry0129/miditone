@@ -1,4 +1,4 @@
-﻿//
+//
 //  Score.hpp
 //  MusicGame
 //
@@ -29,9 +29,7 @@ namespace ui {
     
     class ButtonScore {
     private:
-        Array<Array<ButtonHitNote>> hit;
-        Array<Array<ButtonHoldNote>> hold;
-        Array<Array<ButtonNote*>> score;
+        Array<Array<std::unique_ptr<ButtonNote>>> score;
         Array<Bar> bar;
         float wakeUpTime;
         float acceleration;

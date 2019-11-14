@@ -1,4 +1,4 @@
-﻿//
+//
 //  BalanceBoardScore.hpp
 //  empty
 //
@@ -15,9 +15,7 @@
 namespace ui {
     class BalanceBoardScore {
     private:
-        Array<Array<BalanceBoardHitNote>> hit;
-        Array<Array<BalanceBoardHoldNote>> hold;
-        Array<Array<BalanceBoardNote*>> score;
+        Array<Array<std::unique_ptr<BalanceBoardNote>>> score;
         float wakeUpTime;
         
     public:

@@ -1,4 +1,4 @@
-//
+﻿//
 //  Authentication.cpp
 //  empty
 //
@@ -67,8 +67,8 @@ namespace ui{
                     getData().user = response.parsed_body().user;
 
 #if defined(MIDITONE_WIIBALANCEBOARD)
-                    getData().speed = response.parsed_body().board_pref.note_speed.value(Parse<double>(settings[U"defaultValue.speed"]));
-                    getData().decisionVolume = response.parsed_body().board_pref.se_volume.value_or(Parse<double>(settings[U"defaultValue.seVolume"]);
+                    getData().speed = response.parsed_body().board_pref.note_speed.value_or(Parse<double>(settings[U"defaultValue.speed"]));
+                    getData().decisionVolume = response.parsed_body().board_pref.se_volume.value_or(Parse<double>(settings[U"defaultValue.seVolume"]));
 #else
                     getData().speed = response.parsed_body().button_pref.note_speed.value_or(Parse<double>(settings[U"defaultValue.speed"]));
                     getData().decisionVolume = response.parsed_body().button_pref.se_volume.value_or(Parse<double>(settings[U"defaultValue.seVolume"]));

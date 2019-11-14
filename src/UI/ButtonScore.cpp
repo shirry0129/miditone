@@ -1,4 +1,4 @@
-﻿//
+//
 //  Score.cpp
 //  MusicGame
 //
@@ -40,13 +40,13 @@ namespace ui {
     
     
     ButtonScore::ButtonScore():
-    hit(numOfLane),
-    hold(numOfLane),
+//    hit(numOfLane),
+//    hold(numOfLane),
     score(numOfLane){}
     
     ButtonScore::ButtonScore(const score::SystemScore& _fromFile, float _speed):
-    hit(numOfLane),
-    hold(numOfLane),
+//    hit(numOfLane),
+//    hold(numOfLane),
     score(numOfLane){
         setFromFile(_fromFile, _speed);
     }
@@ -58,47 +58,25 @@ namespace ui {
         for(auto n:_fromFile.getNotes()){
             switch (n.type) {
                 case score::NoteType::HIT:
-                    hit.at(n.lane).emplace_back(n.lane, n.t_beg.sec, wakeUpTime, acceleration);
+                    score.at(n.lane).emplace_back(
+                        std::make_unique<ButtonHitNote>(
+                            n.lane, n.t_beg.sec, wakeUpTime, acceleration
+                        )
+                    );
                     break;
                     
                 case score::NoteType::HOLD:
-                    hold.at(n.lane).emplace_back(n.lane, n.t_beg.sec, n.t_end.sec, wakeUpTime, acceleration);
+                    score.at(n.lane).emplace_back(
+                        std::make_unique<ButtonHoldNote>(
+                            n.lane, n.t_beg.sec, n.t_end.sec, wakeUpTime, acceleration
+                        )
+                    );
                     break;
             }
         }
         
         for (auto b : _fromFile.getBar()) {
             bar.emplace_back(b.time.sec, wakeUpTime, acceleration);
-        }
-        
-        for(auto i:step(numOfLane)){
-            auto hitCount = hit.at(i).begin();
-            auto holdCount = hold.at(i).begin();
-            
-            while (hitCount != hit.at(i).end() || holdCount != hold.at(i).end()) {
-                
-                if(hitCount == hit.at(i).cend()){
-                    for (; holdCount != hold.at(i).cend(); holdCount++) {
-                        score.at(i).push_back(&(*holdCount));
-                    }
-                }else if(holdCount == hold.at(i).cend()){
-                    for (; hitCount != hit.at(i).cend(); hitCount++) {
-                        score.at(i).push_back(&(*hitCount));
-                    }
-                }else if(hitCount->judgeTime > holdCount->startTime){
-                    score.at(i).push_back(&(*holdCount));
-                    ++holdCount;
-                }else if(holdCount->startTime > hitCount->judgeTime){
-                    score.at(i).push_back(&(*hitCount));
-                    ++hitCount;
-                }else{
-                    score.at(i).push_back(&(*holdCount));
-                    score.at(i).push_back(&(*hitCount));
-                    ++holdCount;
-                    ++hitCount;
-                }
-                
-            }
         }
     }
     
@@ -115,12 +93,12 @@ namespace ui {
     }
     
     void ButtonScore::draw() const{
-        for (auto b : bar) {
+        for (const auto &b : bar) {
             b.draw();
         }
         
-        for (auto l:score) {
-            for(auto n:l){
+        for (const auto& l:score) {
+            for(const auto &n:l){
                 n->draw();
             }
         }
