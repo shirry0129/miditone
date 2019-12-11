@@ -1,6 +1,4 @@
 ﻿#include "ClientRequests.hpp"
-
-#include "MiditoneClient.hpp"
 #include "ClientResponses.hpp"
 
 namespace api_client {
@@ -31,26 +29,18 @@ namespace api_client {
         // ############################################
         // HealthCheck
         // ############################################
-        HealthCheck::HealthCheck(const MiditoneClient& client, http::verb method)
+        HealthCheck::HealthCheck(const ClientBase& client, http::verb method)
             : RequestBase(client, method) {}
 
         result_type<response::HealthCheck> HealthCheck::send() const noexcept {
-            const auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, "/api/health_check")
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::HealthCheck>(response::HealthCheck(result.success_value(), response::parser::health_check_parser));
-            else
-                return result_type<response::HealthCheck>(result.failed_value());
+            return send_helper("/api/health_check", response::parser::health_check_parser);
         }
 
 
         // ############################################
         // User
         // ############################################
-        User::User(const MiditoneClient& client, http::verb method)
+        User::User(const ClientBase& client, http::verb method)
             : RequestBase(client, method) {}
 
         User& User::set_qrcode(const string_type& qrcode) noexcept {
@@ -65,36 +55,20 @@ namespace api_client {
                 uri += "/" + qrcode_;
             }
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::User>(response::User(result.success_value(), response::parser::user_parser));
-            else
-                return result_type<response::User>(result.failed_value());
+            return send_helper(uri, response::parser::user_parser);
         }
 
 
         // ############################################
         // Users
         // ############################################
-        Users::Users(const MiditoneClient& client, http::verb method)
+        Users::Users(const ClientBase& client, http::verb method)
             : RequestBase(client, method) {}
 
         result_type<response::Users> Users::send() const noexcept {
             string_type uri = "/api/users";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::Users>(response::Users(result.success_value(), response::parser::users_parser));
-            else
-                return result_type<response::Users>(result.failed_value());
+            return send_helper(uri, response::parser::users_parser);
         }
 
 
@@ -102,11 +76,11 @@ namespace api_client {
         // Preference
         // ############################################
         Preference::Preference(
-            const MiditoneClient& client,
+            const ClientBase& client,
             http::verb method,
             const string_type& qrcode,
             const string_type& platform
-        ) : qrcode_(qrcode), platform_(platform), RequestBase(client, method) {}
+        ) : RequestBase(client, method), qrcode_(qrcode), platform_(platform) {}
 
         Preference& Preference::params(
             const std::optional<float>& note_speed,
@@ -126,16 +100,7 @@ namespace api_client {
         result_type<response::Preference> Preference::send() const noexcept {
             const string_type uri = "/api/users/" + qrcode_ + '/' + platform_ + '/' + "preference";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .set_body(params_)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::Preference>(response::Preference(result.success_value(), response::parser::preference_parser));
-            else
-                return result_type<response::Preference>(result.failed_value());
+            return send_helper(uri, response::parser::preference_parser);
         }
 
 
@@ -143,24 +108,16 @@ namespace api_client {
         // UsersScore
         // ############################################
         UsersScore::UsersScore(
-            const MiditoneClient& client,
+            const ClientBase& client,
             http::verb method,
             const string_type& qrcode,
             const string_type& platform
-        ) : qrcode_(qrcode), platform_(platform), RequestBase(client, method) {}
+        ) : RequestBase(client, method), qrcode_(qrcode), platform_(platform) {}
 
         result_type<response::UsersScore> UsersScore::send() const noexcept {
             const string_type uri = "/api/users/" + qrcode_ + '/' + platform_ + '/' + "scores";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::UsersScore>(response::UsersScore(result.success_value(), response::parser::users_score_parser));
-            else
-                return result_type<response::UsersScore>(result.failed_value());
+            return send_helper(uri, response::parser::users_score_parser);
         }
 
 
@@ -168,17 +125,17 @@ namespace api_client {
         // UsersScore
         // ############################################
         NewRecord::NewRecord(
-            const MiditoneClient& client,
+            const ClientBase& client,
             http::verb method,
             const string_type& qrcode,
             const string_type& platform
-        ) : qrcode_(qrcode), platform_(platform), RequestBase(client, method) {}
+        ) : RequestBase(client, method), qrcode_(qrcode), platform_(platform) {}
 
         NewRecord& NewRecord::params(
             const new_record_params& req_params
         ) {
             response::parser::ptree_type ptree;
-            
+
             ptree.put("score.music_id", req_params.music_id);
             ptree.put("score.difficulty", req_params.difficulty);
             ptree.put("score.points", req_params.points);
@@ -196,16 +153,7 @@ namespace api_client {
         result_type<response::UsersScore> NewRecord::send() const noexcept {
             const string_type uri = "/api/users/" + qrcode_ + '/' + platform_ + '/' + "scores/new_record";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .set_body(params_)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::UsersScore>(response::UsersScore(result.success_value(), response::parser::users_score_parser));
-            else
-                return result_type<response::UsersScore>(result.failed_value());
+            return send_helper(uri, response::parser::users_score_parser);
         }
 
 
@@ -213,24 +161,16 @@ namespace api_client {
         // Ranking
         // ############################################
         Ranking::Ranking(
-            const MiditoneClient& client,
+            const ClientBase& client,
             http::verb method,
             int music_id,
             const string_type& platform
-        ) : music_id_(music_id), platform_(platform), RequestBase(client, method) {}
+        ) : RequestBase(client, method), music_id_(music_id), platform_(platform) {}
 
         result_type<response::Ranking> Ranking::send() const noexcept {
             const string_type uri = "/api/musics/" + std::to_string(music_id_) + '/' + platform_ + '/' + "ranking";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::Ranking>(response::Ranking(result.success_value(), response::parser::ranking_parser));
-            else
-                return result_type<response::Ranking>(result.failed_value());
+            return send_helper(uri, response::parser::ranking_parser);
         }
 
 
@@ -238,24 +178,16 @@ namespace api_client {
         // PlayedTimes
         // ############################################
         PlayedTimes::PlayedTimes(
-            const MiditoneClient& client,
+            const ClientBase& client,
             http::verb method,
             int music_id,
             const string_type& platform
-        ) : music_id_(music_id), platform_(platform), RequestBase(client, method) {}
+        ) : RequestBase(client, method), music_id_(music_id), platform_(platform) {}
 
         result_type<response::PlayedTimes> PlayedTimes::send() const noexcept {
             const string_type uri = "/api/musics/" + std::to_string(music_id_) + '/' + platform_ + '/' + "played_times";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::PlayedTimes>(response::PlayedTimes(result.success_value(), response::parser::played_times_parser));
-            else
-                return result_type<response::PlayedTimes>(result.failed_value());
+            return send_helper(uri, response::parser::played_times_parser);
         }
 
 
@@ -263,23 +195,15 @@ namespace api_client {
         // PlayedTimesList
         // ############################################
         PlayedTimesList::PlayedTimesList(
-            const MiditoneClient& client,
+            const ClientBase& client,
             http::verb method,
             const string_type& platform
-        ) : platform_(platform), RequestBase(client, method) {}
+        ) : RequestBase(client, method), platform_(platform) {}
 
         result_type<response::PlayedTimesList> PlayedTimesList::send() const noexcept {
             const string_type uri = "/api/musics/" + platform_ + '/' + "played_times";
 
-            auto result =
-                create_base_request(client_.http_version, client_.token())
-                .set(method_, uri)
-                .send(client_.destination().host, client_.destination().port);
-
-            if (result)
-                return result_type<response::PlayedTimesList>(response::PlayedTimesList(result.success_value(), response::parser::played_times_list_parser));
-            else
-                return result_type<response::PlayedTimesList>(result.failed_value());
+            return send_helper(uri, response::parser::played_times_list_parser);
         }
     }
 }

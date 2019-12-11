@@ -1,4 +1,4 @@
-﻿//
+//
 //  Authentication.cpp
 //  empty
 //
@@ -47,18 +47,19 @@ namespace ui{
             changeScene(SceneName::TITLE, gameinfo::fadeTime);
         }
 
-        if (!cam.hasNewFrame())
+        if (!cam.hasNewFrame()) {
             return ;
+        }
 
 
         cam.getFrame(camImage);
         camTexture.fillIfNotBusy(camImage);
         
-        if (decoder.decode(camImage, userId)) {
+        if (decoder.decode(camImage, qrData)) {
             authed = true;
             cam.stop();
 
-            const auto& getUserResult = getData().client.get_user(userId.text.narrow());
+            const auto& getUserResult = getData().client.get_user(qrData.text.narrow());
 
             if (getUserResult) {
                 const auto& response = getUserResult.success_value();
@@ -91,15 +92,33 @@ namespace ui{
 
 
 #ifdef MIDITONE_WIIBALANCEBOARD
-            const auto& getUsersScoreResult = getData().client.get_users_board_score(getData().user.qrcode);
+            const auto& getUsersScoreResult = getData().client.get_users_board_score(getData().user.qrcode).all();
 #else
-            const auto& getUsersScoreResult = getData().client.get_users_button_score(getData().user.qrcode);
+            const auto& getUsersScoreResult = getData().client.get_users_button_score(getData().user.qrcode).all();
 #endif
 
             if (getUsersScoreResult) {
                 const auto& response = getUsersScoreResult.success_value();
-                for (const auto& record : response.parsed_body())
-                    getData().usersScore.push_back(record.score);
+                for (const auto& record : response.parsed_body()) {
+                    for (auto& score : getData().scoreList) {
+                        if (score.songInfo.id() != record.music.id) {
+                            continue;
+                        }
+                        
+                        if (record.score.difficulty == "easy") {
+                            score.highScore.easy.combo = record.score.max_combo.value_or(0);
+                            score.highScore.easy.point = record.score.points.value_or(0);
+                        }
+                        if (record.score.difficulty == "normal") {
+                            score.highScore.normal.combo = record.score.max_combo.value_or(0);
+                            score.highScore.normal.point = record.score.points.value_or(0);
+                        }
+                        if (record.score.difficulty == "hard") {
+                            score.highScore.hard.combo = record.score.max_combo.value_or(0);
+                            score.highScore.hard.point = record.score.points.value_or(0);
+                        }
+                    }
+                }
             } else {
                 const auto& error = getUsersScoreResult.failed_value();
                 Logger << U"[get users score] status error : " << Unicode::Widen(error.body());

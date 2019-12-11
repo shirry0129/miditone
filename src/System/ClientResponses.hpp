@@ -89,6 +89,14 @@ namespace api_client {
             // ゲームバージョン  (`button' or `board')
             string_type platform;
         };
+        struct pagination_attr {
+            // 1ページごとのレコード数
+            int_type per_page;
+            // 全体のレコード数
+            int_type total_records;
+            // 全体のページ数
+            int_type total_pages;
+        };
 
 
         // ###################################
@@ -134,21 +142,51 @@ namespace api_client {
             resource_type& parsed_body() & noexcept { return parsed_body_; }
             resource_type&& parsed_body() && noexcept { return std::move(parsed_body_); }
             const resource_type& parsed_body() const & noexcept { return parsed_body_; };
-            const resource_type&& parsed_body() const&& noexcept { return std::move(parsed_body_); };
+            const resource_type&& parsed_body() const && noexcept { return std::move(parsed_body_); };
 
         private:
             resource_type parsed_body_;
         };
 
 
+        // コレクション型レスポンスクラス
+        template<typename T>
+        struct CollectionResponseBase : public ResponseBase<std::vector<T>> {
+            using resource_type = std::vector<T>;
+
+        public:
+            CollectionResponseBase(const http::Response& response, parser::body_parser_t<resource_type> parser)
+                : ResponseBase<resource_type>(response, parser), pagination_({ 0, 0, 0 }) {
+
+                const char_type* per_page = response.header()["Per-Page"].data();
+                const char_type* total = response.header()["Total"].data();
+
+                if (per_page)
+                    pagination_.per_page = std::stoi(per_page);
+                if (total)
+                    pagination_.total_records = std::stoi(total);
+                if (pagination_.per_page != 0)
+                    pagination_.total_pages = std::ceil((float_type)pagination_.total_records / pagination_.per_page);
+            }
+
+            pagination_attr& pagination() & noexcept { return pagination_; }
+            pagination_attr&& pagination() && noexcept { return std::move(pagination_); }
+            const pagination_attr& pagination() const & noexcept { return pagination_; }
+            const pagination_attr&& pagination() const && noexcept { return std::move(pagination_); }
+
+        private:
+            pagination_attr pagination_;
+        };
+
+
         // レスポンスクラスの別名宣言
-        using HealthCheck = ResponseBase<health_check_attr>;
-        using User = ResponseBase<user_t>;
-        using Users = ResponseBase<std::vector<user_attr>>;
-        using Preference = ResponseBase<preference_attr>;
-        using UsersScore = ResponseBase<std::vector<users_score_t>>;
-        using Ranking = ResponseBase<ranking_t>;
-        using PlayedTimes = ResponseBase<played_times_attr>;
-        using PlayedTimesList = ResponseBase<std::vector<played_times_attr>>;
+        using HealthCheck       = ResponseBase<health_check_attr>;
+        using User              = ResponseBase<user_t>;
+        using Users             = CollectionResponseBase<user_attr>;
+        using Preference        = ResponseBase<preference_attr>;
+        using UsersScore        = CollectionResponseBase<users_score_t>;
+        using Ranking           = ResponseBase<ranking_t>;
+        using PlayedTimes       = ResponseBase<played_times_attr>;
+        using PlayedTimesList   = CollectionResponseBase<played_times_attr>;
     }
 }

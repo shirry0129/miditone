@@ -1,4 +1,4 @@
-﻿//
+//
 //  TotalResult.cpp
 //  MusicGame
 //
@@ -22,7 +22,7 @@ TotalResult::TotalResult(const InitData& init) :
 
     if (!getData().isGuest) {
         Array<api_client::request::new_record_params> records;
-        for (size_t i = 0; i < gameinfo::totalTrack; i++) {
+        for (int i = 0; i < gameinfo::totalTrack; i++) {
             api_client::request::new_record_params record;
             record.music_id         = getData().resultSongInfo.at(i).first.songInfo.id();
             record.points           = getData().resultScore.at(i);

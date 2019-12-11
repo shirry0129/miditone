@@ -81,6 +81,13 @@ namespace http {
         /// </summary>
         const string_type& body() const & noexcept override;
 
+        /// <summary>
+        /// レスポンスのヘッダを返す
+        /// </summary>
+        boost::beast::http::fields& header() noexcept;
+
+        const boost::beast::http::fields& header() const noexcept;
+
     private:
         boost::beast::http::response<boost::beast::http::string_body> response_;
     };

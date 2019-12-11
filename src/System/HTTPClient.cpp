@@ -37,6 +37,13 @@ namespace http {
         return response_.body();
     }
 
+    boost::beast::http::fields& Response::header() noexcept {
+        return response_.base();
+    }
+
+    const boost::beast::http::fields& Response::header() const noexcept {
+        return response_.base();
+    }
 
     Request::Request() {}
 

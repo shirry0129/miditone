@@ -1,4 +1,4 @@
-﻿//
+//
 //  CommonInfo.hpp
 //  MusicGame
 //
@@ -37,9 +37,24 @@ namespace ui{
         missCount(0){};
     };
 
+    struct PastScore {
+        size_t point;
+        size_t combo;
+        PastScore():
+        point(0),
+        combo(0){};
+    };
+
+    struct HighScore {
+        PastScore easy;
+        PastScore normal;
+        PastScore hard;
+    };
+
     struct ScoreData {
         std::string scorePath;
         score::Header songInfo;
+        HighScore highScore;
         FilePath musicPath;
         FilePath jacketPath;
         FilePath exPath;
@@ -51,14 +66,13 @@ namespace ui{
         double decisionVolume;
         double speed;
         size_t currentDiff;
-        Array<ScoreData>::const_iterator currentMusic;
+        Array<ScoreData>::iterator currentMusic;
         Array<ScoreData> scoreList;
         Array<DecisionInfo> decisionCount;
         Array<std::pair<ScoreData, score::Difficulty>> resultSongInfo;
         Array<size_t> resultScore;
         api_client::MiditoneClient client;
         api_client::response::user_attr user;
-        Array<api_client::response::score_attr> usersScore;
         bool isGuest;
     };
     

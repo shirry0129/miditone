@@ -184,14 +184,12 @@ namespace api_client {
             std::vector<played_times_attr> played_times_list_parser(const ptree_type& ptree) {
                 std::vector<played_times_attr> parsed;
 
-                for (const auto& data_tree : ptree.get_child("data", empty_tree)) {                    
+                for (const auto& data_tree : ptree.get_child("data", empty_tree)) {
                     parsed.emplace_back(played_times_attributes_parser(data_tree.second));
                 }
 
                 return parsed;
             }
-
-            
         }
     }
 }

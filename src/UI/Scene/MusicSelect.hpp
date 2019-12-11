@@ -38,6 +38,7 @@ namespace ui{
         Audio example;
         double chobeg, choend;
         void resetEx();
+        void drawHighScore(Vec2 tlPos) const;
     public:
         MusicSelect(const InitData& init);
         void update() override;

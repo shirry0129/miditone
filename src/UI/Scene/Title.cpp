@@ -1,4 +1,4 @@
-﻿//
+//
 //  Title.cpp
 //  MusicGame
 //
@@ -37,7 +37,7 @@ namespace ui{
             }
         }
         
-        getData().currentMusic = getData().scoreList.cbegin();
+        getData().currentMusic = getData().scoreList.begin();
     }
     
     void Title::update() {

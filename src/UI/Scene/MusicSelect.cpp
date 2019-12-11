@@ -116,7 +116,7 @@ namespace ui{
                 getData().currentMusic--;
                 resetEx();
             } else if (getData().currentMusic == getData().scoreList.cbegin()) {
-                getData().currentMusic = getData().scoreList.cend() - 1;
+                getData().currentMusic = getData().scoreList.end() - 1;
                 resetEx();
             }
         }
@@ -125,7 +125,7 @@ namespace ui{
                 getData().currentMusic++;
                 resetEx();
             } else if (getData().currentMusic == getData().scoreList.cend() - 1) {
-                getData().currentMusic = getData().scoreList.cbegin();
+                getData().currentMusic = getData().scoreList.begin();
                 resetEx();
             }
         }
@@ -150,10 +150,14 @@ namespace ui{
         FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         
         for (const auto i : step(musics.size())) {
-            auto dist = std::distance(getData().scoreList.cbegin(), getData().currentMusic);
+            auto dist = std::distance(getData().scoreList.begin(), getData().currentMusic);
             musics.at(i).draw(
-                Vec2(((int)i - dist) * defaultEntity.w, 0)
+                Vec2(((int)i - dist) * defaultEntity.w, -50)
             );
+        }
+        
+        if (!getData().isGuest) {
+            drawHighScore({350, 740});
         }
         
         for (auto [i, rect] : Indexed(instructionBox)) {
@@ -185,6 +189,16 @@ namespace ui{
         example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
     }
-    
+
+    void MusicSelect::drawHighScore(Vec2 tlPos) const {
+        Rect(tlPos.asPoint(), 350, 200).draw(ColorF(Palette::Dimgray, 0.7)).drawFrame(2, 3, Palette::Gold);
+        FontAsset(U"30_bold")(U"HighScore").draw(tlPos + Vec2(10, 10), gameinfo::defaultFontColor);
+        FontAsset(U"30_bold")(U"EASY").draw(tlPos + Vec2(10, 60), gameinfo::easy);
+        FontAsset(U"30_bold")(Pad(getData().currentMusic->highScore.easy.point, {7, U'0'})).draw(tlPos + Vec2(200, 60));
+        FontAsset(U"30_bold")(U"NORMAL").draw(tlPos + Vec2(10, 105), gameinfo::normal);
+        FontAsset(U"30_bold")(Pad(getData().currentMusic->highScore.normal.point, {7, U'0'})).draw(tlPos + Vec2(200, 105));
+        FontAsset(U"30_bold")(U"HARD").draw(tlPos + Vec2(10, 150), gameinfo::hard);
+        FontAsset(U"30_bold")(Pad(getData().currentMusic->highScore.hard.point, {7, U'0'})).draw(tlPos + Vec2(200, 150));
+    }
 
 }

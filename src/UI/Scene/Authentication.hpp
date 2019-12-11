@@ -17,7 +17,7 @@ namespace ui {
     private:
         Webcam cam;
         QRDecoder decoder;
-        QRContent userId;
+        QRContent qrData;
         Image camImage;
         DynamicTexture camTexture;
         Array<Rect> instructionBox;

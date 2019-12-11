@@ -2,14 +2,58 @@
 
 #include "ClientRequests.hpp"
 #include "ClientResponses.hpp"
-
+#include "ClientBase.hpp"
 
 namespace api_client {
-    struct connection_dest_t {
-        string_type host, port;
+
+    template<typename request_type>
+    class CollectionRequest {
+        using response_type = typename request_type::response_type;
+
+    public:
+        CollectionRequest(request_type&& req) : req_(req) {}
+
+        // 最初のページを取得
+        [[nodiscard]] request::result_type<response_type> first() {
+            return page(1);
+        }
+
+        // ページ番号を指定して送信
+        // params:
+        //   page: ページ番号 (1以上の数)
+        [[nodiscard]] request::result_type<response_type> page(int page_num) {
+            return req_.page(page_num).send();
+        }
+
+        // 全ページを一括で取得
+        [[nodiscard]] request::result_type<response_type> all() {
+            auto first_result = first();
+            if (!first_result)
+                return first_result;
+
+            auto& response = first_result.success_value();
+            const int total_pages = response.pagination().total_pages;
+            auto& collection = response.parsed_body();
+
+            collection.reserve(response.pagination().total_records);
+
+            for (int page_num = 2; page_num <= total_pages; page_num++) {
+                auto r = page(page_num);
+                if (!r)
+                    break;
+
+                const auto& body = r.success_value().parsed_body();
+                collection.insert(collection.end(), body.cbegin(), body.cend());
+            }
+
+            return first_result;
+        }
+    private:
+        request_type req_;
     };
 
-    class MiditoneClient {
+
+    class MiditoneClient : public ClientBase {
     public:
         static constexpr unsigned int http_version = http::version::_11;
 
@@ -28,41 +72,6 @@ namespace api_client {
         MiditoneClient(const string_type& host, const string_type& port, const string_type& token);
 
         /// <summary>
-        /// 接続先情報を登録する
-        /// </summary>
-        /// <param name="host">接続先のホスト名，またはアドレス</param>
-        /// <param name="port">接続先のポート番号</param>
-        /// <returns>
-        /// *this
-        /// </returns>
-        MiditoneClient& destination(const string_type& host, const string_type& port);
-
-        /// <summary>
-        /// 接続先情報を取得する
-        /// </summary>
-        /// <returns>
-        /// 接続先の情報
-        /// </returns>
-        connection_dest_t destination() const noexcept;
-
-        /// <summary>
-        /// APIのトークンを登録する
-        /// </summary>
-        /// <param name="token">APIのトークン</param>
-        /// <returns>
-        /// *this
-        /// </returns>
-        MiditoneClient& token(const string_type& token) noexcept;
-
-        /// <summary>
-        /// APIのトークンを取得する
-        /// </summary>
-        /// <returns>
-        /// APIのトークン
-        /// </returns>
-        const string_type& token() const noexcept;
-
-        /// <summary>
         /// ユーザを取得する
         /// </summary>
         /// <param name="qrcode">取得するユーザのQRコード</param>
@@ -71,7 +80,8 @@ namespace api_client {
         /// <summary>
         /// ユーザの一覧を取得する
         /// </summary>
-        request::result_type<response::Users> get_users() const noexcept;
+        CollectionRequest<request::Users> get_users(
+        ) const noexcept;
 
         /// <summary>
         /// ボタン版の設定を更新する
@@ -101,7 +111,7 @@ namespace api_client {
         /// ユーザのボタン版のスコアを全て取得する
         /// </summary>
         /// <param name="qrcode">対象のユーザのQRコード</param>
-        request::result_type<response::UsersScore> get_users_button_score(
+        CollectionRequest<request::UsersScore> get_users_button_score(
             const string_type& qrcode
         ) const noexcept;
 
@@ -109,7 +119,7 @@ namespace api_client {
         /// ユーザのバランスボード版のスコアを全て取得する
         /// </summary>
         /// <param name="qrcode">対象のユーザのQRコード</param>
-        request::result_type<response::UsersScore> get_users_board_score(
+        CollectionRequest<request::UsersScore> get_users_board_score(
             const string_type& qrcode
         ) const noexcept;
 
@@ -134,7 +144,7 @@ namespace api_client {
         /// ※ スコアの降順に返します
         /// </summary>
         /// <param name="music_id">対象曲の曲ID</param>
-        request::result_type<response::Ranking> get_button_score_ranking(
+        CollectionRequest<request::Ranking> get_button_score_ranking(
             int music_id
         ) const noexcept;
 
@@ -143,7 +153,7 @@ namespace api_client {
         /// ※ スコアの降順に返します
         /// </summary>
         /// <param name="music_id">対象曲の曲ID</param>
-        request::result_type<response::Ranking> get_board_score_ranking(
+        CollectionRequest<request::Ranking> get_board_score_ranking(
             int music_id
         ) const noexcept;
 
@@ -167,17 +177,15 @@ namespace api_client {
         /// ボタン版の全曲のプレイ回数を取得する
         /// ※ 曲IDの昇順に返します
         /// </summary>
-        request::result_type<response::PlayedTimesList> get_button_played_times(
+        CollectionRequest<request::PlayedTimesList> get_button_played_times(
         ) const noexcept;
 
         /// <summary>
         /// バランスボード版の全曲のプレイ回数を取得する
         /// ※ 曲IDの昇順に返します
         /// </summary>
-        request::result_type<response::PlayedTimesList> get_board_played_times(
+        CollectionRequest<request::PlayedTimesList> get_board_played_times(
         ) const noexcept;
-
-
 
         /// <summary>
         /// サーバーの接続テストをする
