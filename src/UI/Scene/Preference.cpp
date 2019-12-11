@@ -43,17 +43,21 @@ namespace ui{
     
     void PrefBox::draw(const s3d::Vec2 &moveWidth, bool isSelected, score::Difficulty currentDiff) const {
         String diff;
+        Color diffColor;
         double scale = 0.8;
         
         switch (currentDiff) {
             case score::Difficulty::EASY:
                 diff = U"EASY";
+                diffColor = gameinfo::easy;
                 break;
             case score::Difficulty::NORMAL:
                 diff = U"NORMAL";
+                diffColor = gameinfo::normal;
                 break;
             case score::Difficulty::HARD:
                 diff = U"HARD";
+                diffColor = gameinfo::hard;
                 break;
         }
         
@@ -69,7 +73,7 @@ namespace ui{
         
         Transformer2D t(Mat3x2::Scale(scale, entity.center() + moveWidth));
         FontAsset(U"50_bold")(m_content).drawAt(entity.center() + moveWidth + Vec2(0, 150), gameinfo::defaultFontColor);
-        FontAsset(U"50")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), gameinfo::defaultFontColor);
+        FontAsset(U"50")(diff).drawAt(entity.center() + moveWidth + Vec2(0, -100), diffColor);
     }
     
     ui::PrefItem PrefBox::getEntry() const {
