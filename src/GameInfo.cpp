@@ -1,4 +1,4 @@
-﻿//
+//
 //  GameInfo.cpp
 //  empty
 //
@@ -23,6 +23,8 @@ const Color gameinfo::infoFontColor = Color(U"#051e38");
 const Color gameinfo::easy = Palette::Limegreen;
 const Color gameinfo::normal = Palette::Darkorange;
 const Color gameinfo::hard = Palette::Crimson;
+
+const Color gameinfo::beamColor = Palette::Silver;
 
 const int32 gameinfo::titleFontSize = 120;
 

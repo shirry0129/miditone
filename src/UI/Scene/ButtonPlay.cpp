@@ -15,6 +15,7 @@ namespace ui{
 
     ButtonPlay::ButtonPlay(const InitData& init):
     IScene(init),
+    beamHeight(400),
     m_song(getData().currentMusic->musicPath),
 #if defined(SIV3D_TARGET_MACOS)
     beatSound(Resource(U"resource/forSystem/beats.mp3")),
@@ -78,6 +79,17 @@ namespace ui{
         Image buf;
         writeShineImage(buf);
         shine = Texture(buf);
+        
+        for (const auto& i : step(4)) {
+            const auto& lFactor = LaneBG::getInstance().getFactor(i);
+            const auto& rFactor = LaneBG::getInstance().getFactor(i + 1);
+            keyBeam.emplace_back(
+                                 Vec2(lFactor.slope * beamHeight + lFactor.intercept, beamHeight),
+                                 Vec2(rFactor.slope * beamHeight + rFactor.intercept, beamHeight),
+                                 Vec2(rFactor.slope * laneEnd + rFactor.intercept, laneEnd),
+                                 Vec2(lFactor.slope * laneEnd + lFactor.intercept, laneEnd)
+                                 );
+        }
         
         m_song.setVolume(0.8);
         
@@ -208,6 +220,17 @@ namespace ui{
         drawScore({::gameinfo::originalResolution.x, 0});
         
         LaneBG::getInstance().draw();
+        
+        for (const auto [i, key] : Indexed(button.keys())) {
+            if (key.pressed()) {
+                keyBeam.at(i).draw(
+                                   ColorF(gameinfo::beamColor, 0),
+                                   ColorF(gameinfo::beamColor, 0),
+                                   ColorF(gameinfo::beamColor, 0.8),
+                                   ColorF(gameinfo::beamColor, 0.8)
+                                   );
+            }
+        }
         
         if (time.onTriggered(U"Beat1") || time.onTriggered(U"Beat2") || time.onTriggered(U"Beat3") || time.onTriggered(U"Beat4")) {
             beatSound.playOneShot();

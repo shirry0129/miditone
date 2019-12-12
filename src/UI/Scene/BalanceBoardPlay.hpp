@@ -1,4 +1,4 @@
-﻿//
+//
 //  BaranceBoardPlay.hpp
 //  empty
 //
@@ -18,6 +18,8 @@ namespace ui {
 
     class BalanceBoardPlay : public MyApp::Scene {
     private:
+        const int beamLength;
+        
         score::SystemScore m_file;
         ui::BalanceBoardScore m_score;
         musicgame::TimingJudge judger;
@@ -40,6 +42,7 @@ namespace ui {
         bool isDrawable;
         
         Circle decisionLine;
+        Array<Quad> keyBeam;
         Array<double> laneAngle;
         Array<double> effectAngle;
         

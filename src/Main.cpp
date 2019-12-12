@@ -99,7 +99,7 @@ void Main() {
 #ifdef MIDITONE_WIIBALANCEBOARD
     gameinfo::balanceBoard.start_connect(settings[U"balanceBoard.macAddress"].narrow());
     gameinfo::balanceBoard.wait_connect();
-    gameinfo::balanceBoard.set_threshold(0.5);
+    gameinfo::balanceBoard.set_threshold(1.5);
     gameinfo::balanceBoard.start_update();
 #endif
     

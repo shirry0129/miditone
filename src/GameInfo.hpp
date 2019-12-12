@@ -1,4 +1,4 @@
-﻿//
+//
 //  GameInfo.hpp
 //  MusicGame
 //
@@ -32,6 +32,8 @@ struct gameinfo {
     static const Color easy;
     static const Color normal;
     static const Color hard;
+    
+    static const Color beamColor;
     
     static const int32 titleFontSize;
     

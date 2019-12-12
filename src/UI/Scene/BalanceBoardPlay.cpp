@@ -17,6 +17,7 @@ using namespace ui;
 
 BalanceBoardPlay::BalanceBoardPlay(const InitData& init) :
 IScene(init),
+beamLength(lineRadius - 50),
 m_song(getData().currentMusic->musicPath),
 #if defined(SIV3D_TARGET_MACOS)
 beatSound(Resource(U"resource/forSystem/beats.mp3")),
@@ -92,6 +93,15 @@ effectAngle(4){
     Image buf;
     writeShineImage(buf);
     shine = Texture(buf);
+    
+    for (const auto& i : step(4)) {
+        keyBeam.emplace_back(
+                             Vec2(gameinfo::originalScreenCenter - Vec2(noteWidth / 2, lineRadius)),
+                             Vec2(gameinfo::originalScreenCenter + Vec2(noteWidth / 2, -lineRadius)),
+                             Vec2(gameinfo::originalScreenCenter + Vec2(noteWidth / 2, -(lineRadius - beamLength))),
+                             Vec2(gameinfo::originalScreenCenter - Vec2(noteWidth / 2, (lineRadius - beamLength)))
+                             );
+    }
     
     m_song.setVolume(0.5);
     
@@ -203,6 +213,25 @@ void BalanceBoardPlay::draw() const {
     drawScore({gameinfo::originalResolution.x, 0});
     
     decisionLine.draw(Color(Palette::Darkslategray, 200)).drawFrame(0, 4, Color(Palette::Lightskyblue));
+
+    const auto inputs = Array<bool>({
+            gameinfo::balanceBoard.top_left().pressed(),
+            gameinfo::balanceBoard.bottom_left().pressed(),
+            gameinfo::balanceBoard.top_right().pressed(),
+            gameinfo::balanceBoard.bottom_right().pressed()
+    });
+
+    for (const auto [i, input] : Indexed(inputs)) {
+        if (input) {
+            Transformer2D rotate(Mat3x2::Rotate(135_deg + laneAngle.at(i), gameinfo::originalScreenCenter));
+            keyBeam.at(i).draw(
+                      ColorF(gameinfo::beamColor, 0.8),
+                      ColorF(gameinfo::beamColor, 0.8),
+                      ColorF(gameinfo::beamColor, 0),
+                      ColorF(gameinfo::beamColor, 0)
+                      );
+        }
+    }
     
     if (time.onTriggered(U"Beat1") || time.onTriggered(U"Beat2") ||
         time.onTriggered(U"Beat3") || time.onTriggered(U"Beat4")) {

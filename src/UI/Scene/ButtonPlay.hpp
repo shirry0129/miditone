@@ -20,6 +20,8 @@ namespace ui{
 
     class ButtonPlay : public MyApp::Scene {
     private:
+        const int beamHeight;
+        
         score::SystemScore m_file;
         ui::ButtonScore m_score;
         musicgame::TimingJudge judger;
@@ -41,6 +43,7 @@ namespace ui{
         size_t combo;
         size_t maxWidth;
         bool isDrawable;
+        Array<Quad> keyBeam;
         
         void drawSongInfo(const Vec2& tlPos) const;
         void drawScore(const Vec2& trPos) const;
