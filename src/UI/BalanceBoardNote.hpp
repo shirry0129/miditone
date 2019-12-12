@@ -1,4 +1,4 @@
-﻿
+
 #ifndef BalanceBoardNote_hpp
 #define BalanceBoardNote_hpp
 
@@ -15,10 +15,12 @@ namespace ui {
     protected:
         double angle;
         float speed;
+        bool isConcurrent;
 
     public:
-        BalanceBoardNote(size_t _laneNum, float _wakeUpTime, double _angle, float _speed);
+        BalanceBoardNote(size_t _laneNum, float _wakeUpTime, double _angle, float _speed, bool _isConcurrent);
         ~BalanceBoardNote() = default;
+        void setIsConcurrent(bool _concurrent);
 
         virtual void update(double currentTime) = 0;
         virtual void draw() const = 0;
@@ -29,7 +31,7 @@ namespace ui {
 
     public:
         const float judgeTime;
-        BalanceBoardHitNote(size_t _laneNum, float _judgeTime, float _wakeUpTime, double _angle, float _speed);
+        BalanceBoardHitNote(size_t _laneNum, float _judgeTime, float _wakeUpTime, double _angle, float _speed, bool _isConcurrent);
 
         virtual void update(double currentTime) override;
         virtual void draw() const override;
@@ -44,7 +46,7 @@ namespace ui {
         const float startTime;
         const float endTime;
 
-        BalanceBoardHoldNote(size_t _laneNum, float _startTime, float _endTime, float _wakeUpTime, double _angle, float _speed);
+        BalanceBoardHoldNote(size_t _laneNum, float _startTime, float _endTime, float _wakeUpTime, double _angle, float _speed, bool _isConcurrent);
         virtual void update(double currentTime) override;
         virtual void draw() const override;
     };

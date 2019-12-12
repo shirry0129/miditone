@@ -23,12 +23,23 @@ void BalanceBoardScore::setFromFile(const score::SystemScore &_fromFile, float _
     double speed = (lineRadius - 100) * _speed + 100;
     wakeUpTime = (lineRadius - 100) / speed;
     
+    BalanceBoardNote *prevNote = nullptr;
+    double prevTime = 0;
+    
+    
     for (const auto& n : _fromFile.getNotes()) {
+        bool isConcurrent = false;
+        
+        if (prevTime == n.t_beg.sec && prevNote != nullptr) {
+            isConcurrent = true;
+            prevNote->setIsConcurrent(true);
+        }
+        
         switch (n.type) {
             case score::NoteType::HIT:
                 score.at(n.lane).emplace_back(
                     std::make_unique<BalanceBoardHitNote>(
-                        n.lane, n.t_beg.sec, wakeUpTime, laneAngle.at(n.lane), speed
+                        n.lane, n.t_beg.sec, wakeUpTime, laneAngle.at(n.lane), speed, isConcurrent
                     )
                 );
                 break;
@@ -36,11 +47,14 @@ void BalanceBoardScore::setFromFile(const score::SystemScore &_fromFile, float _
             case score::NoteType::HOLD:
                 score.at(n.lane).emplace_back(
                     std::make_unique<BalanceBoardHoldNote>(
-                        n.lane, n.t_beg.sec, n.t_end.sec, wakeUpTime, laneAngle.at(n.lane), speed
+                        n.lane, n.t_beg.sec, n.t_end.sec, wakeUpTime, laneAngle.at(n.lane), speed, isConcurrent
                         )
                     );
                 break;
         }
+        
+        prevTime = n.t_beg.sec;
+        prevNote = score.at(n.lane).back().get();
     }
 }
 

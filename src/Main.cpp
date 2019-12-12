@@ -1,4 +1,4 @@
-﻿
+
 # include <Siv3D.hpp> // OpenSiv3D v0.4.0
 #include "GameInfo.hpp"
 #include "UI/Scene/Common.hpp"
@@ -65,8 +65,6 @@ void Main() {
     TextureAsset::Register(U"name", Resource(U"resource/namebox.png"), TextureDesc::Mipped);
     TextureAsset::Register(U"gameover", Resource(U"resource/end.png"));
     TextureAsset::Register(U"hitNote", Resource(U"resource/hitnote.png"));
-    TextureAsset::Register(U"arrow", Resource(U"resource/ya.png"));
-    TextureAsset::Register(U"return", Resource(U"resource/turn.png"));
     TextureAsset::Register(U"instBack", Resource(U"resource/back.png"));
     TextureAsset::Register(U"resultDecision", Resource(U"resource/result_box.png"));
     TextureAsset::Register(U"resultCombo", Resource(U"resource/max_combo_.png"));
@@ -91,6 +89,14 @@ void Main() {
     TextureAsset::Register(U"instBack", U"resource/back.png");
     TextureAsset::Register(U"resultDecision", U"resource/result_box.png");
     TextureAsset::Register(U"resultCombo", U"resource/max_combo_.png");
+#endif
+    
+#ifdef MIDITONE_WIIBALANCEBOARD
+#if defined(SIV3D_TARGET_MACOS)
+    TextureAsset::Register(U"concurrentHitNote", Resource(U"resource/hitnote_concurrent.png"));
+#elif defined(SIV3D_TARGET_WINDOWS)
+    TextureAsset::Register(U"concurrentHitNote", U"resource/hitnote_concurrent.png");
+#endif
 #endif
     
     const INIData settings(U"../settings.ini");
