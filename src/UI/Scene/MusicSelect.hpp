@@ -34,7 +34,7 @@ namespace ui{
         const RectF defaultEntity;
         Array<MusicBox> musics;
         Array<Rect> instructionBox;
-        Timer countDown;
+//        Timer countDown;
         Audio example;
         double chobeg, choend;
         void resetEx();

@@ -42,7 +42,7 @@ namespace ui{
         size_t currentItem;
         Array<PrefBox> prefItem;
         Array<Rect> instructionBox;
-        Timer countDown;
+//        Timer countDown;
         bool adjustment;
         double chobeg, choend;
     public:

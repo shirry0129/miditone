@@ -74,6 +74,8 @@ namespace ui{
         api_client::MiditoneClient client;
         api_client::response::user_attr user;
         bool isGuest;
+        Timer selectTimer;
+        bool isSelecting;
     };
     
     enum class SceneName {

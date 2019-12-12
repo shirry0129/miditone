@@ -92,8 +92,7 @@ namespace ui{
     IScene(init),
     boxSize(400, 600),
     defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize),
-    example(getData().currentMusic->musicPath),
-    countDown(90){
+    example(getData().currentMusic->musicPath){
         for (const auto& score : getData().scoreList) {
             musics.emplace_back(score, defaultEntity);
         }
@@ -107,7 +106,13 @@ namespace ui{
                         );
         example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
-        countDown.start();
+        
+        if (!getData().isSelecting) {
+            getData().isSelecting = true;
+            getData().selectTimer.set(120s);
+        }
+        
+        getData().selectTimer.start();
     }
     
     void MusicSelect::update() {
@@ -129,9 +134,14 @@ namespace ui{
                 resetEx();
             }
         }
-        if (gameinfo::decide.down() || countDown.reachedZero()) {
+        if (gameinfo::decide.down()) {
+            getData().selectTimer.pause();
             changeScene(SceneName::PREFERENCE, gameinfo::fadeTime);
         };
+        if (getData().selectTimer.reachedZero()) {
+            getData().selectTimer.pause();
+            changeScene(SceneName::PLAY, gameinfo::fadeTime);
+        }
     }
     
     void MusicSelect::draw() const {
@@ -147,7 +157,7 @@ namespace ui{
             FontAsset(U"45_bold")(Unicode::Widen(getData().user.name)).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
         }
         
-        FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
+        FontAsset(U"100_bold")(getData().selectTimer.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         
         for (const auto i : step(musics.size())) {
             auto dist = std::distance(getData().scoreList.begin(), getData().currentMusic);

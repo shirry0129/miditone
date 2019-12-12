@@ -90,7 +90,6 @@ namespace ui{
     currentItem(0),
     adjustment(false),
     example(getData().currentMusic->musicPath, Arg::loop = true),
-    countDown(30),
     defaultEntity(Arg::center(::gameinfo::originalScreenCenter), boxSize){
         prefItem.emplace_back(PrefItem::GAMESTART, U"GAMESTART", defaultEntity, TextureAsset(U"gameStart"));
         prefItem.emplace_back(PrefItem::DIFFICULTY, U"Difficulty", defaultEntity, TextureAsset(U"boxTemplate"));
@@ -108,7 +107,7 @@ namespace ui{
         example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
         
-        countDown.start();
+        getData().selectTimer.start();
     }
     
     void Preference::update() {
@@ -170,6 +169,8 @@ namespace ui{
         
         if (gameinfo::decide.down()) {
             if (prefItem.at(currentItem).getEntry() == PrefItem::GAMESTART) {
+                getData().selectTimer.pause();
+                getData().isSelecting = false;
                 changeScene(SceneName::PLAY, gameinfo::fadeTime);
             }else{
                 adjustment = true;
@@ -180,11 +181,14 @@ namespace ui{
             if (adjustment) {
                 adjustment = false;
             }else{
+                getData().selectTimer.pause();
                 changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
             }
         }
         
-        if (countDown.reachedZero()) {
+        if (getData().selectTimer.reachedZero()) {
+            getData().selectTimer.pause();
+            getData().isSelecting = false;
             changeScene(SceneName::PLAY, gameinfo::fadeTime);
         }
     }
@@ -199,7 +203,7 @@ namespace ui{
             FontAsset(U"80_bold")(getData().trackCount + 1).drawAt(296, 180, Palette::Darkslategray);
             FontAsset(U"45_bold")(Unicode::Widen(getData().user.name)).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
         }        
-        FontAsset(U"100_bold")(countDown.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
+        FontAsset(U"100_bold")(getData().selectTimer.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
         
         for (auto [i, rect] : Indexed(instructionBox)) {
             rect(TextureAsset(U"instBack")).draw();
