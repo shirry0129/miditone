@@ -41,10 +41,12 @@ struct gameinfo {
     
     static int32 totalTrack;
     
-    static const Key prev;
-    static const Key next;
-    static const Key decide;
-    static const Key back;
+    static Key prev;
+    static Key next;
+    static Key decide;
+    static Key back;
+    
+    static KeyGroup button;
     
     static const size_t maxSpeed;
     
@@ -58,6 +60,8 @@ struct gameinfo {
 
 #ifdef MIDITONE_WIIBALANCEBOARD
     static AsyncBalanceBoardController balanceBoard;
+    static JoyCon joyconL;
+    static JoyCon joyconR;
 #endif
 };
 

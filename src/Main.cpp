@@ -1,5 +1,5 @@
 
-# include <Siv3D.hpp> // OpenSiv3D v0.4.0
+# include <Siv3D.hpp> // OpenSiv3D v0.4.0
 #include "GameInfo.hpp"
 #include "UI/Scene/Common.hpp"
 #include "UI/Scene/Title.hpp"
@@ -107,7 +107,35 @@ void Main() {
     gameinfo::balanceBoard.wait_connect();
     gameinfo::balanceBoard.set_threshold(1.5);
     gameinfo::balanceBoard.start_update();
+    
+    for (size_t i = 0; true; i++) {
+        auto pad = Gamepad(i);
+        if (JoyCon::IsJoyConL(pad)) {
+            gameinfo::joyconL = JoyCon(pad);
+        } else if (JoyCon::IsJoyConR(pad)) {
+            gameinfo::joyconR = JoyCon(pad);
+        }
+
+        if (i == Gamepad.MaxUserCount - 1) i = 0;
+
+        if (gameinfo::joyconL.isConnected() && gameinfo::joyconR.isConnected()) break;
+    }
+    
+    gameinfo::prev = gameinfo::joyconL.button0;
+    gameinfo::next = gameinfo::joyconL.button3;
+    gameinfo::back = gameinfo::joyconR.button2;
+    gameinfo::decide = gameinfo::joyconR.button0;
+#else
+    gameinfo::prev = KeyD;
+    gameinfo::next = KeyF;
+    gameinfo::decide = KeyJ;
+    gameinfo::back = KeyK;
 #endif
+    
+    gameinfo::button = gameinfo::prev |
+                       gameinfo::next |
+                       gameinfo::back |
+                       gameinfo::decide;
     
     ui::MyApp sceneManager;
     sceneManager
@@ -130,7 +158,7 @@ void Main() {
             Cursor::RequestStyle(CursorStyle::Hidden);
             
             const Transformer2D scaler(Mat3x2::Scale(renderRatio));
-        
+
             if(!sceneManager.update()){
                 break;
             }

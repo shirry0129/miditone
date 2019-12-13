@@ -89,8 +89,6 @@ namespace ui{
         GAMEOVER
     };
     
-    static auto button = KeyD | KeyF | KeyJ | KeyK;
-    
     using MyApp = SceneManager<SceneName, PlayData>;
 
 }

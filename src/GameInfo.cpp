@@ -32,10 +32,10 @@ const int32 gameinfo::defalutFontSize = 50;
 
 int32 gameinfo::totalTrack;
 
-const Key gameinfo::prev = KeyD;
-const Key gameinfo::next = KeyF;
-const Key gameinfo::decide = KeyJ;
-const Key gameinfo::back = KeyK;
+Key gameinfo::prev;
+Key gameinfo::next;
+Key gameinfo::decide;
+Key gameinfo::back;
 
 const size_t gameinfo::maxSpeed = 15;
 
@@ -47,6 +47,10 @@ const SecondsF gameinfo::exFadeTime = 3s;
 
 const float gameinfo::scale = 0.8;
 
+KeyGroup gameinfo::button;
+
 #ifdef MIDITONE_WIIBALANCEBOARD
 AsyncBalanceBoardController gameinfo::balanceBoard;
+JoyCon gameinfo::joyconL;
+JoyCon gameinfo::joyconR;
 #endif

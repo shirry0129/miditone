@@ -221,7 +221,7 @@ namespace ui{
         
         LaneBG::getInstance().draw();
         
-        for (const auto [i, key] : Indexed(button.keys())) {
+        for (const auto [i, key] : Indexed(gameinfo::button.keys())) {
             if (key.pressed()) {
                 keyBeam.at(i).draw(
                                    ColorF(gameinfo::beamColor, 0),

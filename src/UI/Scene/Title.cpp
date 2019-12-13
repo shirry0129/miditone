@@ -41,7 +41,7 @@ namespace ui{
     }
     
     void Title::update() {
-        if (button.down()) {
+        if (gameinfo::button.down()) {
             changeScene(SceneName::AUTHENTICATION, gameinfo::fadeTime);
         };
     }
