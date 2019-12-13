@@ -107,6 +107,8 @@ namespace ui{
         example.setPosSec(getData().currentMusic->songInfo.chorusBegSec());
         example.play();
         
+        getRanking();
+        
         getData().selectTimer.start();
     }
     
@@ -180,6 +182,9 @@ namespace ui{
         if (gameinfo::back.down()) {
             if (adjustment) {
                 adjustment = false;
+                if (prefItem.at(currentItem).getEntry() == PrefItem::DIFFICULTY) {
+                    getRanking();
+                }
             }else{
                 getData().selectTimer.pause();
                 changeScene(SceneName::MUSICSELECT, gameinfo::fadeTime);
@@ -204,6 +209,13 @@ namespace ui{
             FontAsset(U"45_bold")(Unicode::Widen(getData().user.name)).draw(Arg::topLeft = Vec2(50, 45), gameinfo::defaultFontColor);
         }        
         FontAsset(U"100_bold")(getData().selectTimer.s()).draw(Arg::topRight(::gameinfo::originalResolution.x - 10, 0), gameinfo::defaultFontColor);
+        
+        if (!getData().isGuest) {
+            drawHighScore({350, 740});
+            
+        }
+        
+        drawRanking({1200, 740});
         
         for (auto [i, rect] : Indexed(instructionBox)) {
             rect(TextureAsset(U"instBack")).draw();
@@ -236,7 +248,7 @@ namespace ui{
         }
         
         for (auto i : step(prefItem.size())) {
-            Vec2 moveWidth(((int)i - (int)currentItem) * defaultEntity.w, 0);
+            Vec2 moveWidth(((int)i - (int)currentItem) * defaultEntity.w, -50);
             switch (prefItem.at(i).getEntry()) {
                 case PrefItem::GAMESTART:
                     prefItem.at(i).draw(moveWidth, adjustment);
@@ -252,6 +264,66 @@ namespace ui{
                     break;
             }
         }
+    }
+
+    void Preference::getRanking() {
+        ranking.clear();
+        std::string difficulty;
+        
+        switch (getData().currentDiff) {
+            case 0:
+                difficulty = "easy";
+                break;
+                
+            case 1:
+                difficulty = "normal";
+                break;
+                
+            case 2:
+                difficulty = "hard";
+                break;
+                
+            default:
+                break;
+        }
+        
+#if defined(MIDITONE_WIIBALANCEBOARD)
+        const auto result = getData().client.get_board_score_ranking(getData().currentMusic->songInfo.id(), difficulty).first();
+#else
+        const auto result = getData().client.get_button_score_ranking(getData().currentMusic->songInfo.id(), difficulty).first();
+#endif
+                        
+        const auto& body = result.success_value().parsed_body();
+        std::copy(body.begin(), body.end(), std::back_inserter(ranking));
+    }
+
+    void Preference::drawRanking(Vec2 tlPos) const {
+        Rect(tlPos.asPoint(), 500, 200).draw(ColorF(Palette::Dimgray, 0.7)).drawFrame(2, 3, Palette::Gold);
+        FontAsset(U"30_bold")(U"Ranking").draw(tlPos + Vec2(10, 10), gameinfo::defaultFontColor);
+        for (const auto& i : step(3)) {
+            String name, score;
+            FontAsset(U"30_bold")(i + 1).draw(tlPos + Vec2(10, 60 + 45 * i));
+            try {
+                name = Unicode::Widen(ranking.at(i).user.name);
+                score = U"{:0>7}"_fmt(ranking.at(i).score.points.value_or(0));
+            } catch (std::exception e) {
+                name = U"---";
+                score = U"---";
+            }
+            FontAsset(U"30_bold")(name).draw(tlPos + Vec2(40, 60 + 45 * i));
+            FontAsset(U"30_bold")(score).draw(tlPos + Vec2(340, 60 + 45 * i));
+        }
+    }
+
+    void Preference::drawHighScore(Vec2 tlPos) const {
+        Rect(tlPos.asPoint(), 350, 200).draw(ColorF(Palette::Dimgray, 0.7)).drawFrame(2, 3, Palette::Gold);
+        FontAsset(U"30_bold")(U"HighScore").draw(tlPos + Vec2(10, 10), gameinfo::defaultFontColor);
+        FontAsset(U"30_bold")(U"EASY").draw(tlPos + Vec2(10, 60), gameinfo::easy);
+        FontAsset(U"30_bold")(U"{:0>7}"_fmt(getData().currentMusic->highScore.easy.point)).draw(tlPos + Vec2(200, 60));
+        FontAsset(U"30_bold")(U"NORMAL").draw(tlPos + Vec2(10, 105), gameinfo::normal);
+        FontAsset(U"30_bold")(U"{:0>7}"_fmt(getData().currentMusic->highScore.normal.point)).draw(tlPos + Vec2(200, 105));
+        FontAsset(U"30_bold")(U"HARD").draw(tlPos + Vec2(10, 150), gameinfo::hard);
+        FontAsset(U"30_bold")(U"{:0>7}"_fmt(getData().currentMusic->highScore.hard.point)).draw(tlPos + Vec2(200, 150));
     }
 
 }

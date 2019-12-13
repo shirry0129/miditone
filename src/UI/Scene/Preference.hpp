@@ -42,9 +42,14 @@ namespace ui{
         size_t currentItem;
         Array<PrefBox> prefItem;
         Array<Rect> instructionBox;
-//        Timer countDown;
+        Array<api_client::response::musics_score_t> ranking;
         bool adjustment;
         double chobeg, choend;
+        
+        void getRanking();
+        void drawRanking(Vec2 tlPos) const;
+        void drawHighScore(Vec2 tlPos) const;
+        
     public:
         Preference(const InitData& init);
         void update() override;

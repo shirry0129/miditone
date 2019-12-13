@@ -45,6 +45,18 @@ namespace api_client {
                 return *this;
             }
 
+            RequestBase& url_param(const string_type& key, const string_type& val) {
+                url_parameter_.insert_or_assign(key, val);
+
+                return *this;
+            }
+
+            RequestBase& url_param(const string_type& key, int val) {
+                url_parameter_.insert_or_assign(key, std::to_string(val));
+
+                return *this;
+            }
+
         protected:
             result_type<response_type> send_helper(string_type uri, response::parser::body_parser_t<typename response_type::resource_type> parser) const noexcept {
                 if (!url_parameter_.empty()) {
@@ -133,6 +145,8 @@ namespace api_client {
                 const string_type& platform
             );
 
+            UsersScore& difficulty(const string_type& diff);
+
             result_type<response::UsersScore> send() const noexcept override;
 
         private:
@@ -179,6 +193,8 @@ namespace api_client {
                 const string_type& platform
             );
 
+            Ranking& difficulty(const string_type& diff);
+
             result_type<response::Ranking> send() const noexcept override;
 
         private:
@@ -213,5 +229,29 @@ namespace api_client {
         private:
             string_type platform_;
         };
+
+        struct Music : public RequestBase<response::Music> {
+            Music(
+                const ClientBase& client,
+                http::verb method
+            );
+
+            Music& set_id(int id) noexcept;
+
+            result_type<response::Music> send() const noexcept override;
+
+        private:
+            int id_;
+        };
+
+        struct Musics : public RequestBase<response::Musics> {
+            Musics(
+                const ClientBase& client,
+                http::verb method
+            );
+
+            result_type<response::Musics> send() const noexcept override;
+        };
+
     }
 }

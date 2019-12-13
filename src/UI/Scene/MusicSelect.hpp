@@ -34,11 +34,12 @@ namespace ui{
         const RectF defaultEntity;
         Array<MusicBox> musics;
         Array<Rect> instructionBox;
-//        Timer countDown;
+        Array<api_client::response::musics_score_t> ranking;
         Audio example;
         double chobeg, choend;
         void resetEx();
         void drawHighScore(Vec2 tlPos) const;
+        
     public:
         MusicSelect(const InitData& init);
         void update() override;

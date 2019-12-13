@@ -118,7 +118,7 @@ namespace ui{
         if (point > highPoint && !getData().isGuest) {
             FontAsset(U"45_bold")(U"+{}"_fmt(point - highPoint)).draw(Arg::topRight(1053, 197), Palette::Lightyellow);
         }
-        FontAsset(U"100_bold")(Pad(getData().resultScore.at(getData().trackCount - 1), {7, U'0'})).draw(Arg::topRight(1053, 217), gameinfo::defaultFontColor);
+        FontAsset(U"100_bold")(U"{:0>7}"_fmt(getData().resultScore.at(getData().trackCount - 1))).draw(Arg::topRight(1053, 217), gameinfo::defaultFontColor);
         drawDecision({300, 354});
         drawSongInfo({1142, 229});
         

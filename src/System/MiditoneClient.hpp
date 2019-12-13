@@ -12,6 +12,7 @@ namespace api_client {
 
     public:
         CollectionRequest(request_type&& req) : req_(req) {}
+        CollectionRequest(request_type& req) : req_(req) {}
 
         // 最初のページを取得
         [[nodiscard]] request::result_type<response_type> first() {
@@ -112,7 +113,8 @@ namespace api_client {
         /// </summary>
         /// <param name="qrcode">対象のユーザのQRコード</param>
         CollectionRequest<request::UsersScore> get_users_button_score(
-            const string_type& qrcode
+            const string_type& qrcode,
+            const string_type& diff = ""
         ) const noexcept;
 
         /// <summary>
@@ -120,7 +122,8 @@ namespace api_client {
         /// </summary>
         /// <param name="qrcode">対象のユーザのQRコード</param>
         CollectionRequest<request::UsersScore> get_users_board_score(
-            const string_type& qrcode
+            const string_type& qrcode,
+            const string_type& diff = ""
         ) const noexcept;
 
         /// <summary>
@@ -140,12 +143,27 @@ namespace api_client {
         ) const noexcept;
 
         /// <summary>
+        /// 曲をすべて取得する
+        /// </summary>
+        CollectionRequest<request::Musics> get_musics(
+        ) const noexcept;
+
+        /// <summary>
+        /// 曲を1つ取得する
+        /// </summary>
+        /// <param name="id">取得する曲ID</param>
+        request::result_type<response::Music> get_music(
+            int id
+        ) const noexcept;
+
+        /// <summary>
         /// ボタン版のスコアランキングを取得する
         /// ※ スコアの降順に返します
         /// </summary>
         /// <param name="music_id">対象曲の曲ID</param>
         CollectionRequest<request::Ranking> get_button_score_ranking(
-            int music_id
+            int music_id,
+            const string_type& diff = ""
         ) const noexcept;
 
         /// <summary>
@@ -154,7 +172,8 @@ namespace api_client {
         /// </summary>
         /// <param name="music_id">対象曲の曲ID</param>
         CollectionRequest<request::Ranking> get_board_score_ranking(
-            int music_id
+            int music_id,
+            const string_type& diff = ""
         ) const noexcept;
 
         /// <summary>

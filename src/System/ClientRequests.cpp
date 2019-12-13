@@ -114,6 +114,12 @@ namespace api_client {
             const string_type& platform
         ) : RequestBase(client, method), qrcode_(qrcode), platform_(platform) {}
 
+        UsersScore& UsersScore::difficulty(const string_type& diff) {
+            url_param("difficulty", diff);
+
+            return *this;
+        }
+
         result_type<response::UsersScore> UsersScore::send() const noexcept {
             const string_type uri = "/api/users/" + qrcode_ + '/' + platform_ + '/' + "scores";
 
@@ -167,6 +173,12 @@ namespace api_client {
             const string_type& platform
         ) : RequestBase(client, method), music_id_(music_id), platform_(platform) {}
 
+        Ranking& Ranking::difficulty(const string_type& diff) {
+            url_param("difficulty", diff);
+
+            return *this;
+        }
+
         result_type<response::Ranking> Ranking::send() const noexcept {
             const string_type uri = "/api/musics/" + std::to_string(music_id_) + '/' + platform_ + '/' + "ranking";
 
@@ -204,6 +216,42 @@ namespace api_client {
             const string_type uri = "/api/musics/" + platform_ + '/' + "played_times";
 
             return send_helper(uri, response::parser::played_times_list_parser);
+        }
+
+
+        // ############################################
+        // Music
+        // ############################################
+        Music::Music(
+            const ClientBase& client,
+            http::verb method
+        ) : RequestBase(client, method) {}
+
+        Music& Music::set_id(int id) noexcept {
+            id_ = id;
+
+            return *this;
+        }
+
+        result_type<response::Music> Music::send() const noexcept {
+            const string_type uri = "/api/musics/" + std::to_string(id_);
+
+            return send_helper(uri, response::parser::music_parser);
+        }
+
+
+        // ############################################
+        // Musics
+        // ############################################
+        Musics::Musics(
+            const ClientBase& client,
+            http::verb method
+        ) : RequestBase(client, method) {}
+
+        result_type<response::Musics> Musics::send() const noexcept {
+            const string_type uri = "/api/musics/";
+
+            return send_helper(uri, response::parser::musics_parser);
         }
     }
 }

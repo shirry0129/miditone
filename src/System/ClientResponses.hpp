@@ -116,6 +116,8 @@ namespace api_client {
             ranking_t ranking_parser(const ptree_type& ptree);
             played_times_attr played_times_parser(const ptree_type& ptree);
             std::vector<played_times_attr> played_times_list_parser(const ptree_type& ptree);
+            music_attr music_parser(const ptree_type& ptree);
+            std::vector<music_attr> musics_parser(const ptree_type& ptree);
         }
 
 
@@ -188,5 +190,7 @@ namespace api_client {
         using Ranking           = ResponseBase<ranking_t>;
         using PlayedTimes       = ResponseBase<played_times_attr>;
         using PlayedTimesList   = CollectionResponseBase<played_times_attr>;
+        using Music             = ResponseBase<music_attr>;
+        using Musics            = CollectionResponseBase<music_attr>;
     }
 }

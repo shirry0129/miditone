@@ -101,6 +101,20 @@ namespace api_client {
                 return parsed;
             }
 
+            music_attr music_parser(const ptree_type& ptree) {
+                return music_attributes_parser(ptree, "data.");
+            }
+
+            std::vector<music_attr> musics_parser(const ptree_type& ptree) {
+                std::vector<music_attr> parsed;
+
+                for (const auto & data_tree : ptree.get_child("data", empty_tree)) {
+                    parsed.emplace_back(music_attributes_parser(data_tree.second));
+                }
+
+                return parsed;
+            }
+
             std::vector<users_score_t> users_score_parser(const ptree_type& ptree) {
                 std::vector<users_score_t> parsed;
 
