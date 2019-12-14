@@ -201,14 +201,30 @@ namespace ui{
     }
 
     void MusicSelect::drawHighScore(Vec2 tlPos) const {
+        String easyScore = U"---";
+        String normalScore = U"---";
+        String hardScore = U"---";
+        
+        if (getData().currentMusic->highScore.easy.point.has_value()) {
+            easyScore = U"{:0>7}"_fmt(getData().currentMusic->highScore.easy.point.value());
+        }
+        
+        if (getData().currentMusic->highScore.normal.point.has_value()) {
+            normalScore = U"{:0>7}"_fmt(getData().currentMusic->highScore.normal.point.value());
+        }
+        
+        if (getData().currentMusic->highScore.hard.point.has_value()) {
+            hardScore = U"{:0>7}"_fmt(getData().currentMusic->highScore.hard.point.value());
+        }
+                
         Rect(tlPos.asPoint(), 350, 200).draw(ColorF(Palette::Dimgray, 0.7)).drawFrame(2, 3, Palette::Gold);
         FontAsset(U"30_bold")(U"HighScore").draw(tlPos + Vec2(10, 10), gameinfo::defaultFontColor);
         FontAsset(U"30_bold")(U"EASY").draw(tlPos + Vec2(10, 60), gameinfo::easy);
-        FontAsset(U"30_bold")(U"{:0>7}"_fmt(getData().currentMusic->highScore.easy.point)).draw(tlPos + Vec2(200, 60));
+        FontAsset(U"30_bold")(easyScore).draw(tlPos + Vec2(200, 60));
         FontAsset(U"30_bold")(U"NORMAL").draw(tlPos + Vec2(10, 105), gameinfo::normal);
-        FontAsset(U"30_bold")(U"{:0>7}"_fmt(getData().currentMusic->highScore.normal.point)).draw(tlPos + Vec2(200, 105));
+        FontAsset(U"30_bold")(normalScore).draw(tlPos + Vec2(200, 105));
         FontAsset(U"30_bold")(U"HARD").draw(tlPos + Vec2(10, 150), gameinfo::hard);
-        FontAsset(U"30_bold")(U"{:0>7}"_fmt(getData().currentMusic->highScore.hard.point)).draw(tlPos + Vec2(200, 150));
+        FontAsset(U"30_bold")(hardScore).draw(tlPos + Vec2(200, 150));
     }
 
 }

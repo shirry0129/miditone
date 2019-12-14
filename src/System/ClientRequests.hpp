@@ -45,6 +45,12 @@ namespace api_client {
                 return *this;
             }
 
+            RequestBase& body(const string_type& body) {
+                body_ = body;
+
+                return *this;
+            }
+
             RequestBase& url_param(const string_type& key, const string_type& val) {
                 url_parameter_.insert_or_assign(key, val);
 
@@ -67,10 +73,13 @@ namespace api_client {
                     uri.pop_back();
                 }
 
-                const auto result =
-                    create_base_request(client_.http_version, client_.token())
-                    .set(method_, uri)
-                    .send(client_.destination().host, client_.destination().port);
+                auto req = create_base_request(client_.http_version, client_.token()).set(method_, uri);
+
+                if (!body_.empty()) {
+                    req.set_body(body_);
+                }
+
+                const auto result = req.send(client_.destination().host, client_.destination().port);
 
                 if (result)
                     return result_type<response_type>(response_type(result.success_value(), parser));
@@ -81,6 +90,7 @@ namespace api_client {
             const ClientBase& client_;
             http::verb method_;
             std::map<string_type, string_type> url_parameter_;
+            string_type body_;
         };
 
         // --------------------------------------------------
@@ -133,8 +143,6 @@ namespace api_client {
         private:
             string_type qrcode_;
             string_type platform_;
-
-            string_type params_;
         };
 
         struct UsersScore : public RequestBase<response::UsersScore> {
@@ -182,7 +190,6 @@ namespace api_client {
         private:
             string_type qrcode_;
             string_type platform_;
-            string_type params_;
         };
 
         struct Ranking : public RequestBase<response::Ranking> {

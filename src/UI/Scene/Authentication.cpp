@@ -1,4 +1,4 @@
-﻿//
+//
 //  Authentication.cpp
 //  empty
 //
@@ -106,16 +106,16 @@ namespace ui{
                         }
                         
                         if (record.score.difficulty == "easy") {
-                            score.highScore.easy.combo = record.score.max_combo.value_or(0);
-                            score.highScore.easy.point = record.score.points.value_or(0);
+                            score.highScore.easy.combo = record.score.max_combo;
+                            score.highScore.easy.point = record.score.points;
                         }
                         if (record.score.difficulty == "normal") {
-                            score.highScore.normal.combo = record.score.max_combo.value_or(0);
-                            score.highScore.normal.point = record.score.points.value_or(0);
+                            score.highScore.normal.combo = record.score.max_combo;
+                            score.highScore.normal.point = record.score.points;
                         }
                         if (record.score.difficulty == "hard") {
-                            score.highScore.hard.combo = record.score.max_combo.value_or(0);
-                            score.highScore.hard.point = record.score.points.value_or(0);
+                            score.highScore.hard.combo = record.score.max_combo;
+                            score.highScore.hard.point = record.score.points;
                         }
                     }
                 }

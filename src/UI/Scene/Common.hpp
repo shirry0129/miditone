@@ -38,17 +38,23 @@ namespace ui{
     };
 
     struct PastScore {
-        size_t point;
-        size_t combo;
-        PastScore():
-        point(0),
-        combo(0){};
+        std::optional<size_t> point;
+        std::optional<size_t> combo;
+        void clear() {
+            point.reset();
+            combo.reset();
+        }
     };
 
     struct HighScore {
         PastScore easy;
         PastScore normal;
         PastScore hard;
+        void clear() {
+            easy.clear();
+            normal.clear();
+            hard.clear();
+        }
     };
 
     struct ScoreData {

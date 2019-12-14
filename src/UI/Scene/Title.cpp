@@ -35,6 +35,10 @@ namespace ui{
                     getData().scoreList << data;
                 }
             }
+        } else {
+            for (auto& score: getData().scoreList) {
+                score.highScore.clear();
+            }
         }
         
         getData().currentMusic = getData().scoreList.begin();

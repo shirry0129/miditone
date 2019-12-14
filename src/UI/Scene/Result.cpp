@@ -92,15 +92,15 @@ namespace ui{
         
         switch (getData().currentDiff) {
             case 0:
-                highPoint = getData().currentMusic->highScore.easy.point;
+                highPoint = getData().currentMusic->highScore.easy.point.value_or(0);
                 break;
                 
             case 1:
-                highPoint = getData().currentMusic->highScore.normal.point;
+                highPoint = getData().currentMusic->highScore.normal.point.value_or(0);
                 break;
                 
             case 2:
-                highPoint = getData().currentMusic->highScore.hard.point;
+                highPoint = getData().currentMusic->highScore.hard.point.value_or(0);
                 break;
                 
             default:
@@ -142,13 +142,13 @@ namespace ui{
         
         switch (getData().currentDiff) {
             case 0:
-                highCombo = getData().currentMusic->highScore.easy.combo;
+                highCombo = getData().currentMusic->highScore.easy.combo.value_or(0);
                 break;
             case 1:
-                highCombo = getData().currentMusic->highScore.normal.combo;
+                highCombo = getData().currentMusic->highScore.normal.combo.value_or(0);
                 break;
             case 2:
-                highCombo = getData().currentMusic->highScore.hard.combo;
+                highCombo = getData().currentMusic->highScore.hard.combo.value_or(0);
                 break;
         }
         

@@ -92,7 +92,7 @@ namespace api_client {
             if (se_volume)
                 ptree.put("preference.se_volume", se_volume.value());
 
-            write_json(ptree, params_);
+            write_json(ptree, body_);
 
             return *this;
         }
@@ -151,7 +151,7 @@ namespace api_client {
             ptree.put("score.nice_count", req_params.nice_count);
             ptree.put("score.miss_count", req_params.miss_count);
 
-            write_json(ptree, params_);
+            write_json(ptree, body_);
 
             return *this;
         }
